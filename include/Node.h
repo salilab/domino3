@@ -41,8 +41,10 @@ class IMPDOMINO3EXPORT Node: public kernel::ModelObject {
     inputs[pi].push_back(m);
   }
 
-  IMP_OBJECT_METHODS(Marginals);
+  IMP_OBJECT_METHODS(Node);
 };
+
+IMP_OBJECTS(Node, Nodes);
 
 IMPDOMINO3_END_NAMESPACE
 
