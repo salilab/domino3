@@ -1,8 +1,8 @@
-#include <IMP/domino3/Updater.h>
+#include <IMP/domino3/Node.h>
 
 IMPDOMINO3_BEGIN_NAMESPACE
 
-Updater::Updater(Model *m,
+Node::Node(Model *m,
                  const ParticleIndexes &pis,
                  domino::ParticleStatesTable *pst,
                  std::string name):
@@ -16,11 +16,11 @@ Updater::Updater(Model *m,
   }
 }
 
-void add_input_marginal(ParticleIndex pi, Marginal *m) {
+void Node::add_input_marginal(ParticleIndex pi, Marginal *m) {
   inputs[pi].push_back(m);
 }
 
-void Updater::update() {
+void Node::update() {
   for (unsigned int i = 0; i < pis_.size(); ++i) {
     mine_[i]->update_current_from_list(inputs_[i]);
   }

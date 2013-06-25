@@ -1,17 +1,13 @@
-The scratch module is provided to act as a space to add temporary
-classes while experimenting without forcing you to create your own
-module. Not classes should ever be committed as part of the scratch
-module.
-
-It also provides a good module to write classes in that are used for
-demonstrating bugs in IMP as developers can easily drop the test
-classes into their own copy of scratch.
+This module is for experimenting with a more traditional inferential approach. The computational model is:
+- a graph with a node for each piece of data, sharing edges when they share variables
+- marginals for each variable, with a copy at each node that uses it
+- message passing between nodes when they update the marginals
 
 # Info
 
-_Author(s)_:
+_Author(s)_: Daniel Russel
 
-_Maintainer_:
+_Maintainer_: `drussel`
 
 _License_: None
 
