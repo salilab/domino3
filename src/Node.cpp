@@ -32,4 +32,25 @@ void Node::update() {
   }
 }
 
+NodeGraph get_node_graph(const NodesTemp &nodes) {
+  NodeGraph ret(nodes.size());
+  NodeGraphVertexMap vm = boost::get(ret, boost::vertex_name);
+  for (unsigned int i = 0; i < nodes.size(); ++i) {
+    vm[i] = nodes[i];
+    // create self edge too
+    for (unsigned int j = 0; j <= i; ++j) {
+      kernel::ParticleIndexes intersection;
+      std::set_intersection(nodes[i]->get_particle_indexes().begin(),
+                            nodes[i]->get_particle_indexes().end(),
+                            nodes[j]->get_particle_indexes().begin(),
+                            nodes[j]->get_particle_indexes().end(),
+                            std::back_inserter(intersection));
+      if (!intersection.empty()) {
+        boost::add_edge(ret, i, j, intersection);
+      }
+    }
+  }
+  return ret;
+}
+
 IMPDOMINO3_END_NAMESPACE

@@ -57,6 +57,7 @@ class IMPDOMINO3EXPORT Marginals: public base::Object {
     update_current_from_next();
   }
 
+  /** Return a metric on the change (currently L0, could change) */
   double get_change() const {
     return change_;
   }
