@@ -9,7 +9,7 @@
 #include <IMP/base/object_macros.h>
 #include <IMP/base/graph_macros.h>
 #include <IMP/base/map.h>
-#include <IMP/base/particle_index.h>
+#include <IMP/kernel/particle_index.h>
 #include "Marginals.h"
 
 IMPDOMINO3_BEGIN_NAMESPACE

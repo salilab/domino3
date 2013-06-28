@@ -10,7 +10,7 @@ namespace {
   }
 }
 
-DistanceNode::DistanceNode(Model *m,
+DistanceNode::DistanceNode(kernel::Model *m,
                const kernel::ParticleIndexPair &pis,
                double distance, double allowed_error,
                domino::ParticleStatesTable *pst):
@@ -19,11 +19,12 @@ DistanceNode::DistanceNode(Model *m,
   allowed_error_(allowed_error) {
   // precompile allowed states, use some sort of location structure later
   kernel::Particle *p0 = m->get_particle(pis[0]), *p1 = m->get_particle(pis[1]);
-  ParticleStates *ps0 = pst->get_states(p0), *ps1 = m->get_states(p1);
-  for (unsigned int i = 0; i < ps0->get_number(); ++i) {
-    ps0->load_state(i, p0);
-    for (unsigned int j = 0; j < ps1->get_number(); ++j) {
-      ps1->load_state(i, p1);
+  domino::ParticleStates *ps0 = pst->get_particle_states(p0),
+    *ps1 = pst->get_particle_states(p1);
+  for (unsigned int i = 0; i < ps0->get_number_of_states(); ++i) {
+    ps0->load_particle_state(i, p0);
+    for (unsigned int j = 0; j < ps1->get_number_of_states(); ++j) {
+      ps1->load_particle_state(i, p1);
       double d = IMP::core::get_distance(IMP::core::XYZR(m, pis[0]),
                                          IMP::core::XYZR(m, pis[1]));
       if (std::abs(d- distance) < allowed_error) {
@@ -34,12 +35,12 @@ DistanceNode::DistanceNode(Model *m,
 }
 
 void DistanceNode::do_update() {
-  Marginals *m0 = get_marginals()[0], *m1 = get_margins()[1];
-  for (unsigned int i = 0; i < allowed_states_[i]; ++i) {
-    double cur = m0->get_marginal(allowed_states_[i][0])
-      * m1->get_marginal(allowed_states_[i][1]);
-    m0->add_to_marginal(allowed_states_[i][0], cur);
-    m1->add_to_marginal(allowed_states_[i][1], cur);
+  Marginals *m0 = get_marginals()[0], *m1 = get_marginals()[1];
+  for (unsigned int i = 0; i < allowed_states_[i].size(); ++i) {
+    double cur = m0->get_marginal(allowed_states_[i].first)
+      * m1->get_marginal(allowed_states_[i].second);
+    m0->add_to_marginal(allowed_states_[i].first, cur);
+    m1->add_to_marginal(allowed_states_[i].second, cur);
   }
 }
 

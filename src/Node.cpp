@@ -28,7 +28,7 @@ void Node::update() {
   do_update();
 
   for (unsigned int i = 0; i < pis_.size(); ++i) {
-    mine_[i]->update_current_next();
+    mine_[i]->update_current_from_next();
   }
 }
 
