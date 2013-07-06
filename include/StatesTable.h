@@ -23,12 +23,14 @@ IMPDOMINO3_BEGIN_NAMESPACE
     in the DominoSampler.
  */
 class IMPDOMINO3EXPORT StatesTable : public IMP::base::Object {
-  IMP_NAMED_TUPLE_2(ParticleData, ParticleDatas,
+  IMP_NAMED_TUPLE_3(ParticleData, ParticleDatas,
                     IMP::base::OwnerPointer<States>, states,
-                    IMP::base::OwnerPointer<Marginals>, marginals,);
+                    IMP::base::OwnerPointer<Marginals>, marginals,
+                    RMF::NodeHandle, node,);
   typedef IMP::base::map<kernel::ParticleIndex, ParticleData> Map;
   Map states_;
   base::WeakPointer<kernel::Model> m_;
+  RMF::NodeHandle parent_;
  public:
   StatesTable(kernel::Model *m,
               std::string name = "StatesTable%1%"):
@@ -49,6 +51,8 @@ class IMPDOMINO3EXPORT StatesTable : public IMP::base::Object {
   }
   kernel::ParticleIndexes get_particle_indexes() const;
   void add(kernel::ParticleIndex pi, States *e, Marginals *m);
+  void set_rmf(RMF::NodeHandle parent);
+  void add_to_frame();
   IMP_OBJECT_METHODS(StatesTable);
 };
 

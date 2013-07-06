@@ -11,8 +11,10 @@
 
 #include <IMP/domino3/domino3_config.h>
 #include <IMP/kernel/particle_index.h>
+#include <RMF/NodeHandle.h>
 #include "Marginals.h"
 #include <IMP/base/Pointer.h>
+#include <RMF/NodeHandle.h>
 
 IMPDOMINO3_BEGIN_NAMESPACE
 /** Handle the states for a particular particle (or "class" of
@@ -36,6 +38,13 @@ protected:
                     "Out of range state requested");
     do_load(i, pi);
   }
+  /** Add the marginals to a file for displaying with the passed
+      node as a parent.*/
+  virtual void add_to_rmf(kernel::ParticleIndex pi, RMF::NodeHandle parent) const = 0;
+  /** Update the RMF file contents for the current marginals. Assume everything
+      under the parent is yours.*/
+  virtual void update_rmf(kernel::ParticleIndex pi, RMF::NodeHandle parent,
+                          Marginals *m) const = 0;
   virtual ~States();
 };
 

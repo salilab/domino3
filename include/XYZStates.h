@@ -21,13 +21,16 @@ IMPDOMINO3_BEGIN_NAMESPACE
 */
 class IMPDOMINO3EXPORT XYZStates : public States {
   algebra::Vector3Ds states_;
+  double max_radius_;
 protected:
  virtual void do_load(unsigned int i, ParticleIndex pi) const IMP_OVERRIDE;
  public:
-  XYZStates(Model *m, const algebra::Vector3Ds &states)
-      : States(m, "XYZStates %1%"),
-        states_(states) {}
+ XYZStates(Model *m, const algebra::Vector3Ds &states);
   virtual unsigned int get_number() const IMP_OVERRIDE;
+  void set_max_radius(double r) {max_radius_ = r;}
+  virtual void add_to_rmf(ParticleIndex pi, RMF::NodeHandle parent) const IMP_OVERRIDE;
+  virtual void update_rmf(ParticleIndex pi, RMF::NodeHandle parent,
+                          Marginals *m) const IMP_OVERRIDE;
   IMP_OBJECT_METHODS(XYZStates);
 };
 
