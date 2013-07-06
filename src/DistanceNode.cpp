@@ -19,7 +19,7 @@ DistanceNode::DistanceNode(kernel::Model *m,
        pst, get_distance_name(pis)), distance_(distance),
   allowed_error_(allowed_error) {
   // precompile allowed states, use some sort of location structure later
-  States *ps0 = pst->get(pis[0]), *ps1 = pst->get(pis[1]);
+  States *ps0 = pst->get_states(pis[0]), *ps1 = pst->get_states(pis[1]);
   for (unsigned int i = 0; i < ps0->get_number(); ++i) {
     ps0->load(i, pis[0]);
     for (unsigned int j = 0; j < ps1->get_number(); ++j) {

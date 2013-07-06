@@ -23,45 +23,32 @@ IMPDOMINO3_BEGIN_NAMESPACE
     in the DominoSampler.
  */
 class IMPDOMINO3EXPORT StatesTable : public IMP::base::Object {
-  typedef IMP::base::map<kernel::ParticleIndex,
-  IMP::base::OwnerPointer<States> >
-      Map;
+  IMP_NAMED_TUPLE_2(ParticleData, ParticleDatas,
+                    IMP::base::OwnerPointer<States>, states,
+                    IMP::base::OwnerPointer<Marginals>, marginals,);
+  typedef IMP::base::map<kernel::ParticleIndex, ParticleData> Map;
   Map states_;
-
+  base::WeakPointer<kernel::Model> m_;
  public:
-  StatesTable(kernel::Model *,
-                      std::string name = "StatesTable%1%"):
-                       Object(name) {}
+  StatesTable(kernel::Model *m,
+              std::string name = "StatesTable%1%"):
+    Object(name), m_(m) {}
   // implementation methods use this to get the enumerator
-  States *get(kernel::ParticleIndex pi) const {
+  States *get_states(kernel::ParticleIndex pi) const {
     IMP_USAGE_CHECK(get_has(pi),
                     "I don't know about particle " << pi);
-    return states_.find(pi)->second;
+    return states_.find(pi)->second.get_states();
+  }
+  Marginals *get_marginals(kernel::ParticleIndex pi) const {
+    IMP_USAGE_CHECK(get_has(pi),
+                    "I don't know about particle " << pi);
+    return states_.find(pi)->second.get_marginals();
   }
   bool get_has(kernel::ParticleIndex pi) const {
     return states_.find(pi) != states_.end();
   }
-  kernel::ParticleIndexes get_particle_indexes() const {
-    kernel::ParticleIndexes ret;
-    ret.reserve(states_.size());
-    for (Map::const_iterator it = states_.begin();
-         it != states_.end(); ++it) {
-      ret.push_back(it->first);
-    }
-    std::sort(ret.begin(), ret.end());
-    return ret;
-  }
-  /** One can set the states more than once. If you do that, be
-      careful.
-  */
-  void set_particle_states(kernel::ParticleIndex pi, States *e) {
-    IMP_USAGE_CHECK(!get_has(pi),
-                    "I already know about particle " << pi);
-    IMP_USAGE_CHECK(
-        e->get_number() > 0,
-        "Cannot have 0 states for a particle: \"" << pi << "\"\n");
-    states_[pi] = e;
-  }
+  kernel::ParticleIndexes get_particle_indexes() const;
+  void add(kernel::ParticleIndex pi, States *e, Marginals *m);
   IMP_OBJECT_METHODS(StatesTable);
 };
 

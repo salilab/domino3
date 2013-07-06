@@ -12,7 +12,9 @@ Node::Node(Model *m,
   inputs_.resize(pis_.size());
   for (unsigned int i = 0; i < pis_.size(); ++i) {
     mine_[i] = new Marginals(m, pis_[i],
-                             pst->get(pis_[i])->get_number());
+                             pst->get_states(pis_[i])->get_number());
+    mine_[i]->update_current_from_list(MarginalsList(1,
+                             pst->get_marginals(pis_[i])));
   }
 }
 
@@ -26,6 +28,20 @@ void Node::update() {
   for (unsigned int i = 0; i < pis_.size(); ++i) {
     mine_[i]->update_current_from_next();
   }
+}
+
+void Node::add_neighbor(Node *n) {
+  ParticleIndexes pis = n->get_particle_indexes();
+  for (unsigned int i = 0; i < pis.size(); ++i) {
+    kernel::ParticleIndexes::const_iterator it = std::find(pis_.begin(),
+                                                           pis_.end(),
+                                                           pis[i]);
+    if (it != pis_.end()) {
+      unsigned int offset = it - pis_.begin();
+      inputs_[offset].push_back(n->get_marginals()[i]);
+    }
+  }
+  neighbors_.push_back(n);
 }
 
 NodeGraph get_node_graph(const NodesTemp &nodes) {

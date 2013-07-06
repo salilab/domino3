@@ -2,14 +2,11 @@
 
 IMPDOMINO3_BEGIN_NAMESPACE
 
-Updater::Updater(const NodeGraph &graph,
+Updater::Updater(const NodesTemp &graph,
                  std::string name):
-  base::Object(name), graph_(graph),
-  graph_index_(get_vertex_index(graph)) {
-  NodeGraphVertexName vm = boost::get(boost::vertex_name, graph_);
-  BOOST_FOREACH(NodeGraphVertex vertex,
-                boost::vertices(graph_)) {
-    nodes_.push_back(vm[vertex]);
+  base::Object(name), nodes_(graph) {
+  for (unsigned int i = 0; i < nodes_.size(); ++i) {
+    nodes_[i]->set_index(i);
   }
   set_change_threshold(.05);
 }
@@ -18,11 +15,10 @@ void Updater::do_update() {
   base::set<kernel::ParticleIndex> changed;
   for (ActiveSet::const_iterator it = cur_queue_.begin();
        it != cur_queue_.end(); ++it) {
-    unsigned int cur = *it;
-    nodes_[cur]->update();
-    for (unsigned int i = 0; i < nodes_[cur]->get_marginals().size(); ++i) {
-      if (nodes_[cur]->get_marginals()[i]->get_change() > change_threshold_) {
-        changed.insert(nodes_[cur]->get_particle_indexes()[i]);
+    (*it)->update();
+    for (unsigned int i = 0; i < (*it)->get_marginals().size(); ++i) {
+      if ((*it)->get_marginals()[i]->get_change() > change_threshold_) {
+        changed.insert((*it)->get_particle_indexes()[i]);
       }
     }
   }
@@ -30,7 +26,7 @@ void Updater::do_update() {
   for (unsigned int i = 0; i< nodes_.size(); ++i) {
     for (unsigned int j = 0; j < nodes_[i]->get_particle_indexes().size(); ++j) {
       if (changed.find(nodes_[i]->get_particle_indexes()[j]) != changed.end()) {
-        add_node_to_active_set(i);
+        add_node_to_active_set(nodes_[i]);
         break;
       }
     }
@@ -41,7 +37,7 @@ void Updater::do_update() {
 void Updater::fill_queue() {
   // lazy
   for (unsigned int i = 0; i < nodes_.size(); ++i) {
-    add_node_to_active_set(i);
+    add_node_to_active_set(nodes_[i]);
   }
   swap_active_sets();
 }

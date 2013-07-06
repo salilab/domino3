@@ -11,6 +11,8 @@
 
 #include <IMP/domino3/domino3_config.h>
 #include <IMP/kernel/particle_index.h>
+#include "Marginals.h"
+#include <IMP/base/Pointer.h>
 
 IMPDOMINO3_BEGIN_NAMESPACE
 /** Handle the states for a particular particle (or "class" of
@@ -24,7 +26,6 @@ class IMPDOMINO3EXPORT States : public IMP::base::Object {
   base::WeakPointer<kernel::Model> m_;
 protected:
   virtual void do_load(unsigned int, kernel::ParticleIndex pi) const = 0;
-
  public:
   States(kernel::Model *m, std::string name = "States %1%") :
   Object(name), m_(m) {}

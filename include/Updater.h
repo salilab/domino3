@@ -17,25 +17,23 @@ IMPDOMINO3_BEGIN_NAMESPACE
 
 /** Updater its marginals based on some criteria. */
 class IMPDOMINO3EXPORT Updater: public base::Object {
-  NodeGraph graph_;
-  NodeGraphVertexIndex graph_index_;
   Nodes nodes_;
-  typedef base::set<unsigned int> ActiveSet;
+  typedef base::set<Node *> ActiveSet;
   ActiveSet cur_queue_, next_queue_;
   double change_threshold_;
 
-  void add_node_to_active_set(unsigned int index) {
-    next_queue_.insert(index);
+  void add_node_to_active_set(Node *n) {
+    next_queue_.insert(n);
   }
   void swap_active_sets() {
     std::swap(cur_queue_, next_queue_);
-    cur_queue_= base::set<unsigned int>();
+    cur_queue_= ActiveSet();
   }
   void do_update();
   void fill_queue();
 
  public:
-  Updater(const NodeGraph &graph,
+  Updater(const NodesTemp &nodes,
           std::string name);
 
   void update(unsigned int iterations);

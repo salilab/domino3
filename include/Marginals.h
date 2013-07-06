@@ -22,6 +22,8 @@ class IMPDOMINO3EXPORT Marginals: public base::Object {
   static void normalize(boost::scoped_array<double> &it,
                         unsigned int size) {
     double total = std::accumulate(it.get(), it.get() + size, 0.0);
+    IMP_USAGE_CHECK(total > .001,
+                    "Total is too small to be reliable: " << total);
     for (unsigned int i = 0; i < size; ++i) {
       it[i] /= total;
     }
@@ -53,7 +55,7 @@ class IMPDOMINO3EXPORT Marginals: public base::Object {
     std::fill(next_.get(), next_.get() + size_, 0.0);
     for (unsigned int i = 0; i < others.size(); ++i) {
       for (unsigned int j = 0; j < size_; ++j) {
-        next_[j] += others[i]->current_[j];
+        next_[j] *= others[i]->current_[j];
       }
     }
     update_current_from_next();
