@@ -6,7 +6,7 @@ Updater::Updater(const NodeGraph &graph,
                  std::string name):
   base::Object(name), graph_(graph),
   graph_index_(get_vertex_index(graph)) {
-  NodeGraphVertexMap vm = boost::get(graph_, boost::vertex_name);
+  NodeGraphVertexName vm = boost::get(boost::vertex_name, graph_);
   BOOST_FOREACH(NodeGraphVertex vertex,
                 boost::vertices(graph_)) {
     nodes_.push_back(vm[vertex]);
@@ -22,8 +22,7 @@ void Updater::do_update() {
     nodes_[cur]->update();
     for (unsigned int i = 0; i < nodes_[cur]->get_marginals().size(); ++i) {
       if (nodes_[cur]->get_marginals()[i]->get_change() > change_threshold_) {
-        changed.insert(nodes_[cur]->get_marginals()[i]
-                       ->get_particle_indexes()[i]);
+        changed.insert(nodes_[cur]->get_particle_indexes()[i]);
       }
     }
   }

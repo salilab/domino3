@@ -22,7 +22,7 @@ class IMPDOMINO3EXPORT ExcludedVolumeNode: public Node {
  public:
   ExcludedVolumeNode(Model *m,
                      const kernel::ParticleIndexPair &pis,
-                     domino::ParticleStatesTable *pst);
+                     StatesTable *pst);
 
   IMP_OBJECT_METHODS(ExcludedVolumeNode);
 };

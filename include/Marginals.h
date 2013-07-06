@@ -64,6 +64,10 @@ class IMPDOMINO3EXPORT Marginals: public base::Object {
     return change_;
   }
 
+  unsigned int get_number() const {
+    return size_;
+  }
+
   double get_entropy() const;
 
   IMP_OBJECT_METHODS(Marginals);

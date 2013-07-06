@@ -1,6 +1,17 @@
-//IMP_SWIG_OBJECT(IMP::example, ExampleRestraint, ExampleRestraints);
-//IMP_SWIG_DECORATOR(IMP::example, ExampleDecorator, ExampleDecorators);
-//IMP_SWIG_VALUE_TEMPLATE(IMP::example, ExampleTemplateClassD)
+IMP_SWIG_BASE_OBJECT(IMP::domino3, Node, Nodes);
+IMP_SWIG_OBJECT(IMP::domino3, DistanceNode, DistanceNodes);
+IMP_SWIG_OBJECT(IMP::domino3, ExcludedVolumeNode, ExcludedVolumeNodes);
+IMP_SWIG_BASE_OBJECT(IMP::domino3, Updater, Updaters);
+IMP_SWIG_BASE_OBJECT(IMP::domino3, States, StatesList);
+IMP_SWIG_OBJECT(IMP::domino3, StatesTable, StatesTables);
+IMP_SWIG_OBJECT(IMP::domino3, XYZStates, XYZStatesList);
 
 
-//%include "IMP/example/ExampleRestraint.h"
+%include "IMP/domino3/Marginals.h"
+%include "IMP/domino3/States.h"
+%include "IMP/domino3/StatesTable.h"
+%include "IMP/domino3/XYZStates.h"
+%include "IMP/domino3/Node.h"
+%include "IMP/domino3/ExcludedVolumeNode.h"
+%include "IMP/domino3/DistanceNode.h"
+%include "IMP/domino3/Updater.h"

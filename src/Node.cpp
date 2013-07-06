@@ -3,21 +3,17 @@
 IMPDOMINO3_BEGIN_NAMESPACE
 
 Node::Node(Model *m,
-                 const ParticleIndexes &pis,
-                 domino::ParticleStatesTable *pst,
-                 std::string name):
+           const ParticleIndexes &pis,
+           StatesTable *pst,
+           std::string name):
   ModelObject(m, name), pis_(pis) {
   std::sort(pis_.begin(), pis_.end());
   mine_.resize(pis_.size());
   inputs_.resize(pis_.size());
   for (unsigned int i = 0; i < pis_.size(); ++i) {
     mine_[i] = new Marginals(m, pis_[i],
-                          pst->get_number_of_states(m->get_particle(pis_[i])));
+                             pst->get(pis_[i])->get_number());
   }
-}
-
-void Node::add_input_marginal(ParticleIndex pi, Marginal *m) {
-  inputs[pi].push_back(m);
 }
 
 void Node::update() {
@@ -34,7 +30,7 @@ void Node::update() {
 
 NodeGraph get_node_graph(const NodesTemp &nodes) {
   NodeGraph ret(nodes.size());
-  NodeGraphVertexMap vm = boost::get(ret, boost::vertex_name);
+  NodeGraphVertexName vm = boost::get(boost::vertex_name, ret);
   for (unsigned int i = 0; i < nodes.size(); ++i) {
     vm[i] = nodes[i];
     // create self edge too
@@ -46,7 +42,7 @@ NodeGraph get_node_graph(const NodesTemp &nodes) {
                             nodes[j]->get_particle_indexes().end(),
                             std::back_inserter(intersection));
       if (!intersection.empty()) {
-        boost::add_edge(ret, i, j, intersection);
+        boost::add_edge(i, j, intersection, ret);
       }
     }
   }

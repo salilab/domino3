@@ -9,13 +9,13 @@
 #include <IMP/base/object_macros.h>
 #include <IMP/base/graph_macros.h>
 #include <IMP/base/map.h>
-#include <IMP/domino/particle_states.h>
+#include "StatesTable.h"
 #include <IMP/kernel/particle_index.h>
 #include "Marginals.h"
 
 IMPDOMINO3_BEGIN_NAMESPACE
 
-/** Node its marginals based on some criteria. */
+/** Node updates its marginals based on some criteria. */
 class IMPDOMINO3EXPORT Node: public kernel::ModelObject {
   base::Vector<MarginalsList> inputs_;
   kernel::ParticleIndexes pis_;
@@ -37,7 +37,7 @@ class IMPDOMINO3EXPORT Node: public kernel::ModelObject {
  public:
   Node(kernel::Model *m,
        const kernel::ParticleIndexes &pis,
-       domino::ParticleStatesTable *pst,
+       StatesTable *pst,
        std::string name);
 
   /** Node my marginals. */
@@ -48,8 +48,8 @@ class IMPDOMINO3EXPORT Node: public kernel::ModelObject {
 
   const MarginalsList& get_marginals() const { return mine_; }
 
-  void add_input_marginal(ParticleIndex pi, Marginals *m) {
-    inputs_[pi].push_back(m);
+  void add_input_marginal(kernel::ParticleIndex pi, Marginals *m) {
+    inputs_[pi.get_index()].push_back(m);
   }
 };
 

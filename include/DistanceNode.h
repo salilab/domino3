@@ -25,7 +25,7 @@ class IMPDOMINO3EXPORT DistanceNode: public Node {
   DistanceNode(kernel::Model *m,
                const kernel::ParticleIndexPair &pis,
                double distance, double allowed_error,
-               domino::ParticleStatesTable *pst);
+               StatesTable *pst);
 
   IMP_OBJECT_METHODS(DistanceNode);
 };

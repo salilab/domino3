@@ -9,7 +9,7 @@
 #include "Node.h"
 #include <IMP/base/object_macros.h>
 #include <IMP/base/map.h>
-#include <IMP/base/particle_index.h>
+#include <IMP/kernel/particle_index.h>
 #include <IMP/base/set.h>
 #include "Marginals.h"
 
@@ -25,7 +25,7 @@ class IMPDOMINO3EXPORT Updater: public base::Object {
   double change_threshold_;
 
   void add_node_to_active_set(unsigned int index) {
-    next_queue_.insert(n);
+    next_queue_.insert(index);
   }
   void swap_active_sets() {
     std::swap(cur_queue_, next_queue_);
@@ -46,6 +46,8 @@ class IMPDOMINO3EXPORT Updater: public base::Object {
 
   IMP_OBJECT_METHODS(Updater);
 };
+
+IMP_OBJECTS(Updater, Updaters);
 
 IMPDOMINO3_END_NAMESPACE
 
