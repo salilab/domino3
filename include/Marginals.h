@@ -40,7 +40,7 @@ class IMPDOMINO3EXPORT Marginals: public base::Object {
   }
 
   /** Eventually this will be atomic. */
-  void update_current_from_next() {
+  void set_current_from_next() {
     normalize(next_, size_);
     change_ = 0;
     for (unsigned int i = 0; i < size_; ++i) {
@@ -51,14 +51,14 @@ class IMPDOMINO3EXPORT Marginals: public base::Object {
     std::fill(next_.get(), next_.get() + size_, 0.0);
   }
 
-  void update_current_from_list(const MarginalsListTemp &others) {
+  void set_current_from_list(const MarginalsListTemp &others) {
     std::fill(next_.get(), next_.get() + size_, 0.0);
     for (unsigned int i = 0; i < others.size(); ++i) {
       for (unsigned int j = 0; j < size_; ++j) {
         next_[j] *= others[i]->current_[j];
       }
     }
-    update_current_from_next();
+    set_current_from_next();
   }
 
   /** Return a metric on the change (currently L0, could change) */
@@ -74,6 +74,9 @@ class IMPDOMINO3EXPORT Marginals: public base::Object {
 
   IMP_OBJECT_METHODS(Marginals);
 };
+
+IMPDOMINO3EXPORT void set_uniform(Marginals *m);
+IMPDOMINO3EXPORT void set_random(Marginals *m);
 
 IMPDOMINO3_END_NAMESPACE
 

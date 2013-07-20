@@ -13,20 +13,20 @@ Node::Node(Model *m,
   for (unsigned int i = 0; i < pis_.size(); ++i) {
     mine_[i] = new Marginals(m, pis_[i],
                              pst->get_states(pis_[i])->get_number());
-    mine_[i]->update_current_from_list(MarginalsList(1,
+    mine_[i]->set_current_from_list(MarginalsList(1,
                              pst->get_marginals(pis_[i])));
   }
 }
 
 void Node::update() {
   for (unsigned int i = 0; i < pis_.size(); ++i) {
-    mine_[i]->update_current_from_list(inputs_[i]);
+    mine_[i]->set_current_from_list(inputs_[i]);
   }
 
   do_update();
 
   for (unsigned int i = 0; i < pis_.size(); ++i) {
-    mine_[i]->update_current_from_next();
+    mine_[i]->set_current_from_next();
   }
 }
 
@@ -64,5 +64,26 @@ NodeGraph get_node_graph(const NodesTemp &nodes) {
   }
   return ret;
 }
+
+
+void add_neighbors(const NodesTemp &nodes) {
+  for (unsigned int i = 0; i < nodes.size(); ++i) {
+    kernel::ParticleIndexes pisi = nodes[i]->get_particle_indexes();
+    for (unsigned int j = 0; j < i; ++j) {
+      kernel::ParticleIndexes pisj = nodes[j]->get_particle_indexes();
+      kernel::ParticleIndexes intersection;
+      std::set_intersection(pisi.begin(),
+                            pisi.end(),
+                            pisj.begin(),
+                            pisj.end(),
+                            std::back_inserter(intersection));
+      if (!intersection.empty()) {
+        nodes[i]->add_neighbor(nodes[j]);
+        nodes[j]->add_neighbor(nodes[i]);
+      }
+    }
+  }
+}
+
 
 IMPDOMINO3_END_NAMESPACE

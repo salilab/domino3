@@ -21,4 +21,18 @@ double Marginals::get_entropy() const {
   return ret;
 }
 
+void set_uniform(Marginals *m) {
+  for (unsigned int i = 0; i < m->get_number(); ++i) {
+    m->add_to_marginal(i, 1.0);
+  }
+  m->set_current_from_next();
+}
+
+void set_random(Marginals *m) {
+  for (unsigned int i = 0; i < m->get_number(); ++i) {
+    m->add_to_marginal(i, std::rand());
+  }
+  m->set_current_from_next();
+}
+
 IMPDOMINO3_END_NAMESPACE
