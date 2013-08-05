@@ -23,7 +23,7 @@ DistanceNode::DistanceNode(kernel::Model *m,
   for (unsigned int i = 0; i < ps0->get_number(); ++i) {
     ps0->load(i, pis[0]);
     for (unsigned int j = 0; j < ps1->get_number(); ++j) {
-      ps1->load(i, pis[1]);
+      ps1->load(j, pis[1]);
       double d = IMP::core::get_distance(IMP::core::XYZR(m, pis[0]),
                                          IMP::core::XYZR(m, pis[1]));
       if (std::abs(d- distance) < allowed_error) {
