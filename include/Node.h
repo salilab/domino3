@@ -63,6 +63,9 @@ class IMPDOMINO3EXPORT Node: public kernel::ModelObject {
 };
 
 IMPDOMINO3EXPORT void add_neighbors(const NodesTemp &nodes);
+IMPDOMINO3EXPORT void update_state_table(const NodesTemp &nodes,const StatesTable *pst);
+
+
 
 IMP_GRAPH(NodeGraph, undirected, base::Pointer<Node>,
           kernel::ParticleIndexes,

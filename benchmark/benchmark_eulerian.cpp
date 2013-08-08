@@ -16,7 +16,7 @@
 #define MY_LOG_TERSE(x) std::cout << x;
 
 namespace {
-const double cell_size = 1;
+double cell_size = 1;
 typedef IMP::algebra::GridD<3,
                             IMP::algebra::DenseGridStorageD<3, float>,
                             float> Grid;
@@ -152,6 +152,21 @@ void write_probabilities(unsigned int num_states,
                          const Probabilities &probs, Grid &grid,
                          const States &states, std::string prefix) {
   MY_LOG_TERSE("Writing probabilites to " << prefix << std::endl);
+    
+  for (unsigned int i = 0; i < num_states; ++i) {
+      for (unsigned int j = 0; j < states.size(); ++j) {
+          std::cout << probs[i][j] << "\t";
+      }
+      std::cout << std::endl;
+  }
+  for (unsigned int i = 0; i < num_states; ++i) {
+      
+     auto it= std::max_element(probs[i].get(), probs[i].get()+states.size());
+      std::cout << *it << std::endl;
+      std::cout << std::distance(probs[i].get(), it) << std::endl;
+      std::cout << states[std::distance(probs[i].get(), it)] <<std::endl;
+  }
+    
   for (unsigned int i = 0; i < num_states; ++i) {
     for (unsigned int j = 0; j < states.size(); ++j) {
       grid[states[j]] = probs[i][j];
@@ -169,6 +184,11 @@ IMP::base::AddIntFlag iteration_adder("iterations",
                        "The number of times to iterate through the restraints",
                         &iterations);
 
+IMP::base::AddFloatFlag iteration_cellsize("cellsize",
+                       "The cell size of the grid.",
+                        &cell_size);
+
+
 std::string input = IMP::atom::get_example_path("1d3d-protein.pdb");
 IMP::base::AddStringFlag input_adder("input",
                        "The input pdb to use",
@@ -179,21 +199,21 @@ IMP::base::AddStringFlag input_adder("input",
 int main(int argc, char **argv) {
   IMP::base::setup_from_argv(argc, argv, "Experiment with loopy domino");
   IMP_NEW(IMP::kernel::Model, m, ());
-  IMP::atom::Hierarchy pdb = IMP::atom::read_pdb(input, m);
+    IMP::atom::Hierarchy pdb = IMP::atom::read_pdb(input, m, new IMP::atom::CAlphaPDBSelector());
   // add coordinates to residues
   {
     IMP::base::SetLogState sll(IMP::base::SILENT);
     IMP::atom::create_rigid_body(pdb);
   }
-  IMP::atom::Hierarchies residues
-    = IMP::atom::get_by_type(pdb, IMP::atom::RESIDUE_TYPE);
+    IMP::atom::Atoms atoms
+    = IMP::atom::get_by_type(pdb, IMP::atom::ATOM_TYPE);
   // start with all pairs
   Distances distances;
-  DistanceIndex distance_index(residues.size());
-  for (unsigned int i = 0; i< residues.size(); ++i) {
+  DistanceIndex distance_index(atoms.size());
+  for (unsigned int i = 0; i< atoms.size(); ++i) {
     for (unsigned int j = 0; j < i; ++j) {
-      double dist = IMP::core::get_distance(IMP::core::XYZ(residues[i]),
-                                            IMP::core::XYZ(residues[j]));
+      double dist = IMP::core::get_distance(IMP::core::XYZ(atoms[i]),
+                                            IMP::core::XYZ(atoms[j]));
       Distance cur(i, j, dist);
       distances.push_back(cur);
       distance_index[i].push_back(distances.size() - 1);
@@ -208,9 +228,9 @@ int main(int argc, char **argv) {
             grid.indexes_end(grid.get_bounding_box()),
             std::back_inserter(states));
   Probabilities probabilities;
-  IMP::kernel::ParticleIndexes pis(residues.size());
-  for (unsigned int i = 0; i< residues.size(); ++i) {
-    pis[i] = residues[i].get_particle_index();
+  IMP::kernel::ParticleIndexes pis(atoms.size());
+  for (unsigned int i = 0; i< atoms.size(); ++i) {
+    pis[i] = atoms[i].get_particle_index();
   }
   initialize_probabilities(m, pis, grid, states, probabilities);
   DirtyRestraints dirty_restraints;
@@ -224,7 +244,7 @@ int main(int argc, char **argv) {
                           distance_index[3].end());
 
     IMP::base::Vector<double> entropies
-    = get_entropies(residues.size(), states.size(), probabilities);
+    = get_entropies(atoms.size(), states.size(), probabilities);
     MY_LOG_VERBOSE("entropies are " << entropies << std::endl);
     MY_LOG_VERBOSE("And the total is " << std::accumulate(entropies.begin(),
                                                           entropies.end(), 0.0)
@@ -234,14 +254,14 @@ int main(int argc, char **argv) {
     refine(distances, grid, states, distance_index,
            probabilities, dirty_restraints);
     IMP::base::Vector<double> entropies
-    = get_entropies(residues.size(), states.size(), probabilities);
+    = get_entropies(atoms.size(), states.size(), probabilities);
     MY_LOG_VERBOSE("entropies are " << entropies << std::endl);
     MY_LOG_VERBOSE("And the total is " << std::accumulate(entropies.begin(),
                                                           entropies.end(), 0.0)
                    << std::endl);
   }
 
-  write_probabilities(residues.size(), probabilities, grid,
+  write_probabilities(atoms.size(), probabilities, grid,
                       states, "final");
   return 0;
 }

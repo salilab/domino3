@@ -13,14 +13,16 @@ Node::Node(Model *m,
   for (unsigned int i = 0; i < pis_.size(); ++i) {
     mine_[i] = new Marginals(m, pis_[i],
                              pst->get_states(pis_[i])->get_number());
-    mine_[i]->set_current_from_list(MarginalsList(1,
+    IMP::domino3::set_uniform(mine_[i]);
+
+    mine_[i]->merge_probabilities_from_list(MarginalsList(1,
                              pst->get_marginals(pis_[i])));
   }
 }
 
 void Node::update() {
   for (unsigned int i = 0; i < pis_.size(); ++i) {
-    mine_[i]->set_current_from_list(inputs_[i]);
+    mine_[i]->merge_probabilities_from_list(inputs_[i]);
   }
 
   do_update();
@@ -85,5 +87,25 @@ void add_neighbors(const NodesTemp &nodes) {
   }
 }
 
+
+
+void update_state_table(const NodesTemp &nodes,const StatesTable *pst) {
+    base::map<ParticleIndex,MarginalsList> map_to_merge;
+    for (unsigned int i = 0; i < nodes.size(); ++i) {
+        MarginalsList node_marginals =  nodes[i]->get_marginals();
+        for(MarginalsList::size_type i = 0; i != node_marginals.size(); i++) {
+            ParticleIndex particle_index = node_marginals[i]->get_particle_index();
+            map_to_merge[particle_index].push_back(node_marginals[i]);
+        }
+    }
+    for(base::map<ParticleIndex,MarginalsList>::iterator iter = map_to_merge.begin();
+        iter != map_to_merge.end(); ++iter)
+    {
+        ParticleIndex k =  iter->first;
+        MarginalsList list =  iter->second;
+        pst->get_marginals(k); 
+        std::cout << k << " list size: " << list.size() << std::endl;
+    }
+}
 
 IMPDOMINO3_END_NAMESPACE

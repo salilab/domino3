@@ -9,6 +9,7 @@ Updater::Updater(const NodesTemp &graph,
     nodes_[i]->set_index(i);
   }
   set_change_threshold(.05);
+  fill_queue();
 }
 
 void Updater::do_update() {
@@ -43,7 +44,6 @@ void Updater::fill_queue() {
 }
 
 void Updater::update(unsigned int iterations) {
-  fill_queue();
   for (unsigned int i = 0; i < iterations; ++i) {
     do_update();
   }

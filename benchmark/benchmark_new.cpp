@@ -7,6 +7,13 @@
 #include <IMP/atom/Hierarchy.h>
 #include <IMP/atom/hierarchy_tools.h>
 #include <IMP/atom/pdb.h>
+
+
+#include <IMP/rmf/atom_io.h>
+#include <IMP/rmf/restraint_io.h>
+#include <IMP/rmf/frames.h>
+#include <IMP/rmf/particle_io.h>
+
 #include <IMP/base/SetLogState.h>
 #include <IMP/domino3/Node.h>
 #include <IMP/domino3/DistanceNode.h>
@@ -72,12 +79,32 @@ namespace {
 
     RMF::FrameHandle cf = f.get_current_frame().add_child("frame", RMF::FRAME);
     st->add_to_frame();
-
+      std::cout << "before" << std::endl;
+      for (unsigned int i = 0; i < pis.size(); ++i) {
+          IMP::domino3::Marginals * marg = st->get_marginals(pis[i]);
+          for(int y = 0; y < marg->get_number(); y++){
+              std::cout << marg->get_marginal(y) << "\t";
+          }
+          std::cout << std::endl;
+      }
+      
     for (unsigned int i = 0; i < iterations; ++i) {
-      ud->update(10);
+      ud->update(1);
       cf = cf.add_child("frame", RMF::FRAME);
       st->add_to_frame();
     }
+    IMP::domino3::update_state_table(nodes,st);
+  
+      
+      std::cout << "after" << std::endl;
+
+      for (unsigned int i = 0; i < pis.size(); ++i) {
+          IMP::domino3::Marginals * marg = st->get_marginals(pis[i]);
+          for(int y = 0; y < marg->get_number(); y++){
+              std::cout << marg->get_marginal(y) << "\t";
+          }
+          std::cout << std::endl;
+      }
   }
 }
 
@@ -85,7 +112,7 @@ namespace {
 int main(int argc, char **argv) {
   IMP::base::setup_from_argv(argc, argv, "Experiment with loopy domino");
   IMP_NEW(IMP::kernel::Model, m, ());
-  IMP::atom::Hierarchy pdb = IMP::atom::read_pdb(input, m);
+    IMP::atom::Hierarchy pdb = IMP::atom::read_pdb(input, m,new IMP::atom::CAlphaPDBSelector());
   IMP::atom::Atoms atoms
     = IMP::atom::get_by_type(pdb, IMP::atom::ATOM_TYPE);
   IMP::kernel::ParticleIndexes pis
