@@ -60,17 +60,21 @@ namespace {
       IMP::core::XYZR di(m, pis[i]);
       for (unsigned int j = 0; j < i; ++j) {
         IMP::core::XYZR dj(m, pis[j]);
+        di.set_coordinates(vs[i]);
+        dj.set_coordinates(vs[j]);
+
         double cur_dist = IMP::core::get_distance(di, dj);
         IMP::kernel::ParticleIndexPair cur_pair(pis[i], pis[j]);
         if (cur_dist < dist) {
           IMP_NEW(IMP::domino3::DistanceNode, dn,
                   (m, cur_pair, cur_dist, .1, st));
           nodes.push_back(dn);
-        } else {
-          IMP_NEW(IMP::domino3::ExcludedVolumeNode, dn,
-                  (m, cur_pair, st));
-          nodes.push_back(dn);
         }
+//        else {
+//          IMP_NEW(IMP::domino3::ExcludedVolumeNode, dn,
+//                  (m, cur_pair, st));
+//          nodes.push_back(dn);
+//        }
       }
     }
     IMP::domino3::add_neighbors(nodes);
@@ -89,7 +93,7 @@ namespace {
       }
       
     for (unsigned int i = 0; i < iterations; ++i) {
-      ud->update(1);
+      ud->update(10);
       cf = cf.add_child("frame", RMF::FRAME);
       st->add_to_frame();
     }
@@ -118,6 +122,11 @@ int main(int argc, char **argv) {
   IMP::kernel::ParticleIndexes pis
     = IMP::kernel::get_indexes(IMP::kernel::ParticlesTemp(atoms.begin(),
                                                           atoms.end()));
+    for( int i = 0; i < pis.size(); i++){
+        std::ostringstream oss;
+        oss  << pis[i];
+        m->get_particle(pis[i])->set_name(oss.str());
+    }
 
   run_it(m, pis);
 

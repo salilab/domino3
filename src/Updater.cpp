@@ -16,6 +16,7 @@ void Updater::do_update() {
   base::set<kernel::ParticleIndex> changed;
   for (ActiveSet::const_iterator it = cur_queue_.begin();
        it != cur_queue_.end(); ++it) {
+    IMP_LOG_TERSE("Updating " << (*it)->get_name() << std::endl);
     (*it)->update();
     for (unsigned int i = 0; i < (*it)->get_marginals().size(); ++i) {
       if ((*it)->get_marginals()[i]->get_change() > change_threshold_) {
@@ -27,18 +28,19 @@ void Updater::do_update() {
   for (unsigned int i = 0; i< nodes_.size(); ++i) {
     for (unsigned int j = 0; j < nodes_[i]->get_particle_indexes().size(); ++j) {
       if (changed.find(nodes_[i]->get_particle_indexes()[j]) != changed.end()) {
-        add_node_to_active_set(nodes_[i]);
+        add_node_to_next_set(nodes_[i]);
         break;
       }
     }
   }
   swap_active_sets();
+  next_queue_ = ActiveSet();
 }
 
 void Updater::fill_queue() {
   // lazy
   for (unsigned int i = 0; i < nodes_.size(); ++i) {
-    add_node_to_active_set(nodes_[i]);
+    add_node_to_next_set(nodes_[i]);
   }
   swap_active_sets();
 }

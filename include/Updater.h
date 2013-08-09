@@ -22,12 +22,11 @@ class IMPDOMINO3EXPORT Updater: public base::Object {
   ActiveSet cur_queue_, next_queue_;
   double change_threshold_;
 
-  void add_node_to_active_set(Node *n) {
+  void add_node_to_next_set(Node *n) {
     next_queue_.insert(n);
   }
   void swap_active_sets() {
     std::swap(cur_queue_, next_queue_);
-    cur_queue_= ActiveSet();
   }
   void do_update();
   void fill_queue();

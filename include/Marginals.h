@@ -17,79 +17,128 @@ IMP_OBJECTS(Marginals, MarginalsList);
 
 /** Store the marginal for a variable. */
 class IMPDOMINO3EXPORT Marginals: public base::Object {
-  boost::scoped_array<double> current_, next_;
-  unsigned int size_;
-  double change_;
-  kernel::ParticleIndex pi_;
-
-
- public:
-  Marginals(kernel::Model *m, kernel::ParticleIndex pi, unsigned int size);
-
-  double get_marginal(unsigned int state) const {
-    return current_[state];
-  }
-
-  void add_to_marginal(unsigned int state, double value) {
-    next_[state] += value;
-  }
-
+    boost::scoped_array<double> current_, next_;
+    unsigned int size_;
+    double change_;
+    kernel::ParticleIndex pi_;
     
-  static void normalize(boost::scoped_array<double> &it,
-                                     unsigned int size) {
-    double total = std::accumulate(it.get(), it.get() + size, 0.0);
-    IMP_USAGE_CHECK(total > .001,
-                        "Total is too small to be reliable: " << total);
-    for (unsigned int i = 0; i < size; ++i) {
-        it[i] /= total;
+    
+public:
+    Marginals(kernel::Model *m, kernel::ParticleIndex pi, unsigned int size);
+    
+    double get_marginal(unsigned int state) const {
+        IMP_USAGE_CHECK(state < this->get_number(),"state in get marginal is > size");
+        return current_[state];
     }
-  }
     
-  static void calculate_joint_probability(boost::scoped_array<double> &array,int size, const MarginalsListTemp &others){
-    for (unsigned int i = 0; i < others.size(); ++i) {
-        for (unsigned int j = 0; j < size; ++j) {
-            array[j] *= others[i]->current_[j];
+    void add_to_marginal(unsigned int state, double value) { //change to add next
+        IMP_USAGE_CHECK(state < this->get_number(),"state in add marginal is > size");
+        next_[state] += value;
+    }
+    
+    void multp_to_marginal(unsigned int state, double value) {
+        IMP_USAGE_CHECK(state < this->get_number(),"state in multp marginal is > size");
+        next_[state] *= value;
+    }
+    
+    void show_marginals(){
+        std::cout << this->get_name() << std::endl;
+        for(int i = 0; i < this->get_number(); i++){
+            std::cout << this->current_[i] << " ";
+        }
+        std::cout << std::endl;
+        for(int i = 0; i < this->get_number(); i++){
+            std::cout << this->next_[i] << " ";
+        }
+        std::cout << std::endl;
+
+    }
+    
+    static void normalize(boost::scoped_array<double> &it,
+                          unsigned int size) {
+        double total = std::accumulate(it.get(), it.get() + size, 0.0);
+        IMP_USAGE_CHECK(total > .001,
+                        "Total is too small to be reliable: " << total);
+        for (unsigned int i = 0; i < size; ++i) {
+            it[i] /= total;
+            IMP_USAGE_CHECK(it[i] >= .0,
+                            "Should never be 0 " << it[i]);
         }
     }
-  }
-  void merge_probabilities_from_list(const MarginalsListTemp &others) {
-        std::copy(current_.get(), current_.get() + size_,next_.get());
-        calculate_joint_probability(next_,size_,others);
-        set_current_from_next();
-  }
-  /** Eventually this will be atomic. */
-  void set_current_from_next() {
-    normalize(next_, size_);
-    change_ = 0;
-    for (unsigned int i = 0; i < size_; ++i) {
-      change_ += std::abs(next_[i] - current_[i]);
+    
+    void normalize(){
+        normalize(current_, this->get_number());
     }
-    using namespace std;
-    swap(current_, next_);
-    std::fill(next_.get(), next_.get() + size_, 0.0);
-  }
-
-
-  /** Return a metric on the change (currently L0, could change) */
-  double get_change() const {
-    return change_;
-  }
-  
     
-  kernel::ParticleIndex get_particle_index() const {
-    return pi_;
-  }
+    void calculate_joint_probability(boost::scoped_array<double> &array, const Marginals *marginals){
+        for (unsigned int j = 0; j < this->get_number(); ++j) {
+            array[j] *= marginals->current_[j];
+            IMP_USAGE_CHECK(array[j] >= .0,
+                            "Total is too small to be reliable: " << array[j]);
+            
+        }
+    }
+    
+    void check_current_normalized(){
+        double total = std::accumulate(current_.get(), current_.get() + size_, 0.0);
+        IMP_USAGE_CHECK(std::abs(total - 1.0)  < 0.01,
+                        "Not normalized" << total);
+    }
     
     
-  unsigned int get_number() const {
-    return size_;
-  }
-
-  double get_entropy() const;
-
-  IMP_OBJECT_METHODS(Marginals);
+    void check_next_normalized(){
+        double total = std::accumulate(next_.get(), next_.get() + size_, 0.0);
+        IMP_USAGE_CHECK(std::abs(total - 1.0)  < 0.01,
+                        "Not normalized" << total);
+    }
+    
+    void make_next_zero(){
+        std::fill(next_.get(), next_.get() + this->get_number(), 0.0); // <-- wrong?
+    }
+    
+    void merge_probabilities_from_list(const MarginalsListTemp &others) {
+        std::copy(current_.get(), current_.get() + this->get_number(),next_.get());
+        check_current_normalized();
+        for (unsigned int i = 0; i < others.size(); ++i) {
+            IMP_USAGE_CHECK(others[i]->get_number() == this->get_number(), "size not match");
+            calculate_joint_probability(next_,others[i].get());
+            normalize(next_, this->get_number());
+        }
+        set_current_from_next();
+    }
+    /** Eventually this will be atomic. */
+    void set_current_from_next() {
+        normalize(next_, this->get_number());
+        check_current_normalized();
+        change_ = 0;
+        for (unsigned int i = 0; i < this->get_number(); ++i) {
+            change_ += std::abs(next_[i] - current_[i]);
+        }
+        using namespace std;
+        swap(current_, next_);
+    }
+    
+    
+    /** Return a metric on the change (currently L0, could change) */
+    double get_change() const {
+        return change_;
+    }
+    
+    
+    kernel::ParticleIndex get_particle_index() const {
+        return pi_;
+    }
+    
+    
+    unsigned int get_number() const {
+        return size_;
+    }
+    
+    double get_entropy() const;
+    
+    IMP_OBJECT_METHODS(Marginals);
 };
- 
+
 IMPDOMINO3EXPORT void set_uniform(Marginals *m);
 IMPDOMINO3EXPORT void set_random(Marginals *m);
 IMPDOMINO3_END_NAMESPACE

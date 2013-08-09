@@ -31,6 +31,7 @@ DistanceNode::DistanceNode(kernel::Model *m,
       }
     }
   }
+  IMP_USAGE_CHECK(allowed_states_.size() > 0, "No allowed state could be found");
 }
 
 void DistanceNode::do_update() {

@@ -11,28 +11,42 @@ Node::Node(Model *m,
   mine_.resize(pis_.size());
   inputs_.resize(pis_.size());
   for (unsigned int i = 0; i < pis_.size(); ++i) {
-    mine_[i] = new Marginals(m, pis_[i],
-                             pst->get_states(pis_[i])->get_number());
+//    mine_[i] = new Marginals(m, pis_[i],
+//                             pst->get_states(pis_[i])->get_number());
+      
+      
+      IMP_NEW(IMP::domino3::Marginals, marginals, (m, pis_[i], pst->get_states(pis_[i])->get_number()));
+      mine_[i] = marginals;
+    mine_[i]->set_name(mine_[i]->get_name()+" "+this->get_name());
     IMP::domino3::set_uniform(mine_[i]);
-
+    // give marginals values from state list (but its also uniform?!?
     mine_[i]->merge_probabilities_from_list(MarginalsList(1,
                              pst->get_marginals(pis_[i])));
   }
 }
 
 void Node::update() {
+  // propergate my list to neighbours. Inputs is from neighbor (MPI call in futur)
+  for (unsigned int i = 0; i < pis_.size(); ++i) {
+      for(int j = 0; j < inputs_[i].size(); j++) {
+          inputs_[i][j]->check_current_normalized();
+      }
+  }
   for (unsigned int i = 0; i < pis_.size(); ++i) {
     mine_[i]->merge_probabilities_from_list(inputs_[i]);
+    mine_[i]->make_next_zero();
   }
-
+    
   do_update();
-
+  // propergate my list to neighbours 
   for (unsigned int i = 0; i < pis_.size(); ++i) {
     mine_[i]->set_current_from_next();
+    mine_[i]->check_current_normalized();
   }
 }
 
 void Node::add_neighbor(Node *n) {
+  IMP_INTERNAL_CHECK(n != this,"Omg its wrong");
   ParticleIndexes pis = n->get_particle_indexes();
   for (unsigned int i = 0; i < pis.size(); ++i) {
     kernel::ParticleIndexes::const_iterator it = std::find(pis_.begin(),
@@ -40,7 +54,9 @@ void Node::add_neighbor(Node *n) {
                                                            pis[i]);
     if (it != pis_.end()) {
       unsigned int offset = it - pis_.begin();
+        // not so good for parallel approaches 
       inputs_[offset].push_back(n->get_marginals()[i]);
+      n->get_marginals()[i]->show_marginals(); 
     }
   }
   neighbors_.push_back(n);
@@ -102,9 +118,12 @@ void update_state_table(const NodesTemp &nodes,const StatesTable *pst) {
         iter != map_to_merge.end(); ++iter)
     {
         ParticleIndex k =  iter->first;
-        MarginalsList list =  iter->second;
-        pst->get_marginals(k); 
-        std::cout << k << " list size: " << list.size() << std::endl;
+        MarginalsList node_list =  iter->second;
+        Marginals * pst_marginal = pst->get_marginals(k);
+        for (unsigned int i = 0; i < node_list.size(); ++i) {
+            unsigned int state_size=pst->get_states(k)->get_number();
+            pst_marginal->merge_probabilities_from_list(node_list);
+        }
     }
 }
 
