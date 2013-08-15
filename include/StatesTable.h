@@ -29,6 +29,9 @@ class IMPDOMINO3EXPORT StatesTable : public IMP::base::Object {
                     RMF::NodeHandle, node,);
   typedef IMP::base::map<kernel::ParticleIndex, ParticleData> Map;
   Map states_;
+  typedef IMP::base::Vector<kernel::ParticleIndex> Vector;
+  Vector states_incoming_order_;
+
   base::WeakPointer<kernel::Model> m_;
   RMF::NodeHandle parent_;
  public:
@@ -53,6 +56,7 @@ class IMPDOMINO3EXPORT StatesTable : public IMP::base::Object {
   void add(kernel::ParticleIndex pi, States *e, Marginals *m);
   void set_rmf(RMF::NodeHandle parent);
   void add_to_frame();
+  void print_marginal();
   IMP_OBJECT_METHODS(StatesTable);
 };
 

@@ -18,7 +18,7 @@ Node::Node(Model *m,
       IMP_NEW(IMP::domino3::Marginals, marginals, (m, pis_[i], pst->get_states(pis_[i])->get_number()));
       mine_[i] = marginals;
     mine_[i]->set_name(mine_[i]->get_name()+" "+this->get_name());
-    IMP::domino3::set_uniform(mine_[i]);
+    mine_[i]->set_uniform();
     // give marginals values from state list (but its also uniform?!?
     mine_[i]->merge_probabilities_from_list(MarginalsList(1,
                              pst->get_marginals(pis_[i])));
@@ -56,7 +56,7 @@ void Node::add_neighbor(Node *n) {
       unsigned int offset = it - pis_.begin();
         // not so good for parallel approaches 
       inputs_[offset].push_back(n->get_marginals()[i]);
-      n->get_marginals()[i]->show_marginals(); 
+//      n->get_marginals()[i]->show_marginals();
     }
   }
   neighbors_.push_back(n);
@@ -120,11 +120,21 @@ void update_state_table(const NodesTemp &nodes,const StatesTable *pst) {
         ParticleIndex k =  iter->first;
         MarginalsList node_list =  iter->second;
         Marginals * pst_marginal = pst->get_marginals(k);
-        for (unsigned int i = 0; i < node_list.size(); ++i) {
-            unsigned int state_size=pst->get_states(k)->get_number();
-            pst_marginal->merge_probabilities_from_list(node_list);
-        }
+        pst_marginal->merge_probabilities_from_list(node_list);
     }
 }
+void print_graph(const NodesTemp &nodes){
+
+    for (unsigned int i = 0; i < nodes.size(); ++i) {
+        kernel::ParticleIndexes particles=nodes[i]->get_particle_indexes();
+        std::cout << particles << " -> ";
+        NodesTemp neighbors = nodes[i]->get_neighbors();
+        for(int j = 0; j < particles.size(); j++){
+            std::cout << neighbors[j]->get_particle_indexes() << " ";
+        }
+        std::cout << std::endl;
+    }
+}
+
 
 IMPDOMINO3_END_NAMESPACE

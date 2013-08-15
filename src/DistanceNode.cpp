@@ -37,10 +37,9 @@ DistanceNode::DistanceNode(kernel::Model *m,
 void DistanceNode::do_update() {
   Marginals *m0 = get_marginals()[0], *m1 = get_marginals()[1];
   for (unsigned int i = 0; i < allowed_states_.size(); ++i) {
-    double cur = m0->get_marginal(allowed_states_[i].first)
-      * m1->get_marginal(allowed_states_[i].second);
-    m0->add_to_marginal(allowed_states_[i].first, cur);
-    m1->add_to_marginal(allowed_states_[i].second, cur);
+    double cur = m0->mult_two_marginals(m0->get_current_marginal(allowed_states_[i].first), m1->get_current_marginal(allowed_states_[i].second));
+    m0->add_to_next_marginal(allowed_states_[i].first, cur);
+    m1->add_to_next_marginal(allowed_states_[i].second, cur);
   }
 }
 

@@ -42,7 +42,7 @@ void XYZStates::update_rmf(ParticleIndex, RMF::NodeHandle parent,
   RMF::ParticleFactory f(parent.get_file());
   RMF::NodeHandles children = parent.get_children();
   for (unsigned int i = 0; i < states_.size(); ++i) {
-    double r = max_radius_ * m->get_marginal(i);
+    double r = max_radius_ * m->get_current_marginal(i);
     RMF::Particle d = f.get(children[i]);
     d.set_radius(r);
   }

@@ -20,9 +20,9 @@ ExcludedVolumeNode::ExcludedVolumeNode(Model *m,
 void ExcludedVolumeNode::do_update() {
   Marginals *m0 = get_marginals()[0], *m1 = get_marginals()[1];
   for (unsigned int i = 0; i < m0->get_number(); ++i) {
-    double cur = m0->get_marginal(i) * m1->get_marginal(i);
-    m0->add_to_marginal(i, 1.0 - cur);
-    m1->add_to_marginal(i, 1.0 - cur);
+    double cur = m0->get_current_marginal(i) * m1->get_current_marginal(i);
+    m0->add_to_next_marginal(i, 1.0 - cur);
+    m1->add_to_next_marginal(i, 1.0 - cur);
   }
 }
 
