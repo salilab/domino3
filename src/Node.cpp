@@ -96,13 +96,12 @@ void add_neighbors(const NodesTemp &nodes) {
                             pisj.end(),
                             std::back_inserter(intersection));
       if (!intersection.empty()) {
-        nodes[i]->add_neighbor(nodes[j]);
+        nodes[i]->add_neighbor(nodes[j  ]);
         nodes[j]->add_neighbor(nodes[i]);
       }
     }
   }
 }
-
 
 
 void update_state_table(const NodesTemp &nodes,const StatesTable *pst) {

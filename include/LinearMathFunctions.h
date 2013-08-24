@@ -10,6 +10,8 @@ class IMPDOMINO3EXPORT LinearMathFunctions: public MathFunctions {
 
         virtual double mult(double val1,double val2) IMP_OVERRIDE;
 
+        virtual double dev(double val1,double val2) IMP_OVERRIDE;
+    
         virtual double convert_to_space(double val1) IMP_OVERRIDE;
 
         virtual void normalize(double * it, unsigned int size) IMP_OVERRIDE;

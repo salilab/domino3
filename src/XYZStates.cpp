@@ -24,7 +24,6 @@ void XYZStates::do_load(unsigned int i, ParticleIndex pi) const {
   core::XYZ(get_model(), pi).set_coordinates(states_[i]);
 }
 
-
 void XYZStates::add_to_rmf(ParticleIndex, RMF::NodeHandle parent) const {
   RMF::ParticleFactory f(parent.get_file());
   for (unsigned int i = 0; i < states_.size(); ++i) {

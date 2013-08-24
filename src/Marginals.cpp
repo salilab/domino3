@@ -14,7 +14,7 @@ Marginals::Marginals(Model *m, ParticleIndex pi, unsigned int size):
 
   math->normalize(current_.get(),size_);
   double init_next = math->convert_to_space(0);
-
+  this->set_was_used(true);
   std::fill(next_.get()   , next_.get()    + size_, init_next);
 }
 

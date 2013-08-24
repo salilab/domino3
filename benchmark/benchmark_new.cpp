@@ -17,6 +17,7 @@
 #include <IMP/base/SetLogState.h>
 #include <IMP/domino3/Node.h>
 #include <IMP/domino3/DistanceNode.h>
+#include <IMP/domino3/ErrorDistanceNode.h>
 #include <IMP/domino3/ExcludedVolumeNode.h>
 #include <IMP/domino3/Updater.h>
 #include <RMF/FileHandle.h>
@@ -26,6 +27,24 @@
 
 namespace {
 
+    
+    
+  double calc_weighted_rmsd(IMP::algebra::Vector3Ds &vs, const IMP::kernel::ParticlesTemp &ps,IMP::domino3::StatesTable *pst){
+      IMP::kernel::ParticleIndexes pis = IMP::kernel::get_indexes(ps);
+      double ret_sum=0.0;
+      for (unsigned int i = 0; i < ps.size(); ++i) {
+          IMP::domino3::Marginals * marg = pst->get_marginals(pis[i]);
+          IMP::algebra::Vector3D vector_i = vs[i];
+          for(int y = 0; y < marg->get_number(); y++){
+              IMP::algebra::Vector3D vector_y = vs[y];
+              double dist=IMP::algebra::get_distance(vector_i, vector_y);
+              ret_sum+=exp(marg->get_current_marginal(y))*dist;
+          }
+      }
+      return ret_sum;
+  }
+  
+    
   std::string input = IMP::atom::get_example_path("1d3d-protein.pdb");
   IMP::base::AddStringFlag asf("input", "Input file name", &input);
   std::string output = "out.rmf";
@@ -38,8 +57,17 @@ namespace {
   IMP::base::AddIntFlag aif("iterations", "Number of iterations",
                             &iterations);
 
+    
+    
+    
   void run_it(IMP::kernel::Model *m, const IMP::kernel::ParticlesTemp &ps) {
     IMP::kernel::ParticleIndexes pis = IMP::kernel::get_indexes(ps);
+      for( int i = 0; i < pis.size(); i++){
+          std::ostringstream oss;
+          oss  << pis[i];
+          m->get_particle(pis[i])->set_name(oss.str());
+      }
+
     IMP::algebra::Vector3Ds vs(pis.size());
     for (unsigned int i = 0; i< vs.size(); ++i) {
       vs[i] = IMP::core::XYZ(m, pis[i]).get_coordinates();
@@ -58,21 +86,28 @@ namespace {
     st->set_rmf(f.get_root_node());
 
     IMP::domino3::Nodes nodes;
+      int error_count=0;
     for (unsigned int i = 0; i < pis.size(); ++i) {
       IMP::core::XYZR di(m, pis[i]);
       for (unsigned int j = 0; j < i; j++) {
-//        if(rand() % 100 > 70)
-//            break;
+
         IMP::core::XYZR dj(m, pis[j]);
         di.set_coordinates(vs[i]);
         dj.set_coordinates(vs[j]);
 
         double cur_dist = IMP::core::get_distance(di, dj);
         IMP::kernel::ParticleIndexPair cur_pair(pis[i], pis[j]);
+          std::cout << pis[i] << ":" << pis[j] << " Curr dist: " << cur_dist << std::endl;
         if (cur_dist < dist) {
-          IMP_NEW(IMP::domino3::DistanceNode, dn,
-                  (m, cur_pair, cur_dist, .1, st));
-          nodes.push_back(dn);
+     
+
+
+
+                IMP_NEW(IMP::domino3::DistanceNode, dn,
+                        (m, cur_pair, cur_dist, 3, st));
+                nodes.push_back(dn);
+                dn->set_was_used(true);
+            
         }
 //        else {
 //          IMP_NEW(IMP::domino3::ExcludedVolumeNode, dn,
@@ -81,9 +116,10 @@ namespace {
 //        }
       }
     }
+      std::cout << "Node error size: " << error_count << std::endl;
       std::cout << "Node size: " << nodes.size() << std::endl;
     IMP::domino3::add_neighbors(nodes);
-//      InteractionGraph ig = get_interaction_graph(rs, pst);
+ //     InteractionGraph ig = get_interaction_graph(rs, pst);
 //      SubsetGraph jt = get_junction_tree(ig);
 
     IMP_NEW(IMP::domino3::Updater, ud, (nodes, "updater"));
@@ -95,7 +131,7 @@ namespace {
 
       
     for (unsigned int i = 0; i < iterations; ++i) {
-      ud->update(6);
+      ud->update(10);
       cf = cf.add_child("frame", RMF::FRAME);
       st->add_to_frame();
     }
@@ -104,8 +140,10 @@ namespace {
     std::cout << "after" << std::endl;
 
     st->print_marginal();
+    std::cout << "Weighted RMSD: " << calc_weighted_rmsd(vs,ps,st) << std::endl;
   }
 }
+
 
 
 int main(int argc, char **argv) {
@@ -115,11 +153,6 @@ int main(int argc, char **argv) {
   IMP::atom::Atoms atoms
     = IMP::atom::get_by_type(pdb, IMP::atom::ATOM_TYPE);
 
-//    for( int i = 0; i < pis.size(); i++){
-//        std::ostringstream oss;
-//        oss  << pis[i];
-//        m->get_particle(pis[i])->set_name(oss.str());
-//    }
 
     run_it(m, IMP::kernel::ParticlesTemp(atoms.begin(), atoms.end()));
 

@@ -11,6 +11,9 @@ double LogMathFunctions::add(double val1, double val2){
         return max+log(sum);
 }
 
+double LogMathFunctions::dev(double val1,double val2){
+        return val1-val2;
+}
 
 double LogMathFunctions::sum(double * vals, unsigned int size){
     double max=*std::max_element(vals,vals+size);

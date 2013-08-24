@@ -18,6 +18,7 @@ IMPDOMINO3_BEGIN_NAMESPACE
 class Node;
 IMP_OBJECTS(Node, Nodes);
 
+
 /** Node updates its marginals based on some criteria. */
 class IMPDOMINO3EXPORT Node: public kernel::ModelObject {
   base::Vector<MarginalsList> inputs_;

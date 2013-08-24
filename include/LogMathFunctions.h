@@ -9,6 +9,8 @@ class LogMathFunctions: public MathFunctions {
         virtual double add(double val1, double val2) IMP_OVERRIDE;
 
         virtual double mult(double val1,double val2) IMP_OVERRIDE;
+    
+        virtual double dev(double val1,double val2) IMP_OVERRIDE;
 
         virtual double convert_to_space(double val1) IMP_OVERRIDE;
 

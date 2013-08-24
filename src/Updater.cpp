@@ -8,7 +8,7 @@ Updater::Updater(const NodesTemp &graph,
   for (unsigned int i = 0; i < nodes_.size(); ++i) {
     nodes_[i]->set_index(i);
   }
-  set_change_threshold(.05);
+  set_change_threshold(.01);
   fill_queue();
 }
 

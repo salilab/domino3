@@ -56,8 +56,9 @@ void StatesTable::add_to_frame() {
 void StatesTable::print_marginal(){
       for (unsigned int i = 0; i < states_incoming_order_.size(); ++i) {
           IMP::domino3::Marginals * marg = this->get_marginals(states_incoming_order_[i]);
+	  std::cout << states_incoming_order_[i] << ": ";
           for(int y = 0; y < marg->get_number(); y++){
-              std::cout << marg->get_current_marginal(y) << "\t";
+              std::cout << exp(marg->get_current_marginal(y)) << "\t";
           }
           std::cout << std::endl;
       }

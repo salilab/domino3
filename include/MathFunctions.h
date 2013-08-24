@@ -8,6 +8,8 @@ public:
 	virtual double add(double val1, double val2)=0;
 
 	virtual double mult(double val1,double val2)=0;
+    
+    virtual double dev(double val1,double val2)=0;
 
 	virtual double convert_to_space(double val1)=0;
 

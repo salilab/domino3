@@ -8,6 +8,10 @@ double LinearMathFunctions::mult(double val1,double val2){
         return val1*val2;
 }
 
+double LinearMathFunctions::dev(double val1,double val2){
+        return val1/val2;
+}
+
 double LinearMathFunctions::convert_to_space(double val1){
         return val1;
 }

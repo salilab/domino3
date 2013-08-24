@@ -53,6 +53,10 @@ public:
     
     void set_random();
     
+    double convert_to_space(double x ){
+        return math->convert_to_space(x);
+    }
+    
     void show_marginals(){
         std::cout << this->get_name() << std::endl;
         for(int i = 0; i < this->get_number(); i++){
@@ -69,6 +73,14 @@ public:
     void calculate_joint_probability(boost::scoped_array<double> &array, const Marginals *marginals){
         for (unsigned int j = 0; j < this->get_number(); ++j) {
             array[j] = math->mult(array[j], marginals->current_[j]);
+        }
+    }
+    
+    void calculate_avarage_probability(boost::scoped_array<double> &array, const Marginals *marginals){
+        double avg_term = math->convert_to_space(2.0);
+
+        for (unsigned int j = 0; j < this->get_number(); ++j) {
+            array[j] = math->dev(math->add(array[j], marginals->current_[j]),avg_term);
         }
     }
     
@@ -97,7 +109,7 @@ public:
         check_current_normalized();
         for (unsigned int i = 0; i < others.size(); ++i) {
             IMP_USAGE_CHECK(others[i]->get_number() == this->get_number(), "size not match");
-            calculate_joint_probability(next_,others[i].get());
+            calculate_avarage_probability(next_,others[i].get());
             math->normalize(next_.get(), this->get_number());
         }
         set_current_from_next();
