@@ -109,7 +109,7 @@ public:
         check_current_normalized();
         for (unsigned int i = 0; i < others.size(); ++i) {
             IMP_USAGE_CHECK(others[i]->get_number() == this->get_number(), "size not match");
-            calculate_avarage_probability(next_,others[i].get());
+            calculate_joint_probability(next_,others[i].get());
             math->normalize(next_.get(), this->get_number());
         }
         set_current_from_next();

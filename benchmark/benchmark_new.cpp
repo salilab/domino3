@@ -15,10 +15,9 @@
 #include <IMP/rmf/particle_io.h>
 
 #include <IMP/base/SetLogState.h>
-#include <IMP/domino3/Node.h>
-#include <IMP/domino3/DistanceNode.h>
-#include <IMP/domino3/ErrorDistanceNode.h>
-#include <IMP/domino3/ExcludedVolumeNode.h>
+#include <IMP/domino3/Factor.h>
+#include <IMP/domino3/DistanceFactor.h>
+#include <IMP/domino3/ExcludedVolumeFactor.h>
 #include <IMP/domino3/Updater.h>
 #include <RMF/FileHandle.h>
 #include <IMP/domino3/XYZStates.h>
@@ -85,8 +84,10 @@ namespace {
 
     st->set_rmf(f.get_root_node());
 
-    IMP::domino3::Nodes nodes;
+    IMP::domino3::Factors factors;
       int error_count=0;
+      double avg_dist=0;
+      double counter=0;
     for (unsigned int i = 0; i < pis.size(); ++i) {
       IMP::core::XYZR di(m, pis[i]);
       for (unsigned int j = 0; j < i; j++) {
@@ -96,17 +97,15 @@ namespace {
         dj.set_coordinates(vs[j]);
 
         double cur_dist = IMP::core::get_distance(di, dj);
+          avg_dist +=cur_dist;
+          counter++;
         IMP::kernel::ParticleIndexPair cur_pair(pis[i], pis[j]);
           std::cout << pis[i] << ":" << pis[j] << " Curr dist: " << cur_dist << std::endl;
         if (cur_dist < dist) {
-     
 
-
-
-                IMP_NEW(IMP::domino3::DistanceNode, dn,
-                        (m, cur_pair, cur_dist, 3, st));
-                nodes.push_back(dn);
-                dn->set_was_used(true);
+            IMP_NEW(IMP::domino3::DistanceFactor, dn,(m, cur_pair, cur_dist, 4, st));
+            factors.push_back(dn);
+            dn->set_was_used(true);
             
         }
 //        else {
@@ -116,13 +115,14 @@ namespace {
 //        }
       }
     }
+       std::cout << "AVG Dist:" << avg_dist/counter;
       std::cout << "Node error size: " << error_count << std::endl;
-      std::cout << "Node size: " << nodes.size() << std::endl;
-    IMP::domino3::add_neighbors(nodes);
+      std::cout << "Node size: " << factors.size() << std::endl;
+    IMP::domino3::add_neighbors(factors);
  //     InteractionGraph ig = get_interaction_graph(rs, pst);
 //      SubsetGraph jt = get_junction_tree(ig);
 
-    IMP_NEW(IMP::domino3::Updater, ud, (nodes, "updater"));
+    IMP_NEW(IMP::domino3::Updater, ud, (factors, "updater"));
 
     RMF::FrameHandle cf = f.get_current_frame().add_child("frame", RMF::FRAME);
     st->add_to_frame();
@@ -135,8 +135,8 @@ namespace {
       cf = cf.add_child("frame", RMF::FRAME);
       st->add_to_frame();
     }
-    IMP::domino3::update_state_table(nodes,st);
-      IMP::domino3::print_graph(nodes);
+    IMP::domino3::update_state_table(factors,st);
+      IMP::domino3::print_graph(factors);
     std::cout << "after" << std::endl;
 
     st->print_marginal();

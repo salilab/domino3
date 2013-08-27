@@ -1,8 +1,8 @@
-#ifndef IMPDOMINO3_DISTANCE_NODE_H
-#define IMPDOMINO3_DISTANCE_NODE_H
+#ifndef IMPDOMINO3_DISTANCE_FACTOR_H
+#define IMPDOMINO3_DISTANCE_FACTOR_H
 #include <IMP/domino3/domino3_config.h>
 #include <IMP/kernel/ModelObject.h>
-#include "Node.h"
+#include "Factor.h"
 #include <IMP/base/object_macros.h>
 #include <IMP/base/graph_macros.h>
 #include <IMP/base/map.h>
@@ -11,8 +11,8 @@
 
 IMPDOMINO3_BEGIN_NAMESPACE
 
-/** A node for a single distance restarint. */
-class IMPDOMINO3EXPORT DistanceNode: public Node {
+/** A factor for a single distance restarint. */
+class IMPDOMINO3EXPORT DistanceFactor: public Factor {
   double distance_, allowed_error_;
   IntPairs allowed_states_;
   kernel::ParticleIndexPair pis;
@@ -27,15 +27,15 @@ private:
   double distance_to_probability(double x);
 
  public:
-  DistanceNode(kernel::Model *m,
+  DistanceFactor(kernel::Model *m,
                const kernel::ParticleIndexPair &pis,
                double distance, double allowed_error,
                StatesTable *pst);
 
-  IMP_OBJECT_METHODS(DistanceNode);
+  IMP_OBJECT_METHODS(DistanceFactor);
 };
 
 IMPDOMINO3_END_NAMESPACE
 
-#endif // IMPDOMINO3_DISTANCE_NODE_H
+#endif // IMPDOMINO3_DISTANCE_FACTOR_H
 

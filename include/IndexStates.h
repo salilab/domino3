@@ -20,11 +20,11 @@ IMPDOMINO3_BEGIN_NAMESPACE
     the particle in question.
 */
 class IMPDOMINO3EXPORT IndexStates : public States {
- IMP::kernel::Particles states_;
+ const std::vector<int> states_;
 protected:
  virtual void do_load(unsigned int i, ParticleIndex pi) const IMP_OVERRIDE;
  public:
- IndexStates(Model *m, const IMP::kernel::Particles &states);
+ IndexStates(Model *m, const std::vector<int> &states);
   virtual unsigned int get_number() const IMP_OVERRIDE;
   virtual void add_to_rmf(ParticleIndex pi, RMF::NodeHandle parent) const IMP_OVERRIDE;
   virtual void update_rmf(ParticleIndex pi, RMF::NodeHandle parent,

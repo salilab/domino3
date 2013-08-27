@@ -1,8 +1,8 @@
-#include <IMP/domino3/Node.h>
+#include <IMP/domino3/Factor.h>
 
 IMPDOMINO3_BEGIN_NAMESPACE
 
-Node::Node(Model *m,
+Factor::Factor(Model *m,
            const ParticleIndexes &pis,
            StatesTable *pst,
            std::string name):
@@ -25,7 +25,7 @@ Node::Node(Model *m,
   }
 }
 
-void Node::update() {
+void Factor::update() {
   // propergate my list to neighbours. Inputs is from neighbor (MPI call in futur)
   for (unsigned int i = 0; i < pis_.size(); ++i) {
       for(int j = 0; j < inputs_[i].size(); j++) {
@@ -45,10 +45,11 @@ void Node::update() {
   }
 }
 
-void Node::add_neighbor(Node *n) {
+void Factor::add_neighbor(Factor *n) {
   IMP_INTERNAL_CHECK(n != this,"Omg its wrong");
   ParticleIndexes pis = n->get_particle_indexes();
   for (unsigned int i = 0; i < pis.size(); ++i) {
+    // just add variables that are really match
     kernel::ParticleIndexes::const_iterator it = std::find(pis_.begin(),
                                                            pis_.end(),
                                                            pis[i]);
@@ -62,9 +63,9 @@ void Node::add_neighbor(Node *n) {
   neighbors_.push_back(n);
 }
 
-NodeGraph get_node_graph(const NodesTemp &nodes) {
-  NodeGraph ret(nodes.size());
-  NodeGraphVertexName vm = boost::get(boost::vertex_name, ret);
+FactorGraph get_node_graph(const FactorsTemp &nodes) {
+  FactorGraph ret(nodes.size());
+  FactorGraphVertexName vm = boost::get(boost::vertex_name, ret);
   for (unsigned int i = 0; i < nodes.size(); ++i) {
     vm[i] = nodes[i];
     // create self edge too
@@ -84,7 +85,7 @@ NodeGraph get_node_graph(const NodesTemp &nodes) {
 }
 
 
-void add_neighbors(const NodesTemp &nodes) {
+void add_neighbors(const FactorsTemp &nodes) {
   for (unsigned int i = 0; i < nodes.size(); ++i) {
     kernel::ParticleIndexes pisi = nodes[i]->get_particle_indexes();
     for (unsigned int j = 0; j < i; ++j) {
@@ -96,7 +97,7 @@ void add_neighbors(const NodesTemp &nodes) {
                             pisj.end(),
                             std::back_inserter(intersection));
       if (!intersection.empty()) {
-        nodes[i]->add_neighbor(nodes[j  ]);
+        nodes[i]->add_neighbor(nodes[j]);
         nodes[j]->add_neighbor(nodes[i]);
       }
     }
@@ -104,7 +105,7 @@ void add_neighbors(const NodesTemp &nodes) {
 }
 
 
-void update_state_table(const NodesTemp &nodes,const StatesTable *pst) {
+void update_state_table(const FactorsTemp &nodes,const StatesTable *pst) {
     base::map<ParticleIndex,MarginalsList> map_to_merge;
     for (unsigned int i = 0; i < nodes.size(); ++i) {
         MarginalsList node_marginals =  nodes[i]->get_marginals();
@@ -122,12 +123,12 @@ void update_state_table(const NodesTemp &nodes,const StatesTable *pst) {
         pst_marginal->merge_probabilities_from_list(node_list);
     }
 }
-void print_graph(const NodesTemp &nodes){
+void print_graph(const FactorsTemp &nodes){
 
     for (unsigned int i = 0; i < nodes.size(); ++i) {
         kernel::ParticleIndexes particles=nodes[i]->get_particle_indexes();
         std::cout << particles << " -> ";
-        NodesTemp neighbors = nodes[i]->get_neighbors();
+        FactorsTemp neighbors = nodes[i]->get_neighbors();
         for(int j = 0; j < particles.size(); j++){
             std::cout << neighbors[j]->get_particle_indexes() << " ";
         }

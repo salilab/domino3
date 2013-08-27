@@ -1,4 +1,4 @@
-#include <IMP/domino3/DistanceNode.h>
+#include <IMP/domino3/DistanceFactor.h>
 #include <IMP/core/XYZR.h>
 
 IMPDOMINO3_BEGIN_NAMESPACE
@@ -10,11 +10,11 @@ namespace {
     }
 }
 
-DistanceNode::DistanceNode(kernel::Model *m,
+DistanceFactor::DistanceFactor(kernel::Model *m,
                const kernel::ParticleIndexPair &pis,
                double distance, double allowed_error,
                StatesTable *pst):
-  Node(m, kernel::ParticleIndexes(pis.begin(), pis.end()),
+  Factor(m, kernel::ParticleIndexes(pis.begin(), pis.end()),
        pst, get_distance_name(pis)), distance_(distance),
   allowed_error_(allowed_error) {
   // precompile allowed states, use some sort of location structure later
@@ -32,34 +32,26 @@ DistanceNode::DistanceNode(kernel::Model *m,
               ps1->load(j, pis[1]);
          distances[i*ps0->get_number()+j] = IMP::core::get_distance(IMP::core::XYZR(m, pis[0]),
                                             IMP::core::XYZR(m, pis[1]));
-         std::cout << distances[i*ps0->get_number()+j] << " ";
      }
-     std::cout << std::endl;
   }
 }
 
-double DistanceNode::distance_to_probability(double x){
+double DistanceFactor::distance_to_probability(double x){
     x=x/this->allowed_error;
     return std::max(exp(-pow(x,2)*M_PI),0.00000001);
+//    return std::max(1/sqrt(2*M_PI)*exp(-pow(x,2)*1/2),0.00000001);
 }
 
 
-void DistanceNode::do_update() {
+void DistanceFactor::do_update() {
     Marginals *m0 = get_marginals()[0], *m1 = get_marginals()[1];
     States *ps0 = pst->get_states(pis[0]), *ps1 = pst->get_states(pis[1]);
     for (unsigned int i = 0; i < ps0->get_number(); ++i) {
         for (unsigned int j = 0; j < ps1->get_number(); ++j) {
             double d = this->distances[i*ps0->get_number()+j];
-            double cur = m0->mult_two_marginals(m0->get_current_marginal(i),
-                                                    m1->get_current_marginal(j));
             double prob = distance_to_probability(d-this->distance);
-                cur+= log(prob);
-  //          m0->show_marginals();
-  //          m1->show_marginals();
-
-            m0->add_to_next_marginal(i, cur);
-            m1->add_to_next_marginal(j, cur);
-            
+             m0->add_to_next_marginal(i,log(prob)+m1->get_current_marginal(j));
+             m1->add_to_next_marginal(j,log(prob)+m0->get_current_marginal(i));
         }
     }
 }

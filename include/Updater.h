@@ -6,7 +6,7 @@
 #define IMPDOMINO3_UPDATER_H
 #include <IMP/domino3/domino3_config.h>
 #include <IMP/base/Object.h>
-#include "Node.h"
+#include "Factor.h"
 #include <IMP/base/object_macros.h>
 #include <IMP/base/map.h>
 #include <IMP/kernel/particle_index.h>
@@ -17,12 +17,12 @@ IMPDOMINO3_BEGIN_NAMESPACE
 
 /** Updater its marginals based on some criteria. */
 class IMPDOMINO3EXPORT Updater: public base::Object {
-  Nodes nodes_;
-  typedef base::set<Node *> ActiveSet;
+  Factors factors_;
+  typedef base::set<Factor *> ActiveSet;
   ActiveSet cur_queue_, next_queue_;
   double change_threshold_;
 
-  void add_node_to_next_set(Node *n) {
+  void add_factor_to_next_set(Factor *n) {
     next_queue_.insert(n);
   }
   void swap_active_sets() {
@@ -32,7 +32,7 @@ class IMPDOMINO3EXPORT Updater: public base::Object {
   void fill_queue();
 
  public:
-  Updater(const NodesTemp &nodes,
+  Updater(const FactorsTemp &factors,
           std::string name);
 
   void update(unsigned int iterations);

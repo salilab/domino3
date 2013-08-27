@@ -1,9 +1,9 @@
-/** \file domino3/Node.h
+/** \file domino3/Factor.h
  *  \brief Store the marginal for a variable.
  */
 
-#ifndef IMPDOMINO3_NODE_H
-#define IMPDOMINO3_NODE_H
+#ifndef IMPDOMINO3_FACTOR_H
+#define IMPDOMINO3_FACTOR_H
 #include <IMP/domino3/domino3_config.h>
 #include <IMP/kernel/ModelObject.h>
 #include <IMP/base/object_macros.h>
@@ -15,19 +15,19 @@
 
 IMPDOMINO3_BEGIN_NAMESPACE
 
-class Node;
-IMP_OBJECTS(Node, Nodes);
+class Factor;
+IMP_OBJECTS(Factor, Factors);
 
 
-/** Node updates its marginals based on some criteria. */
-class IMPDOMINO3EXPORT Node: public kernel::ModelObject {
+/** Factor updates its marginals based on some criteria. */
+class IMPDOMINO3EXPORT Factor: public kernel::ModelObject {
   base::Vector<MarginalsList> inputs_;
   kernel::ParticleIndexes pis_;
   MarginalsList mine_;
-  NodesTemp neighbors_;
+  FactorsTemp neighbors_;
   unsigned int index_;
  protected:
-  /** Node the marginals based on my data. All the marginals have been noded
+  /** Factor the marginals based on my data. All the marginals have been Factord
       from the inputs (via averaging). */
   virtual void do_update() = 0;
 
@@ -40,12 +40,12 @@ class IMPDOMINO3EXPORT Node: public kernel::ModelObject {
   }
 
  public:
-  Node(kernel::Model *m,
+  Factor(kernel::Model *m,
        const kernel::ParticleIndexes &pis,
        StatesTable *pst,
        std::string name);
 
-  /** Node my marginals. */
+  /** Factor my marginals. */
   void update();
 
   //! always sorted
@@ -53,31 +53,31 @@ class IMPDOMINO3EXPORT Node: public kernel::ModelObject {
 
   const MarginalsList& get_marginals() const { return mine_; }
 
-  const NodesTemp& get_neighbors() const {return neighbors_;}
+  const FactorsTemp& get_neighbors() const {return neighbors_;}
 
   unsigned int get_index() const {return index_;}
 
   void set_index(unsigned int i) {index_ = i;}
 
   //! make sure to call it on the neighbor too
-  void add_neighbor(Node *n);
+  void add_neighbor(Factor *n);
 };
 
-IMPDOMINO3EXPORT void add_neighbors(const NodesTemp &nodes);
-IMPDOMINO3EXPORT void print_graph(const NodesTemp &nodes);
+IMPDOMINO3EXPORT void add_neighbors(const FactorsTemp &factors);
+IMPDOMINO3EXPORT void print_graph(const FactorsTemp &factors);
 
-IMPDOMINO3EXPORT void update_state_table(const NodesTemp &nodes,const StatesTable *pst);
+IMPDOMINO3EXPORT void update_state_table(const FactorsTemp &factors,const StatesTable *pst);
 
 
 
-IMP_GRAPH(NodeGraph, undirected, base::Pointer<Node>,
+IMP_GRAPH(FactorGraph, undirected, base::Pointer<Factor>,
           kernel::ParticleIndexes,
           out << vertex->get_name() << "\\n"
           << "[" << vertex->get_type_name() << ": "
           << vertex->get_index() << "]");
 
-IMPDOMINO3EXPORT NodeGraph get_node_graph(const NodesTemp &nodes);
+IMPDOMINO3EXPORT FactorGraph get_factor_graph(const FactorsTemp &factors);
 
 IMPDOMINO3_END_NAMESPACE
 
-#endif // IMPDOMINO3_NODE_H
+#endif // IMPDOMINO3_FACTOR_H

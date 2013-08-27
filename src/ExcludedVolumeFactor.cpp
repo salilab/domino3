@@ -1,4 +1,4 @@
-#include <IMP/domino3/ExcludedVolumeNode.h>
+#include <IMP/domino3/ExcludedVolumeFactor.h>
 
 IMPDOMINO3_BEGIN_NAMESPACE
 
@@ -10,14 +10,14 @@ namespace {
   }
 }
 
-ExcludedVolumeNode::ExcludedVolumeNode(Model *m,
+ExcludedVolumeFactor::ExcludedVolumeFactor(Model *m,
                const kernel::ParticleIndexPair &pis,
                StatesTable *pst):
-  Node(m, kernel::ParticleIndexes(pis.begin(), pis.end()),
+  Factor(m, kernel::ParticleIndexes(pis.begin(), pis.end()),
        pst, get_ev_name(pis)) {
 }
 
-void ExcludedVolumeNode::do_update() {
+void ExcludedVolumeFactor::do_update() {
   Marginals *m0 = get_marginals()[0], *m1 = get_marginals()[1];
   for (unsigned int i = 0; i < m0->get_number(); ++i) {
     double cur = m0->get_current_marginal(i) * m1->get_current_marginal(i);

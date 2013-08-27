@@ -11,7 +11,7 @@
 
 IMPDOMINO3_BEGIN_NAMESPACE
 
-IndexStates::IndexStates(Model *m, const IMP::kernel::Particles &states)
+IndexStates::IndexStates(Model *m, const std::vector<int> &states)
       : States(m, "IndexStates %1%"),
         states_(states) {
 }
