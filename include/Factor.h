@@ -18,6 +18,13 @@ IMPDOMINO3_BEGIN_NAMESPACE
 class Factor;
 IMP_OBJECTS(Factor, Factors);
 
+struct FactorEdge {
+    Factor * from_;
+    Factor * to_;
+    FactorEdge(Factor *from, Factor *to) : from_(from), to_(to){}
+};
+IMP_OBJECTS(FactorEdge, FactorEdges);
+
 
 /** Factor updates its marginals based on some criteria. */
 class IMPDOMINO3EXPORT Factor: public kernel::ModelObject {
@@ -61,11 +68,13 @@ class IMPDOMINO3EXPORT Factor: public kernel::ModelObject {
 
   //! make sure to call it on the neighbor too
   void add_neighbor(Factor *n);
+  // match the particles and set intput
+  void set_matching_inputs(Factor *n);
 };
 
 IMPDOMINO3EXPORT void add_neighbors(const FactorsTemp &factors);
+IMPDOMINO3EXPORT void add_neighbors_by_factor_edges(const FactorEdgesTemp &factor_edges);
 IMPDOMINO3EXPORT void print_graph(const FactorsTemp &factors);
-
 IMPDOMINO3EXPORT void update_state_table(const FactorsTemp &factors,const StatesTable *pst);
 
 

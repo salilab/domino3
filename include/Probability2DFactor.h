@@ -1,5 +1,5 @@
-#ifndef IMPDOMINO3_SEA_FACTOR_H
-#define IMPDOMINO3_SEA_FACTOR_H
+#ifndef IMPDOMINO3_PROBABILITY2DFACTOR_FACTOR_H
+#define IMPDOMINO3_PROBABILITY2DFACTOR_FACTOR_H
 #include <IMP/domino3/domino3_config.h>
 #include <IMP/kernel/ModelObject.h>
 #include "Factor.h"
@@ -12,20 +12,21 @@
 IMPDOMINO3_BEGIN_NAMESPACE
 
 /** A factor for a single distance restarint. */
-class IMPDOMINO3EXPORT ProbabilityFactor: public Factor {
-  kernel::ParticleIndexPair pis;
-  StatesTable *pst;
-  double * probability; 
+class IMPDOMINO3EXPORT Probability2DFactor: public Factor {
+  kernel::ParticleIndexPair pis_;
+  StatesTable *pst_;
+  boost::shared_array<double> probability_;
  protected:
   virtual void do_update() IMP_OVERRIDE;
 private:
 
  public:
-  ProbabilityFactor(kernel::Model *m,
+  Probability2DFactor(kernel::Model *m,
           const kernel::ParticleIndexPair &pis,
-          StatesTable *pst,double * probability);
+          StatesTable *pst,
+          boost::shared_array<double> &probability);
 
-  IMP_OBJECT_METHODS(ProbabilityFactor);
+  IMP_OBJECT_METHODS(Probability2DFactor);
 };
 
 IMPDOMINO3_END_NAMESPACE

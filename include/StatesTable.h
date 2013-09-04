@@ -49,6 +49,12 @@ class IMPDOMINO3EXPORT StatesTable : public IMP::base::Object {
                     "I don't know about particle " << pi);
     return states_.find(pi)->second.get_marginals();
   }
+    
+  Marginals *get_marginals_by_order(unsigned int i){
+      IMP_USAGE_CHECK(i < states_incoming_order_.size(),
+                      "Index out of range " << i);
+      return this->get_marginals(states_incoming_order_[i]);
+  }
   bool get_has(kernel::ParticleIndex pi) const {
     return states_.find(pi) != states_.end();
   }

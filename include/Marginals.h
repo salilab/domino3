@@ -53,6 +53,8 @@ public:
     
     void set_random();
     
+    void set_init_vector(boost::scoped_array<double> &array);
+    
     double convert_to_space(double x ){
         return math->convert_to_space(x);
     }

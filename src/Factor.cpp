@@ -45,23 +45,38 @@ void Factor::update() {
   }
 }
 
+void Factor::set_matching_inputs(Factor *n){
+    ParticleIndexes pis = n->get_particle_indexes();
+    for (unsigned int i = 0; i < pis.size(); ++i) {
+        // just add variables that are really match
+        kernel::ParticleIndexes::const_iterator it = std::find(pis_.begin(),
+                                                               pis_.end(),
+                                                               pis[i]);
+        if (it != pis_.end()) {
+            unsigned int offset = it - pis_.begin();
+            // not so good for parallel approaches
+            inputs_[offset].push_back(n->get_marginals()[i]);
+            //      n->get_marginals()[i]->show_marginals();
+        }
+    }
+}
+
 void Factor::add_neighbor(Factor *n) {
   IMP_INTERNAL_CHECK(n != this,"Omg its wrong");
-  ParticleIndexes pis = n->get_particle_indexes();
-  for (unsigned int i = 0; i < pis.size(); ++i) {
-    // just add variables that are really match
-    kernel::ParticleIndexes::const_iterator it = std::find(pis_.begin(),
-                                                           pis_.end(),
-                                                           pis[i]);
-    if (it != pis_.end()) {
-      unsigned int offset = it - pis_.begin();
-        // not so good for parallel approaches 
-      inputs_[offset].push_back(n->get_marginals()[i]);
-//      n->get_marginals()[i]->show_marginals();
-    }
-  }
   neighbors_.push_back(n);
 }
+
+void add_neighbors_by_factor_edges(const FactorEdgesTemp &factor_edges){
+	for (unsigned int i = 0; i < factor_edges.size(); ++i) {
+		FactorEdge * edge = factor_edges[i];
+        edge->from_->add_neighbor(edge->to_);
+        edge->from_->set_matching_inputs(edge->to_);
+        edge->to_->add_neighbor(edge->from_);
+        edge->to_->set_matching_inputs(edge->from_);
+	}
+}
+
+
 
 FactorGraph get_node_graph(const FactorsTemp &nodes) {
   FactorGraph ret(nodes.size());
@@ -98,7 +113,9 @@ void add_neighbors(const FactorsTemp &nodes) {
                             std::back_inserter(intersection));
       if (!intersection.empty()) {
         nodes[i]->add_neighbor(nodes[j]);
+        nodes[i]->set_matching_inputs(nodes[j]);
         nodes[j]->add_neighbor(nodes[i]);
+        nodes[j]->set_matching_inputs(nodes[i]);
       }
     }
   }
@@ -129,7 +146,7 @@ void print_graph(const FactorsTemp &nodes){
         kernel::ParticleIndexes particles=nodes[i]->get_particle_indexes();
         std::cout << particles << " -> ";
         FactorsTemp neighbors = nodes[i]->get_neighbors();
-        for(int j = 0; j < particles.size(); j++){
+        for(int j = 0; j < neighbors.size(); j++){
             std::cout << neighbors[j]->get_particle_indexes() << " ";
         }
         std::cout << std::endl;

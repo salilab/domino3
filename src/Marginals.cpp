@@ -30,6 +30,13 @@ double Marginals::get_entropy() const {
   return -ret;
 }
 
+void Marginals::set_init_vector(boost::scoped_array<double> &array) {
+    for (unsigned int i = 0; i < this->get_number(); ++i) {
+        this->add_to_next_marginal(i, array[i]);
+    }
+    this->set_current_from_next();
+}
+
 
 void Marginals::set_uniform() {
     double start_value=1.0/this->get_number();
