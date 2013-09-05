@@ -15,7 +15,7 @@ IMPDOMINO3_BEGIN_NAMESPACE
 class IMPDOMINO3EXPORT Probability3DFactor: public Factor {
   kernel::ParticleIndexTriplet pis_;
   StatesTable *pst_;
-  boost::shared_array<double> probability_;
+  boost::shared_array<double> log_probability_;
  protected:
   virtual void do_update() IMP_OVERRIDE;
 private:
@@ -24,7 +24,7 @@ private:
   Probability3DFactor(kernel::Model *m,
           const kernel::ParticleIndexTriplet &pis,
           StatesTable *pst,
-          boost::shared_array<double> &probability);
+          boost::shared_array<double> &log_probability);
 
   IMP_OBJECT_METHODS(Probability3DFactor);
 };

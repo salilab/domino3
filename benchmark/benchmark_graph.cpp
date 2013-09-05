@@ -20,7 +20,8 @@
 #include <IMP/domino3/Probability3DFactor.h>
 #include <IMP/domino3/ExcludedVolumeFactor.h>
 
-
+#include <boost/filesystem/path.hpp>
+#include <boost/filesystem/operations.hpp>
 #include <IMP/domino3/Updater.h>
 #include <RMF/FileHandle.h>
 #include <IMP/domino3/IndexStates.h>
@@ -28,6 +29,24 @@
 #include <algorithm>
 
 namespace {
+    std::string output = "out.rmf";
+    IMP::base::AddStringFlag oasf("output", "Output rmf name", &output);
+    std::string dock_file = IMP::domino3::get_example_path("33_dock.txt");
+    IMP::base::AddStringFlag dock("dock", "Dock score file",&dock_file);
+    std::string sea_file = IMP::domino3::get_example_path("4_true_sea.txt");
+    IMP::base::AddStringFlag sea("sea", "SEA score file",&sea_file);
+    std::string chem_file = IMP::domino3::get_example_path("4_33_chemsim_rxn.txt");
+    IMP::base::AddStringFlag chem("chem", "Chem score file",&chem_file);
+    
+    boost::int64_t iterations = 100;
+    IMP::base::AddIntFlag aif("iterations", "Number of iterations",
+                              &iterations);
+    boost::int64_t enzyme_size=3;
+    IMP::base::AddIntFlag enzymes("enzymes", "Number of enzymes",
+                                  &enzyme_size);
+    boost::int64_t ligand_size=4;
+    IMP::base::AddIntFlag ligands("ligands", "Number of ligands",
+                                  &ligand_size);
     static int enzym_id_counter = 0;
     struct Enzyme {
         std::string enzyme_name;
@@ -51,27 +70,13 @@ namespace {
     typedef IMP::base::map<EnzymeLigandLigandPair, double> EnzymeLigandLigandScoreLookup;
     typedef IMP::base::map<std::string, Enzyme *>  StringToEnzyme;
     typedef IMP::base::map<std::string, Ligand *>  StringToLigand;
-
-    
-    
-    
-    std::string input = IMP::atom::get_example_path("1d3d-protein.pdb");
-    IMP::base::AddStringFlag asf("input", "Input file name", &input);
-    std::string output = "out.rmf";
-    IMP::base::AddStringFlag oasf("output", "Output rmf name", &output);
-    double dist = std::numeric_limits<double>::infinity();
-    IMP::base::AddFloatFlag dasf("distance", "Maximum distance for restraints",
-                                 &dist);
-    
-    boost::int64_t iterations = 1;
-    IMP::base::AddIntFlag aif("iterations", "Number of iterations",
-                              &iterations);
-    
     
     void read_in_sea_file(IMP::kernel::Model *m,
                            std::string path,
                            EnzymeEnzymeScoreLookup &scores,
                            StringToEnzyme &id_to_enzyme ){
+        std::cout << "Read sea file: " << path << std::endl;
+
         std::ifstream infile(path.c_str());
         std::string line;
         while (std::getline(infile, line))
@@ -85,7 +90,6 @@ namespace {
             if(!id_to_enzyme[b])
                 id_to_enzyme[b] = new Enzyme(b);
             scores[std::make_pair(id_to_enzyme[a],id_to_enzyme[b])]=score;
-            std::cout << a << " " << b << " " << score << std::endl;
         }
     }
     
@@ -95,6 +99,7 @@ namespace {
                            EnzymeLigandScoreLookup &scores,
                            StringToEnzyme &id_to_enzyme,
                            StringToLigand &id_to_ligand){
+        std::cout << "Read dock file: " << path << std::endl;
         std::ifstream infile(path.c_str());
         std::string line;
         while (std::getline(infile, line))
@@ -108,7 +113,6 @@ namespace {
             if(!id_to_ligand[b])
                 id_to_ligand[b] = new Ligand(b);
             scores[std::make_pair(id_to_enzyme[a],id_to_ligand[b])]=score;
-            std::cout << a << " " << b << " " << score << std::endl;
         }
     }
     
@@ -118,6 +122,7 @@ namespace {
                            EnzymeLigandLigandScoreLookup &scores,
                            StringToEnzyme &id_to_enzyme,
                            StringToLigand &id_to_ligand){
+        std::cout << "Read chem sim. file: " << path << std::endl;
         std::ifstream infile(path.c_str());
         std::string line;
         while (std::getline(infile, line))
@@ -134,82 +139,44 @@ namespace {
                 id_to_ligand[c] = new Ligand(c);
             LigandLigandPair ligand_ligand_pair = std::make_pair(id_to_ligand[b],id_to_ligand[c]);
             scores[std::make_pair(id_to_enzyme[a],ligand_ligand_pair)]=score;
-            std::cout << a << " " << b << " " << c << " " <<  score << std::endl;
         }
     }
     
     
-    void create_graph(IMP::domino3::Factors &factors,IMP::domino3::StatesTable * st,IMP::kernel::Model *m,
-                      boost::shared_array<double> &sea_probability_vector,
-                      boost::shared_array<double> &dock_probability_vector,
-                      boost::shared_array<double> &chem_probability_vector){
+    void create_linear_graph(IMP::domino3::Factors &factors,
+                             IMP::domino3::StatesTable * st,
+                             IMP::kernel::Model *m,
+                             int enzyme_size,int ligand_size,
+                             boost::shared_array<double> &sea_probability_vector,
+                             boost::shared_array<double> &dock_probability_vector,
+                             boost::shared_array<double> &chem_probability_vector){
         IMP::domino3::FactorEdgesTemp edges;
         IMP::kernel::ParticleIndexes pis = st->get_particle_indexes();
-        IMP::kernel::ParticleIndexPair cur_pair1(pis[0], pis[1]);
-        IMP_NEW(IMP::domino3::Probability2DFactor, pf1,(m, cur_pair1, st, sea_probability_vector));
-        factors.push_back(pf1);
-        pf1->set_was_used(true);
-//        
-        IMP::kernel::ParticleIndexPair cur_pair2(pis[1], pis[2]);
-        IMP_NEW(IMP::domino3::Probability2DFactor, pf2,(m, cur_pair2, st, sea_probability_vector));
-        factors.push_back(pf2);
-        pf2->set_was_used(true);
-//        IMP::domino3::FactorEdge * e1 = new IMP::domino3::FactorEdge(pf1,pf2);
-//        IMP::domino3::FactorEdge * e12 = new IMP::domino3::FactorEdge(pf2,pf1);
-//        edges.push_back(e1);
-//        edges.push_back(e12);
-//
-        IMP::kernel::ParticleIndexPair cur_pair3(pis[0], pis[3]);
-        IMP_NEW(IMP::domino3::Probability2DFactor, pf3,(m, cur_pair3, st, dock_probability_vector));
-        factors.push_back(pf3);
-        pf3->set_was_used(true);
-//
-//
-//        
-        IMP::kernel::ParticleIndexTriplet cur_triplet1(pis[0], pis[3], pis[4]);
-        IMP_NEW(IMP::domino3::Probability3DFactor, pf3d1,(m, cur_triplet1, st, chem_probability_vector));
-        factors.push_back(pf3d1);
-        pf3d1->set_was_used(true);
-        
-//        IMP::domino3::FactorEdge * e2 = new IMP::domino3::FactorEdge(pf3,pf3d1);
-//        IMP::domino3::FactorEdge * e3 = new IMP::domino3::FactorEdge(pf3d1,pf1);
-//        IMP::domino3::FactorEdge * e4 = new IMP::domino3::FactorEdge(pf1,pf3d1);
-//        edges.push_back(e2); // docking score -> enzyme
-//        edges.push_back(e3);
-//        edges.push_back(e4);
-        
-        IMP::kernel::ParticleIndexPair cur_pair5(pis[1],pis[4]);
-        IMP_NEW(IMP::domino3::Probability2DFactor, pf5,(m, cur_pair5, st, dock_probability_vector));
-        factors.push_back(pf5);
-        pf5->set_was_used(true);
-//
-        IMP::kernel::ParticleIndexTriplet cur_triplet2(pis[1], pis[4], pis[5]);
-        IMP_NEW(IMP::domino3::Probability3DFactor, pf3d2,(m, cur_triplet2, st, chem_probability_vector));
-        factors.push_back(pf3d2);
-        pf3d2->set_was_used(true);
-//        IMP::domino3::FactorEdge * e5 = new IMP::domino3::FactorEdge(pf5,pf3d2);
-//        IMP::domino3::FactorEdge * e6 = new IMP::domino3::FactorEdge(pf3d2,pf2);
-//        IMP::domino3::FactorEdge * e7 = new IMP::domino3::FactorEdge(pf2,pf3d2);
-//        IMP::domino3::FactorEdge * e61 = new IMP::domino3::FactorEdge(pf3d2,pf1);
-//        IMP::domino3::FactorEdge * e71 = new IMP::domino3::FactorEdge(pf1,pf3d2);
-//        edges.push_back(e5);
-//        edges.push_back(e6);
-//        edges.push_back(e7);
-//        edges.push_back(e61);
-//        edges.push_back(e71);
-
-        
-        IMP::kernel::ParticleIndexPair cur_pair7(pis[2], pis[5]);
-        IMP_NEW(IMP::domino3::Probability2DFactor, pf7,(m, cur_pair7, st, dock_probability_vector));
-        factors.push_back(pf7);
-        pf7->set_was_used(true);
-//
-//        
-        IMP::kernel::ParticleIndexTriplet cur_triplet3(pis[2], pis[5], pis[6]);
-        IMP_NEW(IMP::domino3::Probability3DFactor, pf3d3,(m, cur_triplet3, st, chem_probability_vector));
-        factors.push_back(pf3d3);
-        pf3d3->set_was_used(true);
-        for(int x = 0 ; x< 3; x++){
+        int ENZYME_SIZE=enzyme_size;
+        int LIGAND_SIZE=ligand_size;
+        // create SEA factors 
+        for(int i = 0; i < ENZYME_SIZE-1; i++) {
+            IMP::kernel::ParticleIndexPair cur_pair1(pis[i], pis[i+1]);
+            IMP_NEW(IMP::domino3::Probability2DFactor, pf1,(m, cur_pair1, st, sea_probability_vector));
+            factors.push_back(pf1);
+            pf1->set_was_used(true);
+        }
+        // create dock factors
+        for(int i = 0; i < ENZYME_SIZE; i++) {
+            IMP::kernel::ParticleIndexPair cur_pair3(pis[i], pis[ENZYME_SIZE+i]);
+            IMP_NEW(IMP::domino3::Probability2DFactor, pf3,(m, cur_pair3, st, dock_probability_vector));
+            factors.push_back(pf3);
+            pf3->set_was_used(true);
+        }
+        // create chem. sim. factors
+        for(int i = 0; i < ENZYME_SIZE; i++) {
+            IMP::kernel::ParticleIndexTriplet cur_triplet1(pis[i], pis[ENZYME_SIZE+i], pis[ENZYME_SIZE+i+1]);
+            IMP_NEW(IMP::domino3::Probability3DFactor, pf3d1,(m, cur_triplet1, st, chem_probability_vector));
+            factors.push_back(pf3d1);
+            pf3d1->set_was_used(true);
+        }
+        // create exclude double enzyme
+        for(int x = 0 ; x< ENZYME_SIZE; x++){
             for(int y = 0; y < x ; y++){
                 IMP::kernel::ParticleIndexPair excl_pair(pis[x], pis[y]);
                 IMP_NEW(IMP::domino3::ExcludedVolumeFactor, excl_factor,(m, excl_pair, st));
@@ -217,41 +184,37 @@ namespace {
                 excl_factor->set_was_used(true);
             }
         }
-//        IMP::domino3::FactorEdge * e8 = new IMP::domino3::FactorEdge(pf7,pf2);
-//        IMP::domino3::FactorEdge * e9 = new IMP::domino3::FactorEdge(pf3d3,pf2);
-//        IMP::domino3::FactorEdge * e10 = new IMP::domino3::FactorEdge(pf2,pf3d3);
-//        edges.push_back(e8); // docking score -> enzyme
-//        edges.push_back(e9);
-//        edges.push_back(e10);
-        
+        // create exclude double ligand
+        for(int x = ENZYME_SIZE ; x< (ENZYME_SIZE+LIGAND_SIZE); x++){
+            for(int y = ENZYME_SIZE; y < x ; y++){
+                IMP::kernel::ParticleIndexPair excl_pair(pis[x], pis[y]);
+                IMP_NEW(IMP::domino3::ExcludedVolumeFactor, excl_factor,(m, excl_pair, st));
+                factors.push_back(excl_factor);
+                excl_factor->set_was_used(true);
+            }
+        }        
         std::cout << "Node size: " << factors.size() << std::endl;
-//        IMP::domino3::add_neighbors_by_factor_edges(edges);
         IMP::domino3::add_neighbors(factors);
-
     }
     
     void normalize(boost::shared_array<double> &probability_vector,
                    int size_x,
                    int size_y,int size_z,
                    bool normalize_square){
+        std::cout << "Normalize probability vector of size: " << " x: " << size_x << " y: " << size_y << " z: " << size_z << std::endl;
+
         double total = 0;
         for(int x = 0; x < size_x; x++){
             double * it = probability_vector.get()+(x*size_y*size_z);
             if(normalize_square)
                 total = std::accumulate(it, it + (size_z*size_y), 0.0);
-            std::cout<< "X: " << x << std::endl;
-
             for(int y = 0; y < size_y; y++){
-                std::cout<< "Y: " << y << std::endl;
-
                 double * row = it + (y*size_y);
                 if(!normalize_square)
                     total = std::accumulate(row, row + size_z, 0.0);
                 for(int z = 0; z < size_z; z++){
-                    std::cout << *(row+z) << " ";
-                    *(row+z)/=total;
+                    *(row+z)=log(*(row+z)/total);
                 }
-                std::cout << std::endl;
             }
         }
     }
@@ -261,22 +224,34 @@ namespace {
         StringToLigand id_to_ligand;
         EnzymeLigandScoreLookup enzyme_ligand_scores;
         EnzymeLigandLigandScoreLookup enzyme_ligand_ligand_scores;
+        IMP_USAGE_CHECK(boost::filesystem::exists(sea_file) , "SEA File dosen't exist");
+        IMP_USAGE_CHECK(boost::filesystem::exists(dock_file), "Dock File dosen't exist");
+        IMP_USAGE_CHECK(boost::filesystem::exists(chem_file), "Chem File dosen't exist");
 
         read_in_sea_file(m,
-                          std::string("/Users/aluucard/Documents/workspace/imp/imp/modules/domino3/examples/sea_new.txt"),
+                          sea_file,
                           enzyme_enzyme_scores,
                           id_to_enzyme);
-        
+        int enzymes_in_sea=id_to_enzyme.size();
         read_in_dock_file(m,
-                         std::string("/Users/aluucard/Documents/workspace/imp/imp/modules/domino3/examples/dock.txt"),
+                         dock_file,
                          enzyme_ligand_scores,
                          id_to_enzyme,
                          id_to_ligand);
+        int enzymes_in_dock=id_to_enzyme.size();
+        int ligands_in_dock=id_to_ligand.size();
         read_in_chem_file(m,
-                          std::string("/Users/aluucard/Documents/workspace/imp/imp/modules/domino3/examples/chemsim_rxn.txt"),
+                          chem_file,
                           enzyme_ligand_ligand_scores,
                           id_to_enzyme,
                           id_to_ligand);
+        int enzymes_in_chem=id_to_enzyme.size();
+        int ligands_in_chem=id_to_ligand.size();
+        IMP_USAGE_CHECK(enzymes_in_chem == enzymes_in_sea,"Not the same amount of enzymes in SEA and Chem.");
+        IMP_USAGE_CHECK(enzymes_in_dock == enzymes_in_sea,"Not the same amount of enzymes in SEA and Dock.");
+        IMP_USAGE_CHECK(ligands_in_chem == ligands_in_dock,"Not the same amount of ligands in Dock and Chem.");
+
+
         std::cout << id_to_enzyme.size() << std::endl;
         std::vector<int> enzyme_ids;
         std::vector<int> ligand_ids;
@@ -308,8 +283,9 @@ namespace {
             Enzyme * e1 = enzymePair.first;
             Ligand * l1 = enzymePair.second;
             dock_probability_vector[e1->id*id_to_ligand.size()+l1->id] = score;
+//            dock_probability_vector[e1->id*id_to_ligand.size()+l1->id] =-3.49650756146648;
         }
-        normalize(dock_probability_vector,1,id_to_enzyme.size(),id_to_ligand.size(),false);
+//        normalize(dock_probability_vector,1,id_to_enzyme.size(),id_to_ligand.size(),false);
 
         const unsigned int chem_size = id_to_enzyme.size()*id_to_ligand.size()*id_to_ligand.size();
         boost::shared_array<double> chem_probability_vector(new double[chem_size]);
@@ -346,46 +322,32 @@ namespace {
         IMP_NEW(IMP::domino3::StatesTable, st, (m));
         IMP_NEW(IMP::domino3::IndexStates, enzyme_states, (m, enzyme_ids));
         IMP_NEW(IMP::domino3::IndexStates, ligand_states, (m, ligand_ids));
-
-        // three enzymes
-        for (int i = 0; i < 3; i++){
+        // Enzymes
+        for (int i = 0; i < enzyme_size; i++){
             IMP::kernel::Particle * p = new IMP::kernel::Particle(m);
             IMP_NEW(IMP::domino3::Marginals, marginals, (m, p->get_index(), id_to_enzyme.size()));
             marginals->set_uniform();
             st->add(p->get_index(), enzyme_states, marginals);
         }
-        // four ligands first knowen
-//        IMP::kernel::Particle * p1 = new IMP::kernel::Particle(m);
-//        IMP_NEW(IMP::domino3::Marginals, m1, (m, p1->get_index(), id_to_ligand.size()));
-//        boost::scoped_array<double> ligand1_probability_vector(new double[id_to_ligand.size()]);
-//        std::fill (ligand1_probability_vector.get(),ligand1_probability_vector.get()+id_to_ligand.size(),log(0));
-//        ligand1_probability_vector[0]=log(1.0);
-//        m1->set_init_vector(ligand1_probability_vector);
-//        st->add(p1->get_index(), ligand_states, m1);
-
-        for (int i = 0; i < 4; i++){
+        // Ligands
+        for (int i = 0; i < ligand_size; i++){
             IMP::kernel::Particle * p = new IMP::kernel::Particle(m);
             IMP_NEW(IMP::domino3::Marginals, marginals, (m, p->get_index(), id_to_ligand.size()));
             marginals->set_uniform();
             st->add(p->get_index(), ligand_states, marginals);
         }
         st->print_marginal();
-        //      for (StringToEnzyme::iterator i = id_to_enzyme.begin(); i != id_to_enzyme.end(); ++i){
-        //          Enzyme * p = i->second;
-        //
-        //      }
-        
+
         IMP::domino3::Factors factors;
-        create_graph(factors,st,m,sea_probability_vector,dock_probability_vector,chem_probability_vector);
+        create_linear_graph(factors,st,m,
+                            enzyme_size,ligand_size,
+                            sea_probability_vector,
+                            dock_probability_vector,
+                            chem_probability_vector);
         
         //
         IMP_NEW(IMP::domino3::Updater, ud, (factors, "updater"));
-        //
-        
-        //
-        for (unsigned int i = 0; i < iterations; ++i) {
-            ud->update(100);
-        }
+        ud->update(iterations);
         IMP::domino3::update_state_table(factors,st);
         IMP::domino3::print_graph(factors);
         //
@@ -398,11 +360,6 @@ namespace {
 int main(int argc, char **argv) {
     IMP::base::setup_from_argv(argc, argv, "Experiment with loopy domino");
     IMP_NEW(IMP::kernel::Model, m, ());
-    
-    std::vector<IMP::kernel::Particle *> enzyms;
-    
-    
     run_it(m);
-    
     return 0;
 }

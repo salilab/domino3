@@ -5,19 +5,19 @@ IMPDOMINO3_BEGIN_NAMESPACE
 
 class MathFunctions {
 public:
-	virtual double add(double val1, double val2)=0;
+	virtual inline double add(double val1, double val2)=0;
 
-	virtual double mult(double val1,double val2)=0;
+	virtual inline double mult(double val1,double val2)=0;
     
-    virtual double dev(double val1,double val2)=0;
+    virtual inline double dev(double val1,double val2)=0;
 
-	virtual double convert_to_space(double val1)=0;
+	virtual inline double convert_to_space(double val1)=0;
 
-        virtual void normalize(double * it, unsigned int size)=0;
+    virtual void normalize(double * it, unsigned int size)=0;
 
-        virtual double sum(double * vals, unsigned int size)=0;
+    virtual inline double sum(double * vals, unsigned int size)=0;
 
-        virtual double convert_to_linear(double val1)=0;
+    virtual inline double convert_to_linear(double val1)=0;
 };
 
 IMPDOMINO3_END_NAMESPACE

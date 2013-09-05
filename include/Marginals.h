@@ -29,21 +29,21 @@ class IMPDOMINO3EXPORT Marginals: public base::Object {
 public:
     Marginals(kernel::Model *m, kernel::ParticleIndex pi, unsigned int size);
     
-    double get_current_marginal(unsigned int state) const {
+    inline double get_current_marginal(unsigned int state) const {
         IMP_USAGE_CHECK(state < this->get_number(),"state in get marginal is > size");
         return current_[state];
     }
     
-    double mult_two_marginals(double val1,double val2) const {
+    inline double mult_two_marginals(double val1,double val2) const {
         return math->mult(val1,val2);
     }
     
-    void add_to_next_marginal(unsigned int state, double value) { //change to add next
+    inline void add_to_next_marginal(unsigned int state, double value) { //change to add next
         IMP_USAGE_CHECK(state < this->get_number(),"state in add marginal is > size");
         next_[state] = math->add(next_[state],value);
     }
     
-    void multp_to_next_marginal(unsigned int state, double value) {
+    inline void multp_to_next_marginal(unsigned int state, double value) {
         IMP_USAGE_CHECK(state < this->get_number(),"state in multp marginal is > size");
         next_[state] = math->mult(next_[state],value);
     }
@@ -55,7 +55,7 @@ public:
     
     void set_init_vector(boost::scoped_array<double> &array);
     
-    double convert_to_space(double x ){
+    inline double convert_to_space(double x ){
         return math->convert_to_space(x);
     }
     
@@ -72,13 +72,13 @@ public:
 
     }
     
-    void calculate_joint_probability(boost::scoped_array<double> &array, const Marginals *marginals){
+    inline void calculate_joint_probability(boost::scoped_array<double> &array, const Marginals *marginals){
         for (unsigned int j = 0; j < this->get_number(); ++j) {
             array[j] = math->mult(array[j], marginals->current_[j]);
         }
     }
     
-    void calculate_avarage_probability(boost::scoped_array<double> &array, const Marginals *marginals){
+    inline void calculate_avarage_probability(boost::scoped_array<double> &array, const Marginals *marginals){
         double avg_term = math->convert_to_space(2.0);
 
         for (unsigned int j = 0; j < this->get_number(); ++j) {
@@ -86,7 +86,7 @@ public:
         }
     }
     
-    void check_current_normalized(){
+    inline void check_current_normalized(){
         double total = math->convert_to_space(0);
         for(int i =0;i < size_;i++){
             total = math->add(total,current_[i]);
@@ -95,18 +95,18 @@ public:
 //                        "Not normalized" << total);
     }
     
-    void check_next_normalized(){
+    inline void check_next_normalized(){
         double total = std::accumulate(next_.get(), next_.get() + size_, 0.0);
 //        IMP_USAGE_CHECK(std::abs(total - 1.0)  < 0.01,
 //                        "Not normalized" << total);
     }
     
-    void make_next_zero(){
+    inline void make_next_zero(){
         double zero_value = math->convert_to_space(0.0);
         std::fill(next_.get(), next_.get() + this->get_number(),zero_value); 
     }
     
-    void merge_probabilities_from_list(const MarginalsListTemp &others) {
+    inline void merge_probabilities_from_list(const MarginalsListTemp &others) {
         std::copy(current_.get(), current_.get() + this->get_number(),next_.get());
         check_current_normalized();
         for (unsigned int i = 0; i < others.size(); ++i) {
@@ -117,7 +117,7 @@ public:
         set_current_from_next();
     }
     /** Eventually this will be atomic. */
-    void set_current_from_next() {
+    inline void set_current_from_next() {
         math->normalize(next_.get(), this->get_number());
         check_current_normalized();
         change_ = 0;
