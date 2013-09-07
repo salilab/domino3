@@ -69,12 +69,15 @@ namespace {
     typedef IMP::base::map<EnzymeLigandPair, double > EnzymeLigandScoreLookup;
     typedef IMP::base::map<EnzymeLigandLigandPair, double> EnzymeLigandLigandScoreLookup;
     typedef IMP::base::map<std::string, Enzyme *>  StringToEnzyme;
+    typedef IMP::base::map<const unsigned int, std::string>  IntToString;
+
     typedef IMP::base::map<std::string, Ligand *>  StringToLigand;
     
     void read_in_sea_file(IMP::kernel::Model *m,
                            std::string path,
                            EnzymeEnzymeScoreLookup &scores,
-                           StringToEnzyme &id_to_enzyme ){
+                           StringToEnzyme &id_to_enzyme,
+                           IntToString &enzyme_id_to_name){
         std::cout << "Read sea file: " << path << std::endl;
 
         std::ifstream infile(path.c_str());
@@ -85,10 +88,13 @@ namespace {
             std::string a, b;
             double score;
             iss >> a >> b >> score;
-            if(!id_to_enzyme[a])
+            if(!id_to_enzyme[a]){
                 id_to_enzyme[a] = new Enzyme(a);
-            if(!id_to_enzyme[b])
+                enzyme_id_to_name[id_to_enzyme[a]->id]=a;
+            }if(!id_to_enzyme[b]){
                 id_to_enzyme[b] = new Enzyme(b);
+                enzyme_id_to_name[id_to_enzyme[b]->id]=b;
+            }
             scores[std::make_pair(id_to_enzyme[a],id_to_enzyme[b])]=score;
         }
     }
@@ -98,7 +104,8 @@ namespace {
                            std::string path,
                            EnzymeLigandScoreLookup &scores,
                            StringToEnzyme &id_to_enzyme,
-                           StringToLigand &id_to_ligand){
+                           StringToLigand &id_to_ligand,
+                           IntToString    &ligand_id_to_name){
         std::cout << "Read dock file: " << path << std::endl;
         std::ifstream infile(path.c_str());
         std::string line;
@@ -110,8 +117,10 @@ namespace {
             iss >> a >> b >> score;
             if(!id_to_enzyme[a])
                 id_to_enzyme[a] = new Enzyme(a);
-            if(!id_to_ligand[b])
+            if(!id_to_ligand[b]){
                 id_to_ligand[b] = new Ligand(b);
+                ligand_id_to_name[id_to_ligand[b]->id] = b;
+            }
             scores[std::make_pair(id_to_enzyme[a],id_to_ligand[b])]=score;
         }
     }
@@ -220,24 +229,28 @@ namespace {
     }
     void run_it(IMP::kernel::Model *m) {
         StringToEnzyme id_to_enzyme;
+        IntToString enzyme_id_to_name;
+
         EnzymeEnzymeScoreLookup enzyme_enzyme_scores;
         StringToLigand id_to_ligand;
+        IntToString ligand_id_to_name;
+
         EnzymeLigandScoreLookup enzyme_ligand_scores;
         EnzymeLigandLigandScoreLookup enzyme_ligand_ligand_scores;
         IMP_USAGE_CHECK(boost::filesystem::exists(sea_file) , "SEA File dosen't exist");
         IMP_USAGE_CHECK(boost::filesystem::exists(dock_file), "Dock File dosen't exist");
         IMP_USAGE_CHECK(boost::filesystem::exists(chem_file), "Chem File dosen't exist");
-
         read_in_sea_file(m,
                           sea_file,
                           enzyme_enzyme_scores,
-                          id_to_enzyme);
+                          id_to_enzyme,enzyme_id_to_name);
         int enzymes_in_sea=id_to_enzyme.size();
         read_in_dock_file(m,
                          dock_file,
                          enzyme_ligand_scores,
                          id_to_enzyme,
-                         id_to_ligand);
+                         id_to_ligand,
+                         ligand_id_to_name);
         int enzymes_in_dock=id_to_enzyme.size();
         int ligands_in_dock=id_to_ligand.size();
         read_in_chem_file(m,
@@ -253,8 +266,7 @@ namespace {
 
 
         std::cout << id_to_enzyme.size() << std::endl;
-        std::vector<int> enzyme_ids;
-        std::vector<int> ligand_ids;
+
 
         
         // read structure to probability_vector and normalize
@@ -310,7 +322,8 @@ namespace {
         }
         normalize(chem_probability_vector,id_to_enzyme.size(),id_to_ligand.size(),id_to_ligand.size(),true);
 
-
+        std::vector<int> enzyme_ids;
+        std::vector<int> ligand_ids;
         for (StringToEnzyme::iterator i = id_to_enzyme.begin(); i != id_to_enzyme.end(); ++i){
             Enzyme * p = i->second;
             enzyme_ids.push_back(p->id);
@@ -350,8 +363,45 @@ namespace {
         ud->update(iterations);
         IMP::domino3::update_state_table(factors,st);
         IMP::domino3::print_graph(factors);
-        //
         st->print_marginal();
+        // find high prob. path
+        double probability_to_see_best_match = 1;
+        std::vector<std::string> pathway;
+        for(int i = 0; i < enzyme_size; i++){
+            std::vector<std::pair<double, std::string> > enzyme_order;
+            IMP::domino3::Marginals * m  = st->get_marginals_by_order(i);
+            for(int state = 0; state < m->get_number(); state++)
+                enzyme_order.push_back(std::make_pair( exp(m->get_current_marginal(state)), enzyme_id_to_name[state]));
+            sort(enzyme_order.begin(),enzyme_order.end(), std::greater<std::pair<double, std::string> >());
+            probability_to_see_best_match *= enzyme_order[0].first;
+            pathway.push_back(enzyme_order[0].second);
+            
+            std::cout << "Enzyme " << i << std::endl;
+            for(int state = 0; state <enzyme_order.size();state++){
+                std::cout << enzyme_order[state].second << "\t" << enzyme_order[state].first << std::endl;
+            }
+        }
+        for(int i = enzyme_size; i < (enzyme_size+ligand_size); i++){
+            std::vector<std::pair<double, std::string> > ligand_order;
+            IMP::domino3::Marginals * m  = st->get_marginals_by_order(i);
+            for(int state = 0; state < m->get_number(); state++)
+                ligand_order.push_back(std::make_pair( exp(m->get_current_marginal(state)), ligand_id_to_name[state]));
+            sort(ligand_order.begin(),ligand_order.end(), std::greater<std::pair<double, std::string> >());
+            probability_to_see_best_match *= ligand_order[0].first;
+            pathway.push_back(ligand_order[0].second);
+            std::cout << "Ligand " << i-enzyme_size << std::endl;
+            for(int state = 0; state <ligand_order.size();state++){
+                std::cout << ligand_order[state].second << "\t" << ligand_order[state].first << std::endl;
+            }
+        }
+        for(int i = 0; i < enzyme_size; i++){
+            std::cout << pathway[enzyme_size+i] << " > "<<  pathway[i] << " > " << pathway[enzyme_size+i+1] << " > ";
+        }
+        std::cout << std::endl;
+        std::cout << "probability to see best match:" << probability_to_see_best_match << std::endl;
+
+        
+        
     }
 }
 
