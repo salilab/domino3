@@ -29,25 +29,30 @@
 namespace {
     
     
-    void read_restraints(IMP::kernel::Model *m,
-                         IMP::domino3::StatesTable *st,
-                         IMP::domino3::Factors &factors,
-                         IMP::kernel::ParticleIndexes &pis,
-                         std::string path){
+    struct DistantRestraint{
+        int from;
+        int to;
+        double dist;
+        DistantRestraint( int pfrom,int pto, float pdist):from(pfrom),to(pto),dist(pdist){}
+        
+    };
+    typedef  std::vector<DistantRestraint * > DistantRestraints;
+    DistantRestraints read_restraints(std::string path){
         std::cout << "Read chem sim. file: " << path << std::endl;
         std::ifstream infile(path.c_str());
         std::string line;
+        DistantRestraints ret_array;
         while (std::getline(infile, line))
         {
             std::istringstream iss(line);
             int  trash, from, to;
             double dist;
             iss >> trash >> from >> to >> dist;
-            IMP::kernel::ParticleIndexPair cur_pair(pis[from], pis[to]);
-            IMP_NEW(IMP::domino3::DistanceFactor, dn,(m, cur_pair, dist, .1, st));
-            factors.push_back(dn);
-            dn->set_was_used(true);
+            
+            ret_array.push_back(new DistantRestraint(from, to, dist) );
+            
         }
+        return ret_array;
     }
     
     
@@ -69,8 +74,8 @@ namespace {
     
     std::string anchors = IMP::domino3::get_example_path("example_distance_anchors.txt");
     IMP::base::AddStringFlag asf("anchors", "Input file anchors", &anchors);
-    std::string restraints = IMP::domino3::get_example_path("example_distance_restraints.txt");
-    IMP::base::AddStringFlag oasf("restraints", "Input file restraints", &restraints);
+    std::string restraints_path = IMP::domino3::get_example_path("example_distance_restraints.txt");
+    IMP::base::AddStringFlag oasf("restraints", "Input file restraints", &restraints_path);
     double dist = std::numeric_limits<double>::infinity();
     IMP::base::AddFloatFlag dasf("distance", "Maximum distance for restraints",
                                  &dist);
@@ -82,6 +87,12 @@ namespace {
     
     
     void run_it(IMP::kernel::Model *m, const IMP::algebra::Vector3Ds &vs_org) {
+        DistantRestraints restraints=read_restraints(restraints_path);
+        IMP::base::set<int> residues;
+        for( int i = 0; i < restraints.size(); i++){
+            residues.insert(restraints[i]->from);
+            residues.insert(restraints[i]->to);
+        }
         IMP::ParticlesTemp ps;
         for( int i = 0; i < vs_org.size(); i++){
             IMP::kernel::Particle * p = new IMP::kernel::Particle(m);
@@ -97,13 +108,13 @@ namespace {
         //
         IMP::algebra::Vector3Ds vs(pis.size());
         for (unsigned int i = 0; i< vs.size(); ++i) {
-              vs[i] = IMP::core::XYZ(m, pis[i]).get_coordinates();
+            vs[i] = IMP::core::XYZ(m, pis[i]).get_coordinates();
         }
         IMP_NEW(IMP::domino3::XYZStates, states, (m, vs));
         IMP_NEW(IMP::domino3::StatesTable, st, (m));
         
         // fill statetable with marginals
-        for (unsigned int i = 0; i< pis.size(); ++i) {
+        for (unsigned int i = 0; i <= residues.size(); ++i) {
             IMP_NEW(IMP::domino3::Marginals, marginals, (m, pis[i], vs.size()));
             marginals->set_uniform();
             st->add(pis[i], states, marginals);
@@ -111,7 +122,13 @@ namespace {
         
         
         IMP::domino3::Factors factors;
-        read_restraints(m,st,factors,pis,restraints);
+        for( int i = 0; i < restraints.size(); i++){
+            IMP::kernel::ParticleIndexPair cur_pair(pis[restraints[i]->from], pis[restraints[i]->to]);
+            IMP_NEW(IMP::domino3::DistanceFactor, dn,(m, cur_pair, restraints[i]->dist, .1, st));
+            factors.push_back(dn);
+            dn->set_was_used(true);
+        }
+
         std::cout << "Node size: " << factors.size() << std::endl;
         IMP::domino3::add_neighbors(factors);
         //     InteractionGraph ig = get_interaction_graph(rs, pst);
@@ -129,7 +146,7 @@ namespace {
         st->print_marginal();
         double probability_to_see_best_match = 1;
         std::vector<int> order;
-        for(int i = 0; i < vs_org.size(); i++){
+        for(int i = 0; i < residues.size(); i++){
             std::vector<std::pair<double, int> > pos_order;
             IMP::domino3::Marginals * m  = st->get_marginals_by_order(i);
             for(int state = 0; state < m->get_number(); state++)
@@ -144,7 +161,7 @@ namespace {
         }
         std::cout << std::endl;
         
-    //    std::cout << "Weighted RMSD: " << calc_weighted_rmsd(vs,ps,st) << std::endl;
+        //    std::cout << "Weighted RMSD: " << calc_weighted_rmsd(vs,ps,st) << std::endl;
     }
 }
 
@@ -156,7 +173,9 @@ int main(int argc, char **argv) {
     //    IMP::atom::Hierarchy pdb = IMP::atom:: (input, m,new IMP::atom::CAlphaPDBSelector());
     
     IMP::multifit::AnchorsData data = IMP::multifit::read_anchors_data(anchors.c_str());
-    
+    for(int i = 0; i < data.edges_.size(); i++){
+        std::cout << data.edges_[i].first << " " << data.edges_[i].second << std::endl;
+    }
     std::cout << "bla" << std::endl;
     //  IMP::atom::Atoms atoms
     //    = IMP::atom::get_by_type(pdb, IMP::atom::ATOM_TYPE);
