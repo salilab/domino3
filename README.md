@@ -5,7 +5,7 @@ This module is for experimenting with a more traditional inferential approach. T
 
 # Info
 
-_Author(s)_: Daniel Russel
+_Author(s)_: Daniel Russel, Martin Steinegger
 
 _Maintainer_: `drussel`
 
