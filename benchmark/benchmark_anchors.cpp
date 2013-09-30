@@ -44,7 +44,10 @@ namespace {
         DistantRestraints ret_array;
         while (std::getline(infile, line))
         {
+            if(line.at(0) == '#')
+                continue;
             std::istringstream iss(line);
+            
             int  trash, from, to;
             double dist;
             iss >> trash >> from >> to >> dist;
@@ -124,7 +127,7 @@ namespace {
         IMP::domino3::Factors factors;
         for( int i = 0; i < restraints.size(); i++){
             IMP::kernel::ParticleIndexPair cur_pair(pis[restraints[i]->from], pis[restraints[i]->to]);
-            IMP_NEW(IMP::domino3::DistanceFactor, dn,(m, cur_pair, restraints[i]->dist, .1, st));
+            IMP_NEW(IMP::domino3::DistanceFactor, dn,(m, cur_pair, restraints[i]->dist, 1, st));
             factors.push_back(dn);
             dn->set_was_used(true);
         }

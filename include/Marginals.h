@@ -5,7 +5,7 @@
 #ifndef IMPDOMINO3_MARGINAL_H
 #define IMPDOMINO3_MARGINAL_H
 #include <IMP/domino3/domino3_config.h>
-#include <IMP/domino3/MathFunctions.h>
+#include <IMP/domino3/LogMathFunctions.h>
 #include <IMP/base/Object.h>
 #include <IMP/base/ConstVector.h>
 #include <IMP/base/object_macros.h>
@@ -20,32 +20,44 @@ IMP_OBJECTS(Marginals, MarginalsList);
 
 /** Store the marginal for a variable. */
 class IMPDOMINO3EXPORT Marginals: public base::Object {
-    boost::scoped_array<double> current_, next_;
+    boost::scoped_array<FP> current_, next_;
     unsigned int size_;
-    double change_;
+    FP change_;
     kernel::ParticleIndex pi_;
-    MathFunctions  *math;
     
 public:
     Marginals(kernel::Model *m, kernel::ParticleIndex pi, unsigned int size);
     
-    inline double get_current_marginal(unsigned int state) const {
+    inline FP * get_current_marginal(){
+        return current_.get();
+    }
+    
+    inline FP get_current_marginal(unsigned int state) const {
         IMP_USAGE_CHECK(state < this->get_number(),"state in get marginal is > size");
         return current_[state];
     }
     
-    inline double mult_two_marginals(double val1,double val2) const {
-        return math->mult(val1,val2);
+    inline FP * get_next_marginal(){
+        return next_.get();
     }
     
-    inline void add_to_next_marginal(unsigned int state, double value) { //change to add next
+    inline FP get_next_marginal(unsigned int state) const {
+        IMP_USAGE_CHECK(state < this->get_number(),"state in get marginal is > size");
+        return next_[state];
+    }
+    
+    inline FP mult_two_marginals(FP val1,FP val2) const {
+        return LogMathFunctions::mult(val1,val2);
+    }
+    
+    inline void add_to_next_marginal(unsigned int state, FP value) { //change to add next
         IMP_USAGE_CHECK(state < this->get_number(),"state in add marginal is > size");
-        next_[state] = math->add(next_[state],value);
+        next_[state] = LogMathFunctions::add(next_[state],value);
     }
     
-    inline void multp_to_next_marginal(unsigned int state, double value) {
+    inline void multp_to_next_marginal(unsigned int state, FP value) {
         IMP_USAGE_CHECK(state < this->get_number(),"state in multp marginal is > size");
-        next_[state] = math->mult(next_[state],value);
+        next_[state] = LogMathFunctions::mult(next_[state],value);
     }
     
     
@@ -53,10 +65,10 @@ public:
     
     void set_random();
     
-    void set_init_vector(boost::scoped_array<double> &array);
+    void set_init_vector(boost::scoped_array<FP> &array);
     
-    inline double convert_to_space(double x ){
-        return math->convert_to_space(x);
+    inline FP convert_to_space(FP x ){
+        return LogMathFunctions::convert_to_space(x);
     }
     
     void show_marginals(){
@@ -72,37 +84,37 @@ public:
 
     }
     
-    inline void calculate_joint_probability(boost::scoped_array<double> &array, const Marginals *marginals){
+    inline void calculate_joint_probability(boost::scoped_array<FP> &array, const Marginals *marginals){
         for (unsigned int j = 0; j < this->get_number(); ++j) {
-            array[j] = math->mult(array[j], marginals->current_[j]);
+            array[j] = LogMathFunctions::mult(array[j], marginals->current_[j]);
         }
     }
     
-    inline void calculate_avarage_probability(boost::scoped_array<double> &array, const Marginals *marginals){
-        double avg_term = math->convert_to_space(2.0);
+    inline void calculate_avarage_probability(boost::scoped_array<FP> &array, const Marginals *marginals){
+        FP avg_term = LogMathFunctions::convert_to_space(2.0);
 
         for (unsigned int j = 0; j < this->get_number(); ++j) {
-            array[j] = math->dev(math->add(array[j], marginals->current_[j]),avg_term);
+            array[j] = LogMathFunctions::dev(LogMathFunctions::add(array[j], marginals->current_[j]),avg_term);
         }
     }
     
     inline void check_current_normalized(){
-        double total = math->convert_to_space(0);
+        FP total = LogMathFunctions::convert_to_space(0);
         for(int i =0;i < size_;i++){
-            total = math->add(total,current_[i]);
+            total = LogMathFunctions::add(total,current_[i]);
         }
 //        IMP_USAGE_CHECK(std::abs(total - 1.0)  < 0.01,
 //                        "Not normalized" << total);
     }
     
     inline void check_next_normalized(){
-        double total = std::accumulate(next_.get(), next_.get() + size_, 0.0);
+        FP total = std::accumulate(next_.get(), next_.get() + size_, 0.0);
 //        IMP_USAGE_CHECK(std::abs(total - 1.0)  < 0.01,
 //                        "Not normalized" << total);
     }
     
     inline void make_next_zero(){
-        double zero_value = math->convert_to_space(0.0);
+        FP zero_value = LogMathFunctions::convert_to_space(0.0);
         std::fill(next_.get(), next_.get() + this->get_number(),zero_value); 
     }
     
@@ -112,24 +124,24 @@ public:
         for (unsigned int i = 0; i < others.size(); ++i) {
             IMP_USAGE_CHECK(others[i]->get_number() == this->get_number(), "size not match");
             calculate_joint_probability(next_,others[i].get());
-            math->normalize(next_.get(), this->get_number());
+            LogMathFunctions::normalize(next_.get(), this->get_number());
         }
         set_current_from_next();
     }
     /** Eventually this will be atomic. */
     inline void set_current_from_next() {
-        math->normalize(next_.get(), this->get_number());
+        LogMathFunctions::normalize(next_.get(), this->get_number());
         check_current_normalized();
         change_ = 0;
         for (unsigned int i = 0; i < this->get_number(); ++i) {
-            change_ += std::abs(math->convert_to_linear(next_[i]) - math->convert_to_linear(current_[i]));
+            change_ += std::abs(LogMathFunctions::convert_to_linear(next_[i]) - LogMathFunctions::convert_to_linear(current_[i]));
         }
         using namespace std;
         swap(current_, next_);
     }
     
     /** Return a metric on the change (currently L0, could change) */
-    double get_change() const {
+    FP get_change() const {
         return change_;
     }
     
@@ -141,7 +153,7 @@ public:
         return size_;
     }
     
-    double get_entropy() const;
+    FP get_entropy() const;
     
     IMP_OBJECT_METHODS(Marginals);
 };

@@ -103,7 +103,7 @@ namespace {
           std::cout << pis[i] << ":" << pis[j] << " Curr dist: " << cur_dist << std::endl;
         if (cur_dist < dist) {
 
-            IMP_NEW(IMP::domino3::DistanceFactor, dn,(m, cur_pair, cur_dist, 4, st));
+            IMP_NEW(IMP::domino3::DistanceFactor, dn,(m, cur_pair, cur_dist, 7, st));
             factors.push_back(dn);
             dn->set_was_used(true);
             

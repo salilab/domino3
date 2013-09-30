@@ -15,7 +15,7 @@ IMPDOMINO3_BEGIN_NAMESPACE
 class IMPDOMINO3EXPORT Probability2DFactor: public Factor {
   kernel::ParticleIndexPair pis_;
   StatesTable *pst_;
-  boost::shared_array<double> log_probability_;
+  boost::shared_array<FP> log_probability_;
  protected:
   virtual void do_update() IMP_OVERRIDE;
 private:
@@ -24,7 +24,7 @@ private:
   Probability2DFactor(kernel::Model *m,
           const kernel::ParticleIndexPair &pis,
           StatesTable *pst,
-          boost::shared_array<double> &log_probability);
+          boost::shared_array<FP> &log_probability);
 
   IMP_OBJECT_METHODS(Probability2DFactor);
 };

@@ -19,16 +19,32 @@
 #include <IMP/domino3/Probability2DFactor.h>
 #include <IMP/domino3/Probability3DFactor.h>
 #include <IMP/domino3/ExcludedVolumeFactor.h>
+#include <IMP/domino3/LogMathFunctions.h>
 
 #include <boost/filesystem/path.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <IMP/domino3/Updater.h>
+#include <IMP/domino3/Probability3D.h>
+
 #include <RMF/FileHandle.h>
 #include <IMP/domino3/IndexStates.h>
 #include <IMP/core/XYZ.h>
 #include <algorithm>
 
 namespace {
+    
+    void *memalign(size_t boundary, size_t size)
+    {
+        void *pointer;
+        int code = posix_memalign(&pointer,boundary,size);
+        if (code != 0)
+        {
+            std::cerr<<"Error in memalign: Could not allocate memory by memalign. Please report this bug to developers\n";
+            exit(3);
+        }
+        return pointer;
+    }
+    
     std::string output = "out.rmf";
     IMP::base::AddStringFlag oasf("output", "Output rmf name", &output);
     std::string dock_file = IMP::domino3::get_example_path("33_dock.txt");
@@ -65,9 +81,9 @@ namespace {
     typedef std::pair<Ligand *,Ligand *> LigandLigandPair;
     typedef std::pair<Enzyme *,LigandLigandPair> EnzymeLigandLigandPair;
 
-    typedef IMP::base::map<EnzymeEnzymePair, double > EnzymeEnzymeScoreLookup;
-    typedef IMP::base::map<EnzymeLigandPair, double > EnzymeLigandScoreLookup;
-    typedef IMP::base::map<EnzymeLigandLigandPair, double> EnzymeLigandLigandScoreLookup;
+    typedef IMP::base::map<EnzymeEnzymePair, IMP::domino3::FP > EnzymeEnzymeScoreLookup;
+    typedef IMP::base::map<EnzymeLigandPair, IMP::domino3::FP > EnzymeLigandScoreLookup;
+    typedef IMP::base::map<EnzymeLigandLigandPair, IMP::domino3::FP> EnzymeLigandLigandScoreLookup;
     typedef IMP::base::map<std::string, Enzyme *>  StringToEnzyme;
     typedef IMP::base::map<const unsigned int, std::string>  IntToString;
 
@@ -86,7 +102,7 @@ namespace {
         {
             std::istringstream iss(line);
             std::string a, b;
-            double score;
+            IMP::domino3::FP score;
             iss >> a >> b >> score;
             if(!id_to_enzyme[a]){
                 id_to_enzyme[a] = new Enzyme(a);
@@ -113,7 +129,7 @@ namespace {
         {
             std::istringstream iss(line);
             std::string a, b;
-            double score;
+            IMP::domino3::FP score;
             iss >> a >> b >> score;
             if(!id_to_enzyme[a])
                 id_to_enzyme[a] = new Enzyme(a);
@@ -138,7 +154,7 @@ namespace {
         {
             std::istringstream iss(line);
             std::string a, b, c;
-            double score;
+            IMP::domino3::FP score;
             iss >> a >> b >> c >> score;
             if(!id_to_enzyme[a])
                 id_to_enzyme[a] = new Enzyme(a);
@@ -156,9 +172,9 @@ namespace {
                              IMP::domino3::StatesTable * st,
                              IMP::kernel::Model *m,
                              int enzyme_size,int ligand_size,
-                             boost::shared_array<double> &sea_probability_vector,
-                             boost::shared_array<double> &dock_probability_vector,
-                             boost::shared_array<double> &chem_probability_vector){
+                             boost::shared_array<IMP::domino3::FP> &sea_probability_vector,
+                             boost::shared_array<IMP::domino3::FP> &dock_probability_vector,
+                             IMP::domino3::Probability3D * chem_probability){
         IMP::domino3::FactorEdgesTemp edges;
         IMP::kernel::ParticleIndexes pis = st->get_particle_indexes();
         int ENZYME_SIZE=enzyme_size;
@@ -180,11 +196,11 @@ namespace {
         // create chem. sim. factors
         for(int i = 0; i < ENZYME_SIZE; i++) {
             IMP::kernel::ParticleIndexTriplet cur_triplet1(pis[i], pis[ENZYME_SIZE+i], pis[ENZYME_SIZE+i+1]);
-            IMP_NEW(IMP::domino3::Probability3DFactor, pf3d1,(m, cur_triplet1, st, chem_probability_vector));
+            IMP_NEW(IMP::domino3::Probability3DFactor, pf3d1,(m, cur_triplet1, st, chem_probability));
             factors.push_back(pf3d1);
             pf3d1->set_was_used(true);
         }
-        // create exclude double enzyme
+        // create exclude IMP::domino3::FP enzyme
         for(int x = 0 ; x< ENZYME_SIZE; x++){
             for(int y = 0; y < x ; y++){
                 IMP::kernel::ParticleIndexPair excl_pair(pis[x], pis[y]);
@@ -193,7 +209,7 @@ namespace {
                 excl_factor->set_was_used(true);
             }
         }
-        // create exclude double ligand
+        // create exclude IMP::domino3::FP ligand
         for(int x = ENZYME_SIZE ; x< (ENZYME_SIZE+LIGAND_SIZE); x++){
             for(int y = ENZYME_SIZE; y < x ; y++){
                 IMP::kernel::ParticleIndexPair excl_pair(pis[x], pis[y]);
@@ -206,24 +222,30 @@ namespace {
         IMP::domino3::add_neighbors(factors);
     }
     
-    void normalize(boost::shared_array<double> &probability_vector,
+    void normalize(boost::shared_array<IMP::domino3::FP> &probability_vector,
                    int size_x,
                    int size_y,int size_z,
                    bool normalize_square){
         std::cout << "Normalize probability vector of size: " << " x: " << size_x << " y: " << size_y << " z: " << size_z << std::endl;
 
-        double total = 0;
+        IMP::domino3::FP total = 0;
         for(int x = 0; x < size_x; x++){
-            double * it = probability_vector.get()+(x*size_y*size_z);
+            std::cout << x << std::endl;
+            IMP::domino3::FP * it = probability_vector.get()+(x*size_y*size_z);
             if(normalize_square)
                 total = std::accumulate(it, it + (size_z*size_y), 0.0);
             for(int y = 0; y < size_y; y++){
-                double * row = it + (y*size_y);
+                IMP::domino3::FP * row = it + (y*size_z);
                 if(!normalize_square)
                     total = std::accumulate(row, row + size_z, 0.0);
                 for(int z = 0; z < size_z; z++){
-                    *(row+z)=log(*(row+z)/total);
+//                    std::cout << *(row+z) << " ";
+                    *(row+z)=IMP::domino3::LogMathFunctions::convert_to_space(*(row+z)/total);
+//                    std::cout << *(row+z) << " ";
+
                 }
+//                std::cout << std::endl;
+
             }
         }
     }
@@ -270,12 +292,12 @@ namespace {
 
         
         // read structure to probability_vector and normalize
-        boost::shared_array<double> sea_probability_vector(new double[id_to_enzyme.size()*id_to_enzyme.size()]);
+        boost::shared_array<IMP::domino3::FP> sea_probability_vector(new IMP::domino3::FP[id_to_enzyme.size()*id_to_enzyme.size()]);
         std::fill (sea_probability_vector.get(),sea_probability_vector.get()+(id_to_enzyme.size()*id_to_enzyme.size()),0);
         for (EnzymeEnzymeScoreLookup::iterator i = enzyme_enzyme_scores.begin(); i != enzyme_enzyme_scores.end(); ++i)
         {
             EnzymeEnzymePair enzymePair=i->first;
-            double score = i->second;
+            IMP::domino3::FP score = i->second;
             Enzyme * e1 = enzymePair.first;
             Enzyme * e2 = enzymePair.second;
             if(e1->id == e2->id){
@@ -286,12 +308,12 @@ namespace {
         }
         normalize(sea_probability_vector,1,id_to_enzyme.size(),id_to_enzyme.size(),true);
 
-        boost::shared_array<double> dock_probability_vector(new double[id_to_enzyme.size()*id_to_ligand.size()]);
+        boost::shared_array<IMP::domino3::FP> dock_probability_vector(new IMP::domino3::FP[id_to_enzyme.size()*id_to_ligand.size()]);
         std::fill (dock_probability_vector.get(),dock_probability_vector.get()+(id_to_enzyme.size()*id_to_ligand.size()),0);
         for (EnzymeLigandScoreLookup::iterator i = enzyme_ligand_scores.begin(); i != enzyme_ligand_scores.end(); ++i)
         {
             EnzymeLigandPair enzymePair=i->first;
-            double score = i->second;
+            IMP::domino3::FP score = i->second;
             Enzyme * e1 = enzymePair.first;
             Ligand * l1 = enzymePair.second;
             dock_probability_vector[e1->id*id_to_ligand.size()+l1->id] = score;
@@ -299,13 +321,17 @@ namespace {
         }
 //        normalize(dock_probability_vector,1,id_to_enzyme.size(),id_to_ligand.size(),false);
 
+        IMP::domino3::Probability3D chem_probability(id_to_enzyme.size(),id_to_ligand.size(),id_to_ligand.size());
         const unsigned int chem_size = id_to_enzyme.size()*id_to_ligand.size()*id_to_ligand.size();
-        boost::shared_array<double> chem_probability_vector(new double[chem_size]);
-        std::fill (chem_probability_vector.get(),chem_probability_vector.get()+chem_size,0);
+        
+//        boost::shared_array<IMP::domino3::FP> chem_probability_vector((IMP::domino3::FP *)
+//                                                                      memalign(sizeof(IMP::domino3::FP)*8, (chem_size/4 + 1) * (sizeof(IMP::domino3::FP)*8))
+//                                                                      );
+//        std::fill (chem_probability_vector.get(),chem_probability_vector.get()+chem_size,0);
         for (EnzymeLigandLigandScoreLookup::iterator i = enzyme_ligand_ligand_scores.begin(); i != enzyme_ligand_ligand_scores.end(); ++i)
         {
             EnzymeLigandLigandPair enzymePair=i->first;
-            double score = i->second;
+            IMP::domino3::FP score = i->second;
             Enzyme * e1 = enzymePair.first;
             LigandLigandPair ligand_pair = enzymePair.second;
             Ligand * l1 = ligand_pair.first;
@@ -313,14 +339,14 @@ namespace {
             unsigned int x = e1->id;
             unsigned int y = l1->id;
             unsigned int z = l2->id;
-
-            unsigned int index = x*id_to_ligand.size()*id_to_ligand.size() + y*id_to_ligand.size() + z;
             if(y == z)
-                chem_probability_vector[index] = score/100;
+                chem_probability.set(x,y,z, score/100);
             else
-                chem_probability_vector[index] = score;
+                chem_probability.set(x,y,z, score);
         }
-        normalize(chem_probability_vector,id_to_enzyme.size(),id_to_ligand.size(),id_to_ligand.size(),true);
+//        normalize(chem_probability_vector,id_to_enzyme.size(),id_to_ligand.size(),id_to_ligand.size(),true);
+        chem_probability.normalize();
+//        chem_probability.show();
 
         std::vector<int> enzyme_ids;
         std::vector<int> ligand_ids;
@@ -356,7 +382,7 @@ namespace {
                             enzyme_size,ligand_size,
                             sea_probability_vector,
                             dock_probability_vector,
-                            chem_probability_vector);
+                            &chem_probability);
         
         //
         IMP_NEW(IMP::domino3::Updater, ud, (factors, "updater"));
@@ -365,14 +391,15 @@ namespace {
         IMP::domino3::print_graph(factors);
         st->print_marginal();
         // find high prob. path
-        double probability_to_see_best_match = 1;
+        IMP::domino3::FP probability_to_see_best_match = 1;
         std::vector<std::string> pathway;
         for(int i = 0; i < enzyme_size; i++){
-            std::vector<std::pair<double, std::string> > enzyme_order;
+            std::vector<std::pair<IMP::domino3::FP, std::string> > enzyme_order;
             IMP::domino3::Marginals * m  = st->get_marginals_by_order(i);
             for(int state = 0; state < m->get_number(); state++)
-                enzyme_order.push_back(std::make_pair( exp(m->get_current_marginal(state)), enzyme_id_to_name[state]));
-            sort(enzyme_order.begin(),enzyme_order.end(), std::greater<std::pair<double, std::string> >());
+                enzyme_order.push_back(std::make_pair(IMP::domino3::LogMathFunctions::convert_to_linear(m->get_current_marginal(state)),
+                                                      enzyme_id_to_name[state]));
+            sort(enzyme_order.begin(),enzyme_order.end(), std::greater<std::pair<IMP::domino3::FP, std::string> >());
             probability_to_see_best_match *= enzyme_order[0].first;
             pathway.push_back(enzyme_order[0].second);
             
@@ -382,11 +409,12 @@ namespace {
             }
         }
         for(int i = enzyme_size; i < (enzyme_size+ligand_size); i++){
-            std::vector<std::pair<double, std::string> > ligand_order;
+            std::vector<std::pair<IMP::domino3::FP, std::string> > ligand_order;
             IMP::domino3::Marginals * m  = st->get_marginals_by_order(i);
             for(int state = 0; state < m->get_number(); state++)
-                ligand_order.push_back(std::make_pair( exp(m->get_current_marginal(state)), ligand_id_to_name[state]));
-            sort(ligand_order.begin(),ligand_order.end(), std::greater<std::pair<double, std::string> >());
+                ligand_order.push_back(std::make_pair(IMP::domino3::LogMathFunctions::convert_to_linear(m->get_current_marginal(state)),
+                                                      ligand_id_to_name[state]));
+            sort(ligand_order.begin(),ligand_order.end(), std::greater<std::pair<IMP::domino3::FP, std::string> >());
             probability_to_see_best_match *= ligand_order[0].first;
             pathway.push_back(ligand_order[0].second);
             std::cout << "Ligand " << i-enzyme_size << std::endl;
@@ -399,7 +427,6 @@ namespace {
         }
         std::cout << std::endl;
         std::cout << "probability to see best match:" << probability_to_see_best_match << std::endl;
-
         
         
     }

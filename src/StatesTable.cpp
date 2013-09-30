@@ -58,7 +58,7 @@ void StatesTable::print_marginal(){
           IMP::domino3::Marginals * marg = this->get_marginals(states_incoming_order_[i]);
 	  std::cout << states_incoming_order_[i] << ": ";
           for(int y = 0; y < marg->get_number(); y++){
-              std::cout << exp(marg->get_current_marginal(y)) << "\t";
+              std::cout << LogMathFunctions::convert_to_linear(marg->get_current_marginal(y)) << "\t";
           }
           std::cout << std::endl;
       }

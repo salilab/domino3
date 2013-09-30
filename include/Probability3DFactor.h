@@ -7,6 +7,8 @@
 #include <IMP/base/graph_macros.h>
 #include <IMP/base/map.h>
 #include <IMP/kernel/particle_index.h>
+#include <IMP/domino3/Probability3D.h>
+
 #include "Marginals.h"
 
 IMPDOMINO3_BEGIN_NAMESPACE
@@ -15,7 +17,7 @@ IMPDOMINO3_BEGIN_NAMESPACE
 class IMPDOMINO3EXPORT Probability3DFactor: public Factor {
   kernel::ParticleIndexTriplet pis_;
   StatesTable *pst_;
-  boost::shared_array<double> log_probability_;
+  Probability3D * log_probability;
  protected:
   virtual void do_update() IMP_OVERRIDE;
 private:
@@ -24,7 +26,7 @@ private:
   Probability3DFactor(kernel::Model *m,
           const kernel::ParticleIndexTriplet &pis,
           StatesTable *pst,
-          boost::shared_array<double> &log_probability);
+          Probability3D * log_probability);
 
   IMP_OBJECT_METHODS(Probability3DFactor);
 };

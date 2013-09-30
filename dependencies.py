@@ -1,3 +1,3 @@
-required_modules='container:core:em:rmf:multifit'
+required_modules='container:core:em:rmf:multifit:rotamer'
 required_dependencies='RMF'
 optional_dependencies=''

@@ -18,17 +18,17 @@ IMPDOMINO3_BEGIN_NAMESPACE
 /** Updater its marginals based on some criteria. */
 class IMPDOMINO3EXPORT Updater: public base::Object {
   Factors factors_;
-  typedef base::set<Factor *> ActiveSet;
+  typedef std::vector<Factor *> ActiveSet;
   ActiveSet cur_queue_, next_queue_;
-  double change_threshold_;
+  FP change_threshold_;
 
   void add_factor_to_next_set(Factor *n) {
-    next_queue_.insert(n);
+    next_queue_.push_back(n);
   }
   void swap_active_sets() {
     std::swap(cur_queue_, next_queue_);
   }
-  void do_update();
+  float do_update();
   void fill_queue();
 
  public:
@@ -37,7 +37,7 @@ class IMPDOMINO3EXPORT Updater: public base::Object {
 
   void update(unsigned int iterations);
 
-  void set_change_threshold(double d) {
+  void set_change_threshold(FP d) {
     change_threshold_ = d;
   }
 

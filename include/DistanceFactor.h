@@ -13,23 +13,23 @@ IMPDOMINO3_BEGIN_NAMESPACE
 
 /** A factor for a single distance restarint. */
 class IMPDOMINO3EXPORT DistanceFactor: public Factor {
-  double distance_, allowed_error_;
+  FP distance_, allowed_error_;
   IntPairs allowed_states_;
   kernel::ParticleIndexPair pis;
   StatesTable *pst;
-  double distance;
-  double allowed_error;
-  double * distances;
+  FP distance;
+  FP allowed_error;
+  FP * distances;
   kernel::Model *m;
  protected:
   virtual void do_update() IMP_OVERRIDE;
 private:
-  double distance_to_probability(double x);
+  FP distance_to_probability(FP x);
 
  public:
   DistanceFactor(kernel::Model *m,
                const kernel::ParticleIndexPair &pis,
-               double distance, double allowed_error,
+               FP distance, FP allowed_error,
                StatesTable *pst);
 
   IMP_OBJECT_METHODS(DistanceFactor);
