@@ -28,13 +28,15 @@ class IMPDOMINO3EXPORT Updater: public base::Object {
   void swap_active_sets() {
     std::swap(cur_queue_, next_queue_);
   }
-  float do_update();
+  void do_update();
   void fill_queue();
+  float change;
+  float entropy;
 
  public:
   Updater(const FactorsTemp &factors,
           std::string name);
-
+ 
   void update(unsigned int iterations);
 
   void set_change_threshold(FP d) {

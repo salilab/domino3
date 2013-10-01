@@ -12,10 +12,11 @@ base::Object(name), factors_(graph) {
     fill_queue();
 }
 
-float Updater::do_update() {
+void Updater::do_update() {
     base::set<kernel::ParticleIndex> changed;
     std::random_shuffle ( cur_queue_.begin(), cur_queue_.end() );
-    float sum_change = 0.0f;
+    this->change  = 0.0f;
+    this->entropy  = 0.0f;
     for (ActiveSet::const_iterator it = cur_queue_.begin();
          it != cur_queue_.end(); ++it) {
         //    IMP_LOG_TERSE("Updating " << (*it)->get_name() << std::endl);
@@ -24,7 +25,8 @@ float Updater::do_update() {
             if ((*it)->get_marginals()[i]->get_change() > change_threshold_) {
                 changed.insert((*it)->get_particle_indexes()[i]);
             }
-            sum_change += (*it)->get_marginals()[i]->get_change();
+            this->change  += (*it)->get_marginals()[i]->get_change();
+            this->entropy += (*it)->get_marginals()[i]->get_entropy();
         }
     }
     // later search only relevant nodes using the graph
@@ -37,7 +39,7 @@ float Updater::do_update() {
     }
     swap_active_sets();
     next_queue_ = ActiveSet();
-    return sum_change;
+    
 }
 
 void Updater::fill_queue() {
@@ -49,15 +51,19 @@ void Updater::fill_queue() {
 }
 
 void Updater::update(unsigned int iterations) {
-    float before_change = 0.0f;
+    float before_change  = 0.0f;
+    float before_entropy = 0.0f;
     for (unsigned int i = 0; i < iterations; ++i) {
         std::cout << "Iteration " << i << std::endl;
-        float current_change = do_update();
-        std::cout << "Change: " << std::abs(current_change - before_change) << std::endl;
-        //    if(std::abs(current_change - before_change) < change_threshold_){
-        //       break;
-        //    }
-        before_change = current_change;
+        do_update();
+        float entropy_change = std::abs(this->entropy - before_entropy);
+        float current_change = std::abs(this->change  - before_change);
+        std::cout << "Change: "  << current_change << std::endl;
+        std::cout << "Entropy: " << entropy_change << std::endl;
+        if(entropy_change < 0.01 && current_change < 0.01 )
+            break;
+        before_change  = this->change ;
+        before_entropy = this->entropy;
     }
 }
 

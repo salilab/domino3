@@ -19,11 +19,10 @@ Marginals::Marginals(Model *m, ParticleIndex pi, unsigned int size):
 FP Marginals::get_entropy() const {
   FP ret = 0.0;
   for (unsigned int i = 0; i < this->get_number(); ++i) {
-    FP cur_prob = current_[i];
-    if (cur_prob > 0) {
-        FP cur = cur_prob * LogMathFunctions::convert_to_space(cur_prob);
-      ret += cur;
-    }
+    FP cur_prob = current_[i]; // cur_prob = log(x_i) 
+    FP cur = cur_prob * LogMathFunctions::convert_to_linear(cur_prob);
+    ret += cur;
+    
   }
   return -ret;
 }
