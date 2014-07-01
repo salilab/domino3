@@ -1,11 +1,7 @@
-*.os
-*.o
 *.pyc
 *~
-*.old
-*.orig
-*.gcno
-*.gcda
+~.orig
+*~
+.*.sw?
 CMakeLists.txt
 Files.cmake
-
