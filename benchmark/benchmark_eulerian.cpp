@@ -174,7 +174,7 @@ void write_probabilities(unsigned int num_states,
     }
     std::ostringstream oss;
     oss << prefix << "." << i << ".mrc";
-    IMP::base::OwnerPointer<IMP::em::DensityMap> map
+    IMP::base::PointerMember<IMP::em::DensityMap> map
     = IMP::em::create_density_map(grid);
     IMP::em::write_map(map, oss.str());
   }

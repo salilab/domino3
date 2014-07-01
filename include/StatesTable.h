@@ -24,8 +24,8 @@ IMPDOMINO3_BEGIN_NAMESPACE
  */
 class IMPDOMINO3EXPORT StatesTable : public IMP::base::Object {
   IMP_NAMED_TUPLE_3(ParticleData, ParticleDatas,
-                    IMP::base::OwnerPointer<States>, states,
-                    IMP::base::OwnerPointer<Marginals>, marginals,
+                    IMP::base::PointerMember<States>, states,
+                    IMP::base::PointerMember<Marginals>, marginals,
                     RMF::NodeHandle, node,);
   typedef boost::unordered_map<kernel::ParticleIndex, ParticleData> Map;
   Map states_;
