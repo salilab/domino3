@@ -6,7 +6,7 @@
 
 IMPDOMINO3_BEGIN_NAMESPACE
 typedef float FP;
-/** A node for a single distance restarint. */
+/** A node for a single distance restraint. */
 class LogMathFunctions {
 public:
     

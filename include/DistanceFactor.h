@@ -15,7 +15,7 @@
 
 IMPDOMINO3_BEGIN_NAMESPACE
 
-/** A factor for a single distance restarint. */
+/** A factor for a single distance restraint. */
 class IMPDOMINO3EXPORT DistanceFactor: public Factor {
   FP distance_, allowed_error_;
   IntPairs allowed_states_;

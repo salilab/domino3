@@ -16,7 +16,7 @@
 
 IMPDOMINO3_BEGIN_NAMESPACE
 
-/** A factor for a single distance restarint. */
+/** A factor for a single distance restraint. */
 class IMPDOMINO3EXPORT Probability2DFactor: public Factor {
   kernel::ParticleIndexPair pis_;
   StatesTable *pst_;
