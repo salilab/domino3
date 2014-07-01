@@ -56,7 +56,7 @@ public:
         FP max=*std::max_element(vals,vals+size);
         max=std::max(1.0f,max);
         FP sum = 0;
-        for(int i = 0; i < size; i++){
+        for(unsigned i = 0; i < size; i++){
             sum += convert_to_linear(vals[i] - max);
         }
         return max+convert_to_space(sum);
@@ -78,7 +78,7 @@ public:
     static void normalize(FP * it,
                           unsigned int size) {
         FP sum_vec=sum(it,size);
-        for(int i = 0; i < size; i++){
+        for(unsigned i = 0; i < size; i++){
             it[i]-=sum_vec;
         }
     }

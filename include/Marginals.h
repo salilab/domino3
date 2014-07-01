@@ -74,11 +74,11 @@ public:
     
     void show_marginals(){
         std::cout << this->get_name() << std::endl;
-        for(int i = 0; i < this->get_number(); i++){
+        for(unsigned i = 0; i < this->get_number(); i++){
             std::cout << this->current_[i] << " ";
         }
         std::cout << std::endl;
-        for(int i = 0; i < this->get_number(); i++){
+        for(unsigned i = 0; i < this->get_number(); i++){
             std::cout << this->next_[i] << " ";
         }
         std::cout << std::endl;
@@ -109,7 +109,7 @@ public:
     }
     
     inline void check_next_normalized(){
-        FP total = std::accumulate(next_.get(), next_.get() + size_, 0.0);
+//      FP total = std::accumulate(next_.get(), next_.get() + size_, 0.0);
 //        IMP_USAGE_CHECK(std::abs(total - 1.0)  < 0.01,
 //                        "Not normalized" << total);
     }
