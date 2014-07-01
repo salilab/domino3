@@ -4,6 +4,8 @@
 #ifndef IMPDOMINO3_LOGMATHFUNCTIONS_H
 #define IMPDOMINO3_LOGMATHFUNCTIONS_H
 
+#include <xmmintrin.h>
+
 IMPDOMINO3_BEGIN_NAMESPACE
 typedef float FP;
 /** A node for a single distance restraint. */
