@@ -9,7 +9,6 @@
 #include <IMP/kernel/ModelObject.h>
 #include <IMP/base/object_macros.h>
 #include <IMP/base/graph_macros.h>
-#include <IMP/base/map.h>
 #include <IMP/kernel/particle_index.h>
 #include "Marginals.h"
 

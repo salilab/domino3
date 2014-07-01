@@ -12,7 +12,7 @@
 #include <IMP/domino3/domino3_config.h>
 #include "States.h"
 #include <IMP/kernel/particle_index.h>
-#include <IMP/base/map.h>
+#include <boost/unordered_map.hpp>
 
 IMPDOMINO3_BEGIN_NAMESPACE
 /** Store the association between particles and the classes
@@ -27,7 +27,7 @@ class IMPDOMINO3EXPORT StatesTable : public IMP::base::Object {
                     IMP::base::OwnerPointer<States>, states,
                     IMP::base::OwnerPointer<Marginals>, marginals,
                     RMF::NodeHandle, node,);
-  typedef IMP::base::map<kernel::ParticleIndex, ParticleData> Map;
+  typedef boost::unordered_map<kernel::ParticleIndex, ParticleData> Map;
   Map states_;
   typedef IMP::base::Vector<kernel::ParticleIndex> Vector;
   Vector states_incoming_order_;

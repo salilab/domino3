@@ -6,6 +6,7 @@
  */
 
 #include <IMP/domino3/Factor.h>
+#include <boost/unordered_map.hpp>
 
 IMPDOMINO3_BEGIN_NAMESPACE
 
@@ -130,7 +131,7 @@ void add_neighbors(const FactorsTemp &nodes) {
 
 
 void update_state_table(const FactorsTemp &nodes,const StatesTable *pst) {
-    base::map<ParticleIndex,MarginalsList> map_to_merge;
+    boost::unordered_map<ParticleIndex,MarginalsList> map_to_merge;
     for (unsigned int i = 0; i < nodes.size(); ++i) {
         MarginalsList node_marginals =  nodes[i]->get_marginals();
         for(MarginalsList::size_type i = 0; i != node_marginals.size(); i++) {
@@ -138,7 +139,7 @@ void update_state_table(const FactorsTemp &nodes,const StatesTable *pst) {
             map_to_merge[particle_index].push_back(node_marginals[i]);
         }
     }
-    for(base::map<ParticleIndex,MarginalsList>::iterator iter = map_to_merge.begin();
+    for(boost::unordered_map<ParticleIndex,MarginalsList>::iterator iter = map_to_merge.begin();
         iter != map_to_merge.end(); ++iter)
     {
         ParticleIndex k =  iter->first;

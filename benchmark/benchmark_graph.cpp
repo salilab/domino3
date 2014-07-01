@@ -23,6 +23,7 @@
 
 #include <boost/filesystem/path.hpp>
 #include <boost/filesystem/operations.hpp>
+#include <boost/unordered_map.hpp>
 #include <IMP/domino3/Updater.h>
 #include <IMP/domino3/Probability3D.h>
 
@@ -81,13 +82,13 @@ namespace {
     typedef std::pair<Ligand *,Ligand *> LigandLigandPair;
     typedef std::pair<Enzyme *,LigandLigandPair> EnzymeLigandLigandPair;
 
-    typedef IMP::base::map<EnzymeEnzymePair, IMP::domino3::FP > EnzymeEnzymeScoreLookup;
-    typedef IMP::base::map<EnzymeLigandPair, IMP::domino3::FP > EnzymeLigandScoreLookup;
-    typedef IMP::base::map<EnzymeLigandLigandPair, IMP::domino3::FP> EnzymeLigandLigandScoreLookup;
-    typedef IMP::base::map<std::string, Enzyme *>  StringToEnzyme;
-    typedef IMP::base::map<const unsigned int, std::string>  IntToString;
+    typedef boost::unordered_map<EnzymeEnzymePair, IMP::domino3::FP > EnzymeEnzymeScoreLookup;
+    typedef boost::unordered_map<EnzymeLigandPair, IMP::domino3::FP > EnzymeLigandScoreLookup;
+    typedef boost::unordered_map<EnzymeLigandLigandPair, IMP::domino3::FP> EnzymeLigandLigandScoreLookup;
+    typedef boost::unordered_map<std::string, Enzyme *>  StringToEnzyme;
+    typedef boost::unordered_map<const unsigned int, std::string>  IntToString;
 
-    typedef IMP::base::map<std::string, Ligand *>  StringToLigand;
+    typedef boost::unordered_map<std::string, Ligand *>  StringToLigand;
     
     void read_in_sea_file(IMP::kernel::Model *m,
                            std::string path,

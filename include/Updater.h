@@ -9,7 +9,6 @@
 #include <IMP/base/Object.h>
 #include "Factor.h"
 #include <IMP/base/object_macros.h>
-#include <IMP/base/map.h>
 #include <IMP/kernel/particle_index.h>
 #include <IMP/base/set.h>
 #include "Marginals.h"

@@ -11,6 +11,7 @@
 #include <IMP/base/SetLogState.h>
 #include <IMP/core/XYZ.h>
 #include <algorithm>
+#include <boost/unordered_map.hpp>
 
 #define MY_LOG_VERBOSE(x) std::cout << x;
 #define MY_LOG_TERSE(x) std::cout << x;
@@ -34,7 +35,7 @@ IMP_NAMED_TUPLE_3(Distance, Distances,
 
 void fill_one(const Grid &grid,
               const IMP::algebra::BoundingBox3D &bb,
-              const IMP::base::map<GridIndex, int> &state_map,
+              const boost::unordered_map<GridIndex, int> &state_map,
               unsigned int index,
               Probabilities &probabilities) {
   States cur_states(grid.indexes_begin(bb), grid.indexes_end(bb));
@@ -72,7 +73,7 @@ void initialize_probabilities(IMP::kernel::Model *m,
                               const Grid &grid,
                               const States &states,
                               Probabilities &probabilities) {
-  IMP::base::map<GridIndex, int> state_map;
+  boost::unordered_map<GridIndex, int> state_map;
   for (unsigned int i = 0; i< states.size(); ++i) {
     state_map[states[i]] = i;
   }

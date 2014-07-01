@@ -12,7 +12,6 @@
 #include <IMP/domino3/domino3_config.h>
 #include <IMP/algebra/Vector3D.h>
 #include <IMP/kernel/particle_index.h>
-#include <IMP/base/map.h>
 
 IMPDOMINO3_BEGIN_NAMESPACE
 
