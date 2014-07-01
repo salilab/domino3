@@ -1,3 +1,10 @@
+/**
+ *  \file IMP/domino3/Probability3DFactor.cpp
+ *
+ *  Copyright 2007-2014 IMP Inventors. All rights reserved.
+ *
+ */
+
 #include <IMP/domino3/Probability3DFactor.h>
 #include <IMP/core/XYZR.h>
 #include <IMP/domino3/LogMathFunctions.h>

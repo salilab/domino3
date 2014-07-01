@@ -1,9 +1,10 @@
-/** \file domino3/ExcludedVolumeFactor.h
+/** \file IMP/domino3/ExcludedVolumeFactor.h
  *  \brief Store the marginal for a variable.
  */
 
 #ifndef IMPDOMINO3_EXCLUDED_VOLUME_FACTOR_H
 #define IMPDOMINO3_EXCLUDED_VOLUME_FACTOR_H
+
 #include <IMP/domino3/domino3_config.h>
 #include <IMP/kernel/ModelObject.h>
 #include <IMP/base/object_macros.h>
@@ -28,4 +29,4 @@ class IMPDOMINO3EXPORT ExcludedVolumeFactor: public Factor {
 
 IMPDOMINO3_END_NAMESPACE
 
-#endif // IMPDOMINO3_EXCLUDED_VOLUME_FACTOR_H
+#endif /* IMPDOMINO3_EXCLUDED_VOLUME_FACTOR_H */

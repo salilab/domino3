@@ -1,5 +1,9 @@
+/** \file IMP/domino3/DistanceFactor.h
+ */
+
 #ifndef IMPDOMINO3_DISTANCE_FACTOR_H
 #define IMPDOMINO3_DISTANCE_FACTOR_H
+
 #include <IMP/domino3/domino3_config.h>
 #include <IMP/kernel/ModelObject.h>
 #include "Factor.h"
@@ -37,5 +41,4 @@ private:
 
 IMPDOMINO3_END_NAMESPACE
 
-#endif // IMPDOMINO3_DISTANCE_FACTOR_H
-
+#endif /* IMPDOMINO3_DISTANCE_FACTOR_H */

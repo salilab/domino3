@@ -1,9 +1,10 @@
-/** \file domino3/Marginals.h
+/** \file IMP/domino3/Marginals.h
  *  \brief Store the marginal for a variable.
  */
 
-#ifndef IMPDOMINO3_MARGINAL_H
-#define IMPDOMINO3_MARGINAL_H
+#ifndef IMPDOMINO3_MARGINALS_H
+#define IMPDOMINO3_MARGINALS_H
+
 #include <IMP/domino3/domino3_config.h>
 #include <IMP/domino3/LogMathFunctions.h>
 #include <IMP/base/Object.h>
@@ -161,4 +162,4 @@ public:
 IMPDOMINO3_END_NAMESPACE
 
 
-#endif // IMPDOMINO3_MARGINAL_H
+#endif /* IMPDOMINO3_MARGINALS_H */

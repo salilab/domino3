@@ -1,5 +1,10 @@
+/** \file IMP/domino3/Probability3DFactor.h
+    \brief A factor for a single distance restraint.
+ */
+
 #ifndef IMPDOMINO3_PROBABILITY3D_FACTOR_H
 #define IMPDOMINO3_PROBABILITY3D_FACTOR_H
+
 #include <IMP/domino3/domino3_config.h>
 #include <IMP/kernel/ModelObject.h>
 #include "Factor.h"
@@ -13,7 +18,7 @@
 
 IMPDOMINO3_BEGIN_NAMESPACE
 
-/** A factor for a single distance restarint. */
+/** A factor for a single distance restraint. */
 class IMPDOMINO3EXPORT Probability3DFactor: public Factor {
   kernel::ParticleIndexTriplet pis_;
   StatesTable *pst_;
@@ -33,5 +38,4 @@ private:
 
 IMPDOMINO3_END_NAMESPACE
 
-#endif // IMPDOMINO3_SEA_FACTOR_H
-
+#endif /* IMPDOMINO3_PROBABILITY3D_FACTOR_H */

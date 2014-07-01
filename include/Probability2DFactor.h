@@ -1,5 +1,10 @@
-#ifndef IMPDOMINO3_PROBABILITY2DFACTOR_FACTOR_H
-#define IMPDOMINO3_PROBABILITY2DFACTOR_FACTOR_H
+/** \file IMP/domino3/Probability2DFactor.h
+    \brief A factor for a single distance restraint.
+ */
+
+#ifndef IMPDOMINO3_PROBABILITY2DFACTOR_H
+#define IMPDOMINO3_PROBABILITY2DFACTOR_H
+
 #include <IMP/domino3/domino3_config.h>
 #include <IMP/kernel/ModelObject.h>
 #include "Factor.h"
@@ -31,5 +36,4 @@ private:
 
 IMPDOMINO3_END_NAMESPACE
 
-#endif // IMPDOMINO3_SEA_FACTOR_H
-
+#endif /* IMPDOMINO3_PROBABILITY2DFACTOR_H */

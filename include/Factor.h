@@ -1,9 +1,10 @@
-/** \file domino3/Factor.h
+/** \file IMP/domino3/Factor.h
  *  \brief Store the marginal for a variable.
  */
 
 #ifndef IMPDOMINO3_FACTOR_H
 #define IMPDOMINO3_FACTOR_H
+
 #include <IMP/domino3/domino3_config.h>
 #include <IMP/kernel/ModelObject.h>
 #include <IMP/base/object_macros.h>
@@ -89,4 +90,4 @@ IMPDOMINO3EXPORT FactorGraph get_factor_graph(const FactorsTemp &factors);
 
 IMPDOMINO3_END_NAMESPACE
 
-#endif // IMPDOMINO3_FACTOR_H
+#endif /* IMPDOMINO3_FACTOR_H */

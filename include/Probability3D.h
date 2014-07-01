@@ -1,3 +1,7 @@
+/** \file IMP/domino3/Probability3D.h
+    \brief A node for a single distance restraint.
+ */
+
 #ifndef IMPDOMINO3_PROBABILITY3D_H
 #define IMPDOMINO3_PROBABILITY3D_H
 
@@ -15,7 +19,7 @@ void *memalign(size_t boundary, size_t size)
     return pointer;
 }
 
-/** A node for a single distance restarint. */
+/** A node for a single distance restraint. */
 class Probability3D {
 private:
     int z_real_length,real_length;
@@ -93,4 +97,4 @@ public:
 
 IMPDOMINO3_END_NAMESPACE
 
-#endif // IMPDOMINO3_PROBABILITY3D_H
+#endif /* IMPDOMINO3_PROBABILITY3D_H */

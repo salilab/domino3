@@ -1,3 +1,10 @@
+/**
+ *  \file IMP/domino3/ExcludedVolumeFactor.cpp
+ *
+ *  Copyright 2007-2014 IMP Inventors. All rights reserved.
+ *
+ */
+
 #include <IMP/domino3/ExcludedVolumeFactor.h>
 #include <IMP/domino3/LogMathFunctions.h>
 IMPDOMINO3_BEGIN_NAMESPACE
