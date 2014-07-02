@@ -176,7 +176,7 @@ namespace {
                              boost::shared_array<IMP::domino3::FP> &sea_probability_vector,
                              boost::shared_array<IMP::domino3::FP> &dock_probability_vector,
                              IMP::domino3::Probability3D * chem_probability){
-        IMP::domino3::FactorEdgesTemp edges;
+        IMP::domino3::FactorEdges edges;
         IMP::kernel::ParticleIndexes pis = st->get_particle_indexes();
         int ENZYME_SIZE=enzyme_size;
         int LIGAND_SIZE=ligand_size;

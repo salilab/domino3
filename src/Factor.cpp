@@ -74,9 +74,9 @@ void Factor::add_neighbor(Factor *n) {
   neighbors_.push_back(n);
 }
 
-void add_neighbors_by_factor_edges(const FactorEdgesTemp &factor_edges){
+void add_neighbors_by_factor_edges(const FactorEdges &factor_edges){
 	for (unsigned int i = 0; i < factor_edges.size(); ++i) {
-		FactorEdge * edge = factor_edges[i];
+		const FactorEdge * edge = &factor_edges[i];
         edge->from_->add_neighbor(edge->to_);
         edge->from_->set_matching_inputs(edge->to_);
         edge->to_->add_neighbor(edge->from_);
