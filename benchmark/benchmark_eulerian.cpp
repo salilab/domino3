@@ -12,6 +12,7 @@
 #include <IMP/core/XYZ.h>
 #include <algorithm>
 #include <boost/unordered_map.hpp>
+#include <boost/unordered_set.hpp>
 
 #define MY_LOG_VERBOSE(x) std::cout << x;
 #define MY_LOG_TERSE(x) std::cout << x;
@@ -26,7 +27,7 @@ typedef IMP::base::Vector<GridIndex> States;
 
 typedef boost::scoped_array<boost::scoped_array<double> >  Probabilities;
 typedef IMP::base::Vector<IMP::base::Vector<int> > DistanceIndex;
-typedef IMP::base::set<int> DirtyRestraints;
+typedef boost::unordered_set<int> DirtyRestraints;
 
 IMP_NAMED_TUPLE_3(Distance, Distances,
                   int, first,
