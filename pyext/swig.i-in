@@ -1,3 +1,12 @@
+%import "RMF.i"
+%{
+#include "RMF.h"
+%}
+
+%{
+typedef float FP;
+%}
+
 IMP_SWIG_BASE_OBJECT(IMP::domino3, Factor, Factors);
 IMP_SWIG_OBJECT(IMP::domino3, DistanceFactor, DistanceFactors);
 IMP_SWIG_OBJECT(IMP::domino3, ExcludedVolumeFactor, ExcludedVolumeFactors);
