@@ -153,7 +153,7 @@ namespace {
         for(size_t i = 0; i < residues.size(); i++){
             std::vector<std::pair<double, int> > pos_order;
             IMP::domino3::Marginals * m  = st->get_marginals_by_order(i);
-            for(int state = 0; state < m->get_number(); state++)
+            for(unsigned int state = 0; state < m->get_number(); state++)
                 pos_order.push_back(std::make_pair( exp(m->get_current_marginal(state)), state));
             sort(pos_order.begin(),pos_order.end(), std::greater<std::pair<double, int> >());
             probability_to_see_best_match *= pos_order[0].first;
@@ -177,7 +177,7 @@ int main(int argc, char **argv) {
     //    IMP::atom::Hierarchy pdb = IMP::atom:: (input, m,new IMP::atom::CAlphaPDBSelector());
     
     IMP::multifit::AnchorsData data = IMP::multifit::read_anchors_data(anchors.c_str());
-    for(int i = 0; i < data.edges_.size(); i++){
+    for(size_t i = 0; i < data.edges_.size(); i++){
         std::cout << data.edges_[i].first << " " << data.edges_[i].second << std::endl;
     }
     std::cout << "bla" << std::endl;
