@@ -124,7 +124,7 @@ namespace {
 
     IMP_NEW(IMP::domino3::Updater, ud, (factors, "updater"));
 
-    RMF::FrameHandle cf = f.get_current_frame().add_child("frame", RMF::FRAME);
+    RMF::FrameID cf = f.add_frame("frame", RMF::FRAME);
     st->add_to_frame();
     std::cout << "before" << std::endl;
     st->print_marginal();
@@ -132,7 +132,7 @@ namespace {
       
     for (unsigned int i = 0; i < iterations; ++i) {
       ud->update(100);
-      cf = cf.add_child("frame", RMF::FRAME);
+      cf = f.add_frame("frame", RMF::FRAME);
       st->add_to_frame();
     }
     IMP::domino3::update_state_table(factors,st);
