@@ -65,7 +65,7 @@ namespace {
         for (unsigned int i = 0; i < ps.size(); ++i) {
             IMP::domino3::Marginals * marg = pst->get_marginals(pis[i]);
             IMP::algebra::Vector3D vector_i = vs[i];
-            for(int y = 0; y < marg->get_number(); y++){
+            for(unsigned y = 0; y < marg->get_number(); y++){
                 IMP::algebra::Vector3D vector_y = vs[y];
                 double dist=IMP::algebra::get_distance(vector_i, vector_y);
                 ret_sum+=exp(marg->get_current_marginal(y))*dist;
@@ -92,18 +92,18 @@ namespace {
     void run_it(IMP::kernel::Model *m, const IMP::algebra::Vector3Ds &vs_org) {
         DistantRestraints restraints=read_restraints(restraints_path);
         IMP::base::set<int> residues;
-        for( int i = 0; i < restraints.size(); i++){
+        for(size_t i = 0; i < restraints.size(); i++){
             residues.insert(restraints[i]->from);
             residues.insert(restraints[i]->to);
         }
         IMP::ParticlesTemp ps;
-        for( int i = 0; i < vs_org.size(); i++){
+        for(size_t i = 0; i < vs_org.size(); i++){
             IMP::kernel::Particle * p = new IMP::kernel::Particle(m);
             ps.push_back(p);
             IMP::core::XYZR::setup_particle(m, p->get_index(),  IMP::algebra::Sphere3D(vs_org[i], 1));
         }
         IMP::kernel::ParticleIndexes pis = IMP::kernel::get_indexes(ps);
-        for( int i = 0; i < pis.size(); i++){
+        for(size_t i = 0; i < pis.size(); i++){
             std::ostringstream oss;
             oss  << pis[i];
             m->get_particle(pis[i])->set_name(oss.str());
@@ -125,7 +125,7 @@ namespace {
         
         
         IMP::domino3::Factors factors;
-        for( int i = 0; i < restraints.size(); i++){
+        for(size_t i = 0; i < restraints.size(); i++){
             IMP::kernel::ParticleIndexPair cur_pair(pis[restraints[i]->from], pis[restraints[i]->to]);
             IMP_NEW(IMP::domino3::DistanceFactor, dn,(m, cur_pair, restraints[i]->dist, 1, st));
             factors.push_back(dn);
@@ -149,7 +149,7 @@ namespace {
         st->print_marginal();
         double probability_to_see_best_match = 1;
         std::vector<int> order;
-        for(int i = 0; i < residues.size(); i++){
+        for(size_t i = 0; i < residues.size(); i++){
             std::vector<std::pair<double, int> > pos_order;
             IMP::domino3::Marginals * m  = st->get_marginals_by_order(i);
             for(int state = 0; state < m->get_number(); state++)
@@ -159,7 +159,7 @@ namespace {
             order.push_back(pos_order[0].second);
         }
         
-        for(int i = 0 ; i < order.size();i++){
+        for(size_t i = 0 ; i < order.size();i++){
             std::cout << order[i] << " ";
         }
         std::cout << std::endl;

@@ -101,7 +101,7 @@ public:
     
     inline void check_current_normalized(){
         FP total = LogMathFunctions::convert_to_space(0);
-        for(int i =0;i < size_;i++){
+        for(unsigned int i =0;i < size_;i++){
             total = LogMathFunctions::add(total,current_[i]);
         }
 //        IMP_USAGE_CHECK(std::abs(total - 1.0)  < 0.01,

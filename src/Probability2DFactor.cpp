@@ -29,9 +29,9 @@ void Probability2DFactor::do_update() {
     States *ps0 = pst_->get_states(pis_[0]), *ps1 = pst_->get_states(pis_[1]);
     const int size_i = ps0->get_number();
     const int size_j = ps1->get_number();
-    for (unsigned int i = 0; i < size_i; ++i) {
+    for (int i = 0; i < size_i; ++i) {
         const FP m0_i_current_marginal = m0->get_current_marginal(i);
-        for (unsigned int j = 0; j < size_j; ++j) {
+        for (int j = 0; j < size_j; ++j) {
             const FP log_prob_i_j=this->log_probability_[i*size_j+j];
             const FP m1_j_current_marginal = m1->get_current_marginal(j);
             m0->add_to_next_marginal(i,log_prob_i_j + m1_j_current_marginal);

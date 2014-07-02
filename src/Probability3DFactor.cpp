@@ -75,17 +75,17 @@ void Probability3DFactor::do_update() {
     __m128 * z_next_m2 =(__m128 * ) &z_next_m2_float[0];
     
     FP init_value=LogMathFunctions::convert_to_space(0.0f);
-    for (unsigned int i = 0; i < size_i; ++i) {
+    for (int i = 0; i < size_i; ++i) {
         const FP m0_i_current_marginal = m0->get_current_marginal(i);
         __m128 i_cur_m0 = _mm_set1_ps(m0_i_current_marginal);
         __m128 i_next_m0 = _mm_set1_ps(init_value);
 
-        for (unsigned int j = 0; j < size_j; ++j) {
+        for (int j = 0; j < size_j; ++j) {
             const FP m1_j_current_marginal = m1->get_current_marginal(j);
             __m128 j_cur_m1 = _mm_set1_ps(m1_j_current_marginal);
             __m128 j_next_m1 = _mm_set1_ps(init_value);
             __m128 * prob_row = (__m128*) this->log_probability->get_ptr(i, j, 0);
-            for (unsigned int z = 0; z < (size_z/4)+1; z++) {
+            for (int z = 0; z < (size_z/4)+1; z++) {
                 
                 __m128 tmp  = LogMathFunctions::mult_sse(prob_row[z],j_cur_m1);
                 tmp         = LogMathFunctions::mult_sse(tmp,z_cur_m2[z]);
