@@ -25,6 +25,7 @@
 #include <IMP/core/XYZ.h>
 #include <IMP/multifit/anchors_reader.h>
 #include <algorithm>
+#include <boost/unordered_set.hpp>
 
 namespace {
     
@@ -91,7 +92,7 @@ namespace {
     
     void run_it(IMP::kernel::Model *m, const IMP::algebra::Vector3Ds &vs_org) {
         DistantRestraints restraints=read_restraints(restraints_path);
-        IMP::base::set<int> residues;
+        boost::unordered_set<int> residues;
         for(size_t i = 0; i < restraints.size(); i++){
             residues.insert(restraints[i]->from);
             residues.insert(restraints[i]->to);

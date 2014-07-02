@@ -10,7 +10,7 @@
 #include "Factor.h"
 #include <IMP/base/object_macros.h>
 #include <IMP/kernel/particle_index.h>
-#include <IMP/base/set.h>
+#include <boost/unordered_set.hpp>
 #include "Marginals.h"
 
 IMPDOMINO3_BEGIN_NAMESPACE

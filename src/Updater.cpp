@@ -20,7 +20,7 @@ base::Object(name), factors_(graph) {
 }
 
 void Updater::do_update() {
-    base::set<kernel::ParticleIndex> changed;
+    boost::unordered_set<kernel::ParticleIndex> changed;
     std::random_shuffle ( cur_queue_.begin(), cur_queue_.end() );
     this->change  = 0.0f;
     this->entropy  = 0.0f;
