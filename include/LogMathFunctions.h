@@ -5,6 +5,7 @@
 #define IMPDOMINO3_LOGMATHFUNCTIONS_H
 
 #include <xmmintrin.h>
+#include <float.h>
 
 IMPDOMINO3_BEGIN_NAMESPACE
 typedef float FP;
