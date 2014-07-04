@@ -67,15 +67,15 @@ namespace {
     static int enzym_id_counter = 0;
     struct Enzyme {
         std::string enzyme_name;
-        const unsigned id = enzym_id_counter++;
-        Enzyme(std::string name) : enzyme_name(name){}
+        unsigned id;
+        Enzyme(std::string name) : enzyme_name(name), id(enzym_id_counter++) {}
     };
     
     static int ligand_id_counter = 0;
     struct Ligand {
         std::string ligand_name;
-        const unsigned id = ligand_id_counter++;
-        Ligand(std::string name) : ligand_name(name){}
+        unsigned id;
+        Ligand(std::string name) : ligand_name(name), id(ligand_id_counter++) {}
     };
     typedef std::pair<Enzyme *,Enzyme *> EnzymeEnzymePair;
     typedef std::pair<Enzyme *,Ligand *> EnzymeLigandPair;
