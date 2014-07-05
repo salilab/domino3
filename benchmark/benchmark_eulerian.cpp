@@ -163,7 +163,8 @@ void write_probabilities(unsigned int num_states,
   }
   for (unsigned int i = 0; i < num_states; ++i) {
       
-     auto it= std::max_element(probs[i].get(), probs[i].get()+states.size());
+      Probabilities::const_iterator it =
+              std::max_element(probs[i].get(), probs[i].get()+states.size());
       std::cout << *it << std::endl;
       std::cout << std::distance(probs[i].get(), it) << std::endl;
       std::cout << states[std::distance(probs[i].get(), it)] <<std::endl;
