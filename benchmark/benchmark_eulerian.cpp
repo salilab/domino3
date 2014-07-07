@@ -153,7 +153,7 @@ void refine(const Distances &distances, const Grid &grid,
 void write_probabilities(unsigned int num_states,
                          const Probabilities &probs, Grid &grid,
                          const States &states, std::string prefix) {
-  MY_LOG_TERSE("Writing probabilites to " << prefix << std::endl);
+  MY_LOG_TERSE("Writing probabilities to " << prefix << std::endl);
     
   for (unsigned int i = 0; i < num_states; ++i) {
       for (unsigned int j = 0; j < states.size(); ++j) {
