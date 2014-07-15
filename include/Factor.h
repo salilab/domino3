@@ -85,8 +85,6 @@ IMP_GRAPH(FactorGraph, undirected, base::Pointer<Factor>,
           << "[" << vertex->get_type_name() << ": "
           << vertex->get_index() << "]");
 
-IMPDOMINO3EXPORT FactorGraph get_factor_graph(const FactorsTemp &factors);
-
 IMPDOMINO3_END_NAMESPACE
 
 #endif /* IMPDOMINO3_FACTOR_H */
