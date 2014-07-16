@@ -14,6 +14,7 @@ IMP_SWIG_BASE_OBJECT(IMP::domino3, Updater, Updaters);
 IMP_SWIG_BASE_OBJECT(IMP::domino3, States, StatesList);
 IMP_SWIG_OBJECT(IMP::domino3, StatesTable, StatesTables);
 IMP_SWIG_OBJECT(IMP::domino3, XYZStates, XYZStatesList);
+IMP_SWIG_OBJECT(IMP::domino3, Marginals, MarginalsList);
 
 
 %include "IMP/domino3/Marginals.h"
