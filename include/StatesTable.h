@@ -62,7 +62,7 @@ class IMPDOMINO3EXPORT StatesTable : public IMP::base::Object {
   void add(kernel::ParticleIndex pi, States *e, Marginals *m);
   void set_rmf(RMF::NodeHandle parent);
   void add_to_frame();
-  void print_marginal();
+  void show_marginal();
   IMP_OBJECT_METHODS(StatesTable);
 };
 

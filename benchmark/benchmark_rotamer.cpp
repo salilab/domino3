@@ -94,13 +94,13 @@ namespace {
 //        IMP_NEW(IMP::domino3::Updater, ud, (factors, "updater"));
 //        
 //        std::cout << "before" << std::endl;
-//        st->print_marginal();
+//        st->show_marginal();
 //        ud->update(iterations);
 //        IMP::domino3::update_state_table(factors,st);
 //        IMP::domino3::print_graph(factors);
 //        std::cout << "after" << std::endl;
 //        
-//        st->print_marginal();
+//        st->show_marginal();
 //        double probability_to_see_best_match = 1;
 //        std::vector<int> order;
 //        for(int i = 0; i < residues.size(); i++){

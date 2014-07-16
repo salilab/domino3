@@ -53,7 +53,7 @@ void StatesTable::add_to_frame() {
   }
 }
 
-void StatesTable::print_marginal(){
+void StatesTable::show_marginal(){
       for (unsigned int i = 0; i < states_incoming_order_.size(); ++i) {
           IMP::domino3::Marginals * marg = this->get_marginals(states_incoming_order_[i]);
 	  std::cout << states_incoming_order_[i] << ": ";

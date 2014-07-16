@@ -127,7 +127,7 @@ namespace {
     RMF::FrameID cf = f.add_frame("frame", RMF::FRAME);
     st->add_to_frame();
     std::cout << "before" << std::endl;
-    st->print_marginal();
+    st->show_marginal();
 
       
     for (unsigned int i = 0; i < iterations; ++i) {
@@ -139,7 +139,7 @@ namespace {
       IMP::domino3::print_graph(factors);
     std::cout << "after" << std::endl;
 
-    st->print_marginal();
+    st->show_marginal();
       std::cout << "Weighted RMSD: " << calc_weighted_rmsd(vs,ps,st) << std::endl;
 
     double  diagonal[] =  {1,	1,  1	,1 , 1	,1, 1, 0.999085, 0.845624, 0.846366}; 

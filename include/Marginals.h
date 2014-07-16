@@ -85,13 +85,13 @@ public:
 
     }
     
-    inline void calculate_joint_probability(boost::scoped_array<FP> &array, const Marginals *marginals){
+    inline void compute_joint_probability(boost::scoped_array<FP> &array, const Marginals *marginals){
         for (unsigned int j = 0; j < this->get_number(); ++j) {
             array[j] = LogMathFunctions::mult(array[j], marginals->current_[j]);
         }
     }
     
-    inline void calculate_avarage_probability(boost::scoped_array<FP> &array, const Marginals *marginals){
+    inline void compute_average_probability(boost::scoped_array<FP> &array, const Marginals *marginals){
         FP avg_term = LogMathFunctions::convert_to_space(2.0);
 
         for (unsigned int j = 0; j < this->get_number(); ++j) {
@@ -124,7 +124,7 @@ public:
         check_current_normalized();
         for (unsigned int i = 0; i < others.size(); ++i) {
             IMP_USAGE_CHECK(others[i]->get_number() == this->get_number(), "size not match");
-            calculate_joint_probability(next_,others[i].get());
+            compute_joint_probability(next_,others[i].get());
             LogMathFunctions::normalize(next_.get(), this->get_number());
         }
         set_current_from_next();

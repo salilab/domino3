@@ -376,7 +376,7 @@ namespace {
             marginals->set_uniform();
             st->add(p->get_index(), ligand_states, marginals);
         }
-        st->print_marginal();
+        st->show_marginal();
 
         IMP::domino3::Factors factors;
         create_linear_graph(factors,st,m,
@@ -390,7 +390,7 @@ namespace {
         ud->update(iterations);
         IMP::domino3::update_state_table(factors,st);
         IMP::domino3::print_graph(factors);
-        st->print_marginal();
+        st->show_marginal();
         // find high prob. path
         IMP::domino3::FP probability_to_see_best_match = 1;
         std::vector<std::string> pathway;
