@@ -141,7 +141,7 @@ public:
         swap(current_, next_);
     }
     
-    /** Return a metric on the change (currently L0, could change) */
+    //! Return a metric on the change (currently L0, could change)
     FP get_change() const {
         return change_;
     }
