@@ -40,10 +40,10 @@ void fill_one(const Grid &grid,
               unsigned int index,
               Probabilities &probabilities) {
   States cur_states(grid.indexes_begin(bb), grid.indexes_end(bb));
-  if (cur_states.size() < state_map.size()) {
+/*if (cur_states.size() < state_map.size()) {
     MY_LOG_TERSE("Particle " << index << " has initial states " << cur_states
                  << std::endl);
-  }
+  }*/
   double cur_prob = 1.0/ cur_states.size();
   for (unsigned int i = 0; i < cur_states.size(); ++i) {
     probabilities[index][state_map.find(cur_states[i])->second]
@@ -153,9 +153,9 @@ void refine(const Distances &distances, const Grid &grid,
 void write_probabilities(unsigned int num_states,
                          const Probabilities &probs, Grid &grid,
                          const States &states, std::string prefix) {
-  MY_LOG_TERSE("Writing probabilities to " << prefix << std::endl);
+  //MY_LOG_TERSE("Writing probabilities to " << prefix << std::endl);
     
-  for (unsigned int i = 0; i < num_states; ++i) {
+/*for (unsigned int i = 0; i < num_states; ++i) {
       for (unsigned int j = 0; j < states.size(); ++j) {
           std::cout << probs[i][j] << "\t";
       }
@@ -168,7 +168,7 @@ void write_probabilities(unsigned int num_states,
       std::cout << *it << std::endl;
       std::cout << std::distance(probs[i].get(), it) << std::endl;
       std::cout << states[std::distance(probs[i].get(), it)] <<std::endl;
-  }
+  }*/
     
   for (unsigned int i = 0; i < num_states; ++i) {
     for (unsigned int j = 0; j < states.size(); ++j) {
@@ -248,20 +248,20 @@ int main(int argc, char **argv) {
 
     IMP::base::Vector<double> entropies
     = get_entropies(atoms.size(), states.size(), probabilities);
-    MY_LOG_VERBOSE("entropies are " << entropies << std::endl);
-    MY_LOG_VERBOSE("And the total is " << std::accumulate(entropies.begin(),
-                                                          entropies.end(), 0.0)
-                   << std::endl);
+    //MY_LOG_VERBOSE("entropies are " << entropies << std::endl);
+    //MY_LOG_VERBOSE("And the total is " << std::accumulate(entropies.begin(),
+    //                                                    entropies.end(), 0.0)
+    //             << std::endl);
 
   for (unsigned int i = 0; i < iterations; ++i) {
     refine(distances, grid, states, distance_index,
            probabilities, dirty_restraints);
     IMP::base::Vector<double> entropies
     = get_entropies(atoms.size(), states.size(), probabilities);
-    MY_LOG_VERBOSE("entropies are " << entropies << std::endl);
-    MY_LOG_VERBOSE("And the total is " << std::accumulate(entropies.begin(),
-                                                          entropies.end(), 0.0)
-                   << std::endl);
+    //MY_LOG_VERBOSE("entropies are " << entropies << std::endl);
+    //MY_LOG_VERBOSE("And the total is " << std::accumulate(entropies.begin(),
+    //                                                    entropies.end(), 0.0)
+    //             << std::endl);
   }
 
   write_probabilities(atoms.size(), probabilities, grid,

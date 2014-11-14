@@ -100,7 +100,7 @@ namespace {
           avg_dist +=cur_dist;
           counter++;
         IMP::kernel::ParticleIndexPair cur_pair(pis[i], pis[j]);
-          std::cout << pis[i] << ":" << pis[j] << " Curr dist: " << cur_dist << std::endl;
+        //std::cout << pis[i] << ":" << pis[j] << " Curr dist: " << cur_dist << std::endl;
         if (cur_dist < dist) {
 
             IMP_NEW(IMP::domino3::DistanceFactor, dn,(m, cur_pair, cur_dist, 7, st));
@@ -115,9 +115,9 @@ namespace {
 //        }
       }
     }
-       std::cout << "AVG Dist:" << avg_dist/counter;
-      std::cout << "Node error size: " << error_count << std::endl;
-      std::cout << "Node size: " << factors.size() << std::endl;
+    //std::cout << "AVG Dist:" << avg_dist/counter;
+    //std::cout << "Node error size: " << error_count << std::endl;
+    //std::cout << "Node size: " << factors.size() << std::endl;
     IMP::domino3::add_neighbors(factors);
  //     InteractionGraph ig = get_interaction_graph(rs, pst);
 //      SubsetGraph jt = get_junction_tree(ig);
@@ -126,8 +126,8 @@ namespace {
 
     RMF::FrameID cf = f.add_frame("frame", RMF::FRAME);
     st->add_to_frame();
-    std::cout << "before" << std::endl;
-    st->show_marginal();
+    //std::cout << "before" << std::endl;
+    //st->show_marginal();
 
       
     for (unsigned int i = 0; i < iterations; ++i) {
@@ -136,22 +136,22 @@ namespace {
       st->add_to_frame();
     }
     IMP::domino3::update_state_table(factors,st);
-      IMP::domino3::print_graph(factors);
-    std::cout << "after" << std::endl;
+    //IMP::domino3::print_graph(factors);
+    //std::cout << "after" << std::endl;
 
-    st->show_marginal();
-      std::cout << "Weighted RMSD: " << calc_weighted_rmsd(vs,ps,st) << std::endl;
+    //st->show_marginal();
+    //std::cout << "Weighted RMSD: " << calc_weighted_rmsd(vs,ps,st) << std::endl;
 
     double  diagonal[] =  {1,	1,  1	,1 , 1	,1, 1, 0.999085, 0.845624, 0.846366}; 
       for( int i = 0; i < pis.size(); i++){
           IMP::domino3::Marginals * m0 = st->get_marginals_by_order(i);
-          std::cout <<  diagonal[i] << " " << exp(m0->get_current_marginal(i)) << std::endl;
+          //std::cout <<  diagonal[i] << " " << exp(m0->get_current_marginal(i)) << std::endl;
           if( std::abs(diagonal[i] - exp(m0->get_current_marginal(i))) >0.1){
               std::cout << "Error in Test" << std::endl;
               exit(-1);
           }
       }
-      std::cout << "Test successful" <<std::endl;
+      //std::cout << "Test successful" <<std::endl;
   }
 }
 
