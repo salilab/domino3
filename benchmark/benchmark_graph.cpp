@@ -95,7 +95,7 @@ namespace {
                            EnzymeEnzymeScoreLookup &scores,
                            StringToEnzyme &id_to_enzyme,
                            IntToString &enzyme_id_to_name){
-        std::cout << "Read sea file: " << path << std::endl;
+        //std::cout << "Read sea file: " << path << std::endl;
 
         std::ifstream infile(path.c_str());
         std::string line;
@@ -123,7 +123,7 @@ namespace {
                            StringToEnzyme &id_to_enzyme,
                            StringToLigand &id_to_ligand,
                            IntToString    &ligand_id_to_name){
-        std::cout << "Read dock file: " << path << std::endl;
+        //std::cout << "Read dock file: " << path << std::endl;
         std::ifstream infile(path.c_str());
         std::string line;
         while (std::getline(infile, line))
@@ -148,7 +148,7 @@ namespace {
                            EnzymeLigandLigandScoreLookup &scores,
                            StringToEnzyme &id_to_enzyme,
                            StringToLigand &id_to_ligand){
-        std::cout << "Read chem sim. file: " << path << std::endl;
+        //std::cout << "Read chem sim. file: " << path << std::endl;
         std::ifstream infile(path.c_str());
         std::string line;
         while (std::getline(infile, line))
@@ -219,7 +219,7 @@ namespace {
                 excl_factor->set_was_used(true);
             }
         }        
-        std::cout << "Node size: " << factors.size() << std::endl;
+        //std::cout << "Node size: " << factors.size() << std::endl;
         IMP::domino3::add_neighbors(factors);
     }
     
@@ -227,11 +227,11 @@ namespace {
                    int size_x,
                    int size_y,int size_z,
                    bool normalize_square){
-        std::cout << "Normalize probability vector of size: " << " x: " << size_x << " y: " << size_y << " z: " << size_z << std::endl;
+        //std::cout << "Normalize probability vector of size: " << " x: " << size_x << " y: " << size_y << " z: " << size_z << std::endl;
 
         IMP::domino3::FP total = 0;
         for(int x = 0; x < size_x; x++){
-            std::cout << x << std::endl;
+            //std::cout << x << std::endl;
             IMP::domino3::FP * it = probability_vector.get()+(x*size_y*size_z);
             if(normalize_square)
                 total = std::accumulate(it, it + (size_z*size_y), 0.0);
@@ -288,7 +288,7 @@ namespace {
         IMP_USAGE_CHECK(ligands_in_chem == ligands_in_dock,"Not the same amount of ligands in Dock and Chem.");
 
 
-        std::cout << id_to_enzyme.size() << std::endl;
+        //std::cout << id_to_enzyme.size() << std::endl;
 
 
         
@@ -376,7 +376,7 @@ namespace {
             marginals->set_uniform();
             st->add(p->get_index(), ligand_states, marginals);
         }
-        st->show_marginal();
+        //st->show_marginal();
 
         IMP::domino3::Factors factors;
         create_linear_graph(factors,st,m,
@@ -389,8 +389,8 @@ namespace {
         IMP_NEW(IMP::domino3::Updater, ud, (factors, "updater"));
         ud->update(iterations);
         IMP::domino3::update_state_table(factors,st);
-        IMP::domino3::print_graph(factors);
-        st->show_marginal();
+        //IMP::domino3::print_graph(factors);
+        //st->show_marginal();
         // find high prob. path
         IMP::domino3::FP probability_to_see_best_match = 1;
         std::vector<std::string> pathway;
@@ -404,10 +404,10 @@ namespace {
             probability_to_see_best_match *= enzyme_order[0].first;
             pathway.push_back(enzyme_order[0].second);
             
-            std::cout << "Enzyme " << i << std::endl;
-            for(int state = 0; state <enzyme_order.size();state++){
+            //std::cout << "Enzyme " << i << std::endl;
+            /*for(int state = 0; state <enzyme_order.size();state++){
                 std::cout << enzyme_order[state].second << "\t" << enzyme_order[state].first << std::endl;
-            }
+            }*/
         }
         for(int i = enzyme_size; i < (enzyme_size+ligand_size); i++){
             std::vector<std::pair<IMP::domino3::FP, std::string> > ligand_order;
@@ -418,16 +418,16 @@ namespace {
             sort(ligand_order.begin(),ligand_order.end(), std::greater<std::pair<IMP::domino3::FP, std::string> >());
             probability_to_see_best_match *= ligand_order[0].first;
             pathway.push_back(ligand_order[0].second);
-            std::cout << "Ligand " << i-enzyme_size << std::endl;
-            for(int state = 0; state <ligand_order.size();state++){
+            //std::cout << "Ligand " << i-enzyme_size << std::endl;
+            /*for(int state = 0; state <ligand_order.size();state++){
                 std::cout << ligand_order[state].second << "\t" << ligand_order[state].first << std::endl;
-            }
+            }*/
         }
-        for(int i = 0; i < enzyme_size; i++){
+        /*for(int i = 0; i < enzyme_size; i++){
             std::cout << pathway[enzyme_size+i] << " > "<<  pathway[i] << " > " << pathway[enzyme_size+i+1] << " > ";
         }
         std::cout << std::endl;
-        std::cout << "probability to see best match:" << probability_to_see_best_match << std::endl;
+        std::cout << "probability to see best match:" << probability_to_see_best_match << std::endl;*/
         
         
     }

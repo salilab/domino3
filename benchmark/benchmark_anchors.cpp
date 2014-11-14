@@ -39,7 +39,7 @@ namespace {
     };
     typedef  std::vector<DistantRestraint * > DistantRestraints;
     DistantRestraints read_restraints(std::string path){
-        std::cout << "Read chem sim. file: " << path << std::endl;
+        //std::cout << "Read chem sim. file: " << path << std::endl;
         std::ifstream infile(path.c_str());
         std::string line;
         DistantRestraints ret_array;
@@ -133,21 +133,21 @@ namespace {
             dn->set_was_used(true);
         }
 
-        std::cout << "Node size: " << factors.size() << std::endl;
+        //std::cout << "Node size: " << factors.size() << std::endl;
         IMP::domino3::add_neighbors(factors);
         //     InteractionGraph ig = get_interaction_graph(rs, pst);
         //      SubsetGraph jt = get_junction_tree(ig);
         
         IMP_NEW(IMP::domino3::Updater, ud, (factors, "updater"));
         
-        std::cout << "before" << std::endl;
-        st->show_marginal();
+        //std::cout << "before" << std::endl;
+        //st->show_marginal();
         ud->update(iterations);
         IMP::domino3::update_state_table(factors,st);
-        IMP::domino3::print_graph(factors);
-        std::cout << "after" << std::endl;
+        //IMP::domino3::print_graph(factors);
+        //std::cout << "after" << std::endl;
         
-        st->show_marginal();
+        //st->show_marginal();
         double probability_to_see_best_match = 1;
         std::vector<int> order;
         for(size_t i = 0; i < residues.size(); i++){
@@ -160,10 +160,10 @@ namespace {
             order.push_back(pos_order[0].second);
         }
         
-        for(size_t i = 0 ; i < order.size();i++){
+/*      for(size_t i = 0 ; i < order.size();i++){
             std::cout << order[i] << " ";
         }
-        std::cout << std::endl;
+        std::cout << std::endl;*/
         
         //    std::cout << "Weighted RMSD: " << calc_weighted_rmsd(vs,ps,st) << std::endl;
     }
@@ -177,10 +177,10 @@ int main(int argc, char **argv) {
     //    IMP::atom::Hierarchy pdb = IMP::atom:: (input, m,new IMP::atom::CAlphaPDBSelector());
     
     IMP::multifit::AnchorsData data = IMP::multifit::read_anchors_data(anchors.c_str());
-    for(size_t i = 0; i < data.edges_.size(); i++){
+/*  for(size_t i = 0; i < data.edges_.size(); i++){
         std::cout << data.edges_[i].first << " " << data.edges_[i].second << std::endl;
-    }
-    std::cout << "bla" << std::endl;
+    }*/
+    //std::cout << "bla" << std::endl;
     //  IMP::atom::Atoms atoms
     //    = IMP::atom::get_by_type(pdb, IMP::atom::ATOM_TYPE);
     
