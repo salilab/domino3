@@ -61,12 +61,12 @@ void Updater::update(unsigned int iterations) {
     float before_change  = 0.0f;
     float before_entropy = 0.0f;
     for (unsigned int i = 0; i < iterations; ++i) {
-        std::cout << "Iteration " << i << std::endl;
+        IMP_LOG_VERBOSE("Iteration " << i << std::endl);
         do_update();
         float entropy_change = std::abs(this->entropy - before_entropy);
         float current_change = std::abs(this->change  - before_change);
-        std::cout << "Change: "  << current_change << std::endl;
-        std::cout << "Entropy: " << entropy_change << std::endl;
+        IMP_LOG_VERBOSE("Change: "  << current_change << std::endl);
+        IMP_LOG_VERBOSE("Entropy: " << entropy_change << std::endl);
         if(entropy_change < 0.01 && current_change < 0.01 )
             break;
         before_change  = this->change ;

@@ -32,7 +32,6 @@ DistanceFactor::DistanceFactor(kernel::Model *m,
   this->allowed_error = allowed_error;
   States *ps0 = pst->get_states(pis[0]), *ps1 = pst->get_states(pis[1]);
   this->distances = new FP[ps0->get_number()*ps1->get_number()];
-      std::cout << get_distance_name(pis) << std::endl;
   for (unsigned int i = 0; i < ps0->get_number(); ++i) {
   ps0->load(i, pis[0]);
      for (unsigned int j = 0; j < ps1->get_number(); ++j) {
