@@ -6,10 +6,10 @@
 #define IMPDOMINO3_EXCLUDED_VOLUME_FACTOR_H
 
 #include <IMP/domino3/domino3_config.h>
-#include <IMP/kernel/ModelObject.h>
+#include <IMP/ModelObject.h>
 #include <IMP/base/object_macros.h>
 #include <IMP/base/graph_macros.h>
-#include <IMP/kernel/particle_index.h>
+#include <IMP/particle_index.h>
 #include "Marginals.h"
 
 IMPDOMINO3_BEGIN_NAMESPACE
@@ -20,7 +20,7 @@ class IMPDOMINO3EXPORT ExcludedVolumeFactor: public Factor {
   virtual void do_update() IMP_OVERRIDE;
  public:
   ExcludedVolumeFactor(Model *m,
-                     const kernel::ParticleIndexPair &pis,
+                     const ParticleIndexPair &pis,
                      StatesTable *pst);
 
   IMP_OBJECT_METHODS(ExcludedVolumeFactor);

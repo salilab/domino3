@@ -1,9 +1,9 @@
 /**
- * Copyright 2007-2014 IMP Inventors. All rights reserved.
+ * Copyright 2007-2015 IMP Inventors. All rights reserved.
  */
 
 #include <IMP/base/flags.h>
-#include <IMP/kernel/Model.h>
+#include <IMP/Model.h>
 #include <IMP/atom/Hierarchy.h>
 #include <IMP/atom/hierarchy_tools.h>
 #include <IMP/atom/pdb.h>
@@ -60,8 +60,8 @@ namespace {
     }
     
     
-    double calc_weighted_rmsd(IMP::algebra::Vector3Ds &vs, const IMP::kernel::ParticlesTemp &ps,IMP::domino3::StatesTable *pst){
-        IMP::kernel::ParticleIndexes pis = IMP::kernel::get_indexes(ps);
+    double calc_weighted_rmsd(IMP::algebra::Vector3Ds &vs, const IMP::ParticlesTemp &ps,IMP::domino3::StatesTable *pst){
+        IMP::ParticleIndexes pis = IMP::get_indexes(ps);
         double ret_sum=0.0;
         for (unsigned int i = 0; i < ps.size(); ++i) {
             IMP::domino3::Marginals * marg = pst->get_marginals(pis[i]);
@@ -90,7 +90,7 @@ namespace {
     
     
     
-    void run_it(IMP::kernel::Model *m, const IMP::algebra::Vector3Ds &vs_org) {
+    void run_it(IMP::Model *m, const IMP::algebra::Vector3Ds &vs_org) {
         DistantRestraints restraints=read_restraints(restraints_path);
         boost::unordered_set<int> residues;
         for(size_t i = 0; i < restraints.size(); i++){
@@ -99,11 +99,11 @@ namespace {
         }
         IMP::ParticlesTemp ps;
         for(size_t i = 0; i < vs_org.size(); i++){
-            IMP::kernel::Particle * p = new IMP::kernel::Particle(m);
+            IMP::Particle * p = new IMP::Particle(m);
             ps.push_back(p);
             IMP::core::XYZR::setup_particle(m, p->get_index(),  IMP::algebra::Sphere3D(vs_org[i], 1));
         }
-        IMP::kernel::ParticleIndexes pis = IMP::kernel::get_indexes(ps);
+        IMP::ParticleIndexes pis = IMP::get_indexes(ps);
         for(size_t i = 0; i < pis.size(); i++){
             std::ostringstream oss;
             oss  << pis[i];
@@ -127,7 +127,7 @@ namespace {
         
         IMP::domino3::Factors factors;
         for(size_t i = 0; i < restraints.size(); i++){
-            IMP::kernel::ParticleIndexPair cur_pair(pis[restraints[i]->from], pis[restraints[i]->to]);
+            IMP::ParticleIndexPair cur_pair(pis[restraints[i]->from], pis[restraints[i]->to]);
             IMP_NEW(IMP::domino3::DistanceFactor, dn,(m, cur_pair, restraints[i]->dist, 1, st));
             factors.push_back(dn);
             dn->set_was_used(true);
@@ -173,7 +173,7 @@ namespace {
 
 int main(int argc, char **argv) {
     IMP::base::setup_from_argv(argc, argv, "Experiment with loopy domino");
-    IMP_NEW(IMP::kernel::Model, m, ());
+    IMP_NEW(IMP::Model, m, ());
     //    IMP::atom::Hierarchy pdb = IMP::atom:: (input, m,new IMP::atom::CAlphaPDBSelector());
     
     IMP::multifit::AnchorsData data = IMP::multifit::read_anchors_data(anchors.c_str());

@@ -1,9 +1,9 @@
 /**
- * Copyright 2007-2014 IMP Inventors. All rights reserved.
+ * Copyright 2007-2015 IMP Inventors. All rights reserved.
  */
 
 #include <IMP/base/flags.h>
-#include <IMP/kernel/Model.h>
+#include <IMP/Model.h>
 #include <IMP/atom/Hierarchy.h>
 #include <IMP/atom/hierarchy_tools.h>
 #include <IMP/atom/pdb.h>
@@ -90,7 +90,7 @@ namespace {
 
     typedef boost::unordered_map<std::string, Ligand *>  StringToLigand;
     
-    void read_in_sea_file(IMP::kernel::Model *m,
+    void read_in_sea_file(IMP::Model *m,
                            std::string path,
                            EnzymeEnzymeScoreLookup &scores,
                            StringToEnzyme &id_to_enzyme,
@@ -117,7 +117,7 @@ namespace {
     }
     
     
-    void read_in_dock_file(IMP::kernel::Model *m,
+    void read_in_dock_file(IMP::Model *m,
                            std::string path,
                            EnzymeLigandScoreLookup &scores,
                            StringToEnzyme &id_to_enzyme,
@@ -143,7 +143,7 @@ namespace {
     }
     
     
-    void read_in_chem_file(IMP::kernel::Model *m,
+    void read_in_chem_file(IMP::Model *m,
                            std::string path,
                            EnzymeLigandLigandScoreLookup &scores,
                            StringToEnzyme &id_to_enzyme,
@@ -171,32 +171,32 @@ namespace {
     
     void create_linear_graph(IMP::domino3::Factors &factors,
                              IMP::domino3::StatesTable * st,
-                             IMP::kernel::Model *m,
+                             IMP::Model *m,
                              int enzyme_size,int ligand_size,
                              boost::shared_array<IMP::domino3::FP> &sea_probability_vector,
                              boost::shared_array<IMP::domino3::FP> &dock_probability_vector,
                              IMP::domino3::Probability3D * chem_probability){
         IMP::domino3::FactorEdges edges;
-        IMP::kernel::ParticleIndexes pis = st->get_particle_indexes();
+        IMP::ParticleIndexes pis = st->get_particle_indexes();
         int ENZYME_SIZE=enzyme_size;
         int LIGAND_SIZE=ligand_size;
         // create SEA factors 
         for(int i = 0; i < ENZYME_SIZE-1; i++) {
-            IMP::kernel::ParticleIndexPair cur_pair1(pis[i], pis[i+1]);
+            IMP::ParticleIndexPair cur_pair1(pis[i], pis[i+1]);
             IMP_NEW(IMP::domino3::Probability2DFactor, pf1,(m, cur_pair1, st, sea_probability_vector));
             factors.push_back(pf1);
             pf1->set_was_used(true);
         }
         // create dock factors
         for(int i = 0; i < ENZYME_SIZE; i++) {
-            IMP::kernel::ParticleIndexPair cur_pair3(pis[i], pis[ENZYME_SIZE+i]);
+            IMP::ParticleIndexPair cur_pair3(pis[i], pis[ENZYME_SIZE+i]);
             IMP_NEW(IMP::domino3::Probability2DFactor, pf3,(m, cur_pair3, st, dock_probability_vector));
             factors.push_back(pf3);
             pf3->set_was_used(true);
         }
         // create chem. sim. factors
         for(int i = 0; i < ENZYME_SIZE; i++) {
-            IMP::kernel::ParticleIndexTriplet cur_triplet1(pis[i], pis[ENZYME_SIZE+i], pis[ENZYME_SIZE+i+1]);
+            IMP::ParticleIndexTriplet cur_triplet1(pis[i], pis[ENZYME_SIZE+i], pis[ENZYME_SIZE+i+1]);
             IMP_NEW(IMP::domino3::Probability3DFactor, pf3d1,(m, cur_triplet1, st, chem_probability));
             factors.push_back(pf3d1);
             pf3d1->set_was_used(true);
@@ -204,7 +204,7 @@ namespace {
         // create exclude IMP::domino3::FP enzyme
         for(int x = 0 ; x< ENZYME_SIZE; x++){
             for(int y = 0; y < x ; y++){
-                IMP::kernel::ParticleIndexPair excl_pair(pis[x], pis[y]);
+                IMP::ParticleIndexPair excl_pair(pis[x], pis[y]);
                 IMP_NEW(IMP::domino3::ExcludedVolumeFactor, excl_factor,(m, excl_pair, st));
                 factors.push_back(excl_factor);
                 excl_factor->set_was_used(true);
@@ -213,7 +213,7 @@ namespace {
         // create exclude IMP::domino3::FP ligand
         for(int x = ENZYME_SIZE ; x< (ENZYME_SIZE+LIGAND_SIZE); x++){
             for(int y = ENZYME_SIZE; y < x ; y++){
-                IMP::kernel::ParticleIndexPair excl_pair(pis[x], pis[y]);
+                IMP::ParticleIndexPair excl_pair(pis[x], pis[y]);
                 IMP_NEW(IMP::domino3::ExcludedVolumeFactor, excl_factor,(m, excl_pair, st));
                 factors.push_back(excl_factor);
                 excl_factor->set_was_used(true);
@@ -250,7 +250,7 @@ namespace {
             }
         }
     }
-    void run_it(IMP::kernel::Model *m) {
+    void run_it(IMP::Model *m) {
         StringToEnzyme id_to_enzyme;
         IntToString enzyme_id_to_name;
 
@@ -364,14 +364,14 @@ namespace {
         IMP_NEW(IMP::domino3::IndexStates, ligand_states, (m, ligand_ids));
         // Enzymes
         for (int i = 0; i < enzyme_size; i++){
-            IMP::kernel::Particle * p = new IMP::kernel::Particle(m);
+            IMP::Particle * p = new IMP::Particle(m);
             IMP_NEW(IMP::domino3::Marginals, marginals, (m, p->get_index(), id_to_enzyme.size()));
             marginals->set_uniform();
             st->add(p->get_index(), enzyme_states, marginals);
         }
         // Ligands
         for (int i = 0; i < ligand_size; i++){
-            IMP::kernel::Particle * p = new IMP::kernel::Particle(m);
+            IMP::Particle * p = new IMP::Particle(m);
             IMP_NEW(IMP::domino3::Marginals, marginals, (m, p->get_index(), id_to_ligand.size()));
             marginals->set_uniform();
             st->add(p->get_index(), ligand_states, marginals);
@@ -437,7 +437,7 @@ namespace {
 
 int main(int argc, char **argv) {
     IMP::base::setup_from_argv(argc, argv, "Experiment with loopy domino");
-    IMP_NEW(IMP::kernel::Model, m, ());
+    IMP_NEW(IMP::Model, m, ());
     run_it(m);
     return 0;
 }

@@ -6,11 +6,11 @@
 #define IMPDOMINO3_PROBABILITY3D_FACTOR_H
 
 #include <IMP/domino3/domino3_config.h>
-#include <IMP/kernel/ModelObject.h>
+#include <IMP/ModelObject.h>
 #include "Factor.h"
 #include <IMP/base/object_macros.h>
 #include <IMP/base/graph_macros.h>
-#include <IMP/kernel/particle_index.h>
+#include <IMP/particle_index.h>
 #include <IMP/domino3/Probability3D.h>
 
 #include "Marginals.h"
@@ -19,7 +19,7 @@ IMPDOMINO3_BEGIN_NAMESPACE
 
 /** A factor for a single distance restraint. */
 class IMPDOMINO3EXPORT Probability3DFactor: public Factor {
-  kernel::ParticleIndexTriplet pis_;
+  ParticleIndexTriplet pis_;
   StatesTable *pst_;
   Probability3D * log_probability;
  protected:
@@ -27,8 +27,8 @@ class IMPDOMINO3EXPORT Probability3DFactor: public Factor {
 private:
 
  public:
-  Probability3DFactor(kernel::Model *m,
-          const kernel::ParticleIndexTriplet &pis,
+  Probability3DFactor(Model *m,
+          const ParticleIndexTriplet &pis,
           StatesTable *pst,
           Probability3D * log_probability);
 

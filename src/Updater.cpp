@@ -1,7 +1,7 @@
 /**
  *  \file IMP/domino3/Updater.cpp
  *
- *  Copyright 2007-2014 IMP Inventors. All rights reserved.
+ *  Copyright 2007-2015 IMP Inventors. All rights reserved.
  *
  */
 
@@ -20,7 +20,7 @@ base::Object(name), factors_(graph) {
 }
 
 void Updater::do_update() {
-    boost::unordered_set<kernel::ParticleIndex> changed;
+    boost::unordered_set<ParticleIndex> changed;
     std::random_shuffle ( cur_queue_.begin(), cur_queue_.end() );
     this->change  = 0.0f;
     this->entropy  = 0.0f;

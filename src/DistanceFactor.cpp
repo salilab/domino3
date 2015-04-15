@@ -1,7 +1,7 @@
 /**
  *  \file IMP/domino3/DistanceFactor.cpp
  *
- *  Copyright 2007-2014 IMP Inventors. All rights reserved.
+ *  Copyright 2007-2015 IMP Inventors. All rights reserved.
  *
  */
 
@@ -10,18 +10,18 @@
 
 IMPDOMINO3_BEGIN_NAMESPACE
 namespace {
-    std::string get_distance_name(const kernel::ParticleIndexPair &pis) {
+    std::string get_distance_name(const ParticleIndexPair &pis) {
         std::ostringstream oss;
         oss << "Distance-" << pis[0] << "-" << pis[1];
         return oss.str();
     }
 }
 
-DistanceFactor::DistanceFactor(kernel::Model *m,
-               const kernel::ParticleIndexPair &pis,
+DistanceFactor::DistanceFactor(Model *m,
+               const ParticleIndexPair &pis,
                FP distance, FP allowed_error,
                StatesTable *pst):
-  Factor(m, kernel::ParticleIndexes(pis.begin(), pis.end()),
+  Factor(m, ParticleIndexes(pis.begin(), pis.end()),
        pst, get_distance_name(pis)), distance_(distance),
   allowed_error_(allowed_error) {
   // precompile allowed states, use some sort of location structure later

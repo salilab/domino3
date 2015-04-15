@@ -1,7 +1,7 @@
 /**
  *  \file IMP/domino3/ExcludedVolumeFactor.cpp
  *
- *  Copyright 2007-2014 IMP Inventors. All rights reserved.
+ *  Copyright 2007-2015 IMP Inventors. All rights reserved.
  *
  */
 
@@ -10,7 +10,7 @@
 IMPDOMINO3_BEGIN_NAMESPACE
 
 namespace {
-    std::string get_ev_name(const kernel::ParticleIndexPair &pis) {
+    std::string get_ev_name(const ParticleIndexPair &pis) {
         std::ostringstream oss;
         oss << "EV-" << pis[0] << "-" << pis[1];
         return oss.str();
@@ -20,9 +20,9 @@ namespace {
 
 
 ExcludedVolumeFactor::ExcludedVolumeFactor(Model *m,
-                                           const kernel::ParticleIndexPair &pis,
+                                           const ParticleIndexPair &pis,
                                            StatesTable *pst):
-Factor(m, kernel::ParticleIndexes(pis.begin(), pis.end()),
+Factor(m, ParticleIndexes(pis.begin(), pis.end()),
        pst, get_ev_name(pis)) {
 }
 

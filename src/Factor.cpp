@@ -1,7 +1,7 @@
 /**
  *  \file IMP/domino3/Factor.cpp
  *
- *  Copyright 2007-2014 IMP Inventors. All rights reserved.
+ *  Copyright 2007-2015 IMP Inventors. All rights reserved.
  *
  */
 
@@ -57,7 +57,7 @@ void Factor::set_matching_inputs(Factor *n){
     ParticleIndexes pis = n->get_particle_indexes();
     for (unsigned int i = 0; i < pis.size(); ++i) {
         // just add variables that are really match
-        kernel::ParticleIndexes::const_iterator it = std::find(pis_.begin(),
+        ParticleIndexes::const_iterator it = std::find(pis_.begin(),
                                                                pis_.end(),
                                                                pis[i]);
         if (it != pis_.end()) {
@@ -93,7 +93,7 @@ FactorGraph get_node_graph(const FactorsTemp &nodes) {
     vm[i] = nodes[i];
     // create self edge too
     for (unsigned int j = 0; j <= i; ++j) {
-      kernel::ParticleIndexes intersection;
+      ParticleIndexes intersection;
       std::set_intersection(nodes[i]->get_particle_indexes().begin(),
                             nodes[i]->get_particle_indexes().end(),
                             nodes[j]->get_particle_indexes().begin(),
@@ -110,10 +110,10 @@ FactorGraph get_node_graph(const FactorsTemp &nodes) {
 
 void add_neighbors(const FactorsTemp &nodes) {
   for (unsigned int i = 0; i < nodes.size(); ++i) {
-    kernel::ParticleIndexes pisi = nodes[i]->get_particle_indexes();
+    ParticleIndexes pisi = nodes[i]->get_particle_indexes();
     for (unsigned int j = 0; j < i; ++j) {
-      kernel::ParticleIndexes pisj = nodes[j]->get_particle_indexes();
-      kernel::ParticleIndexes intersection;
+      ParticleIndexes pisj = nodes[j]->get_particle_indexes();
+      ParticleIndexes intersection;
       std::set_intersection(pisi.begin(),
                             pisi.end(),
                             pisj.begin(),
@@ -151,7 +151,7 @@ void update_state_table(const FactorsTemp &nodes,const StatesTable *pst) {
 void print_graph(const FactorsTemp &nodes){
 
     for (unsigned int i = 0; i < nodes.size(); ++i) {
-        kernel::ParticleIndexes particles=nodes[i]->get_particle_indexes();
+        ParticleIndexes particles=nodes[i]->get_particle_indexes();
         std::cout << particles << " -> ";
         FactorsTemp neighbors = nodes[i]->get_neighbors();
         for(int j = 0; j < neighbors.size(); j++){

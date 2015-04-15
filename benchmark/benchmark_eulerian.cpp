@@ -1,9 +1,9 @@
 /**
- * Copyright 2007-2014 IMP Inventors. All rights reserved.
+ * Copyright 2007-2015 IMP Inventors. All rights reserved.
  */
 
 #include <IMP/base/flags.h>
-#include <IMP/kernel/Model.h>
+#include <IMP/Model.h>
 #include <IMP/atom/Hierarchy.h>
 #include <IMP/atom/hierarchy_tools.h>
 #include <IMP/em/DensityMap.h>
@@ -69,8 +69,8 @@ IMP::base::Vector<double> get_entropies(unsigned int num_variables,
 
 /** Be lazy and pin the first 4. I don't think it matters.
 */
-void initialize_probabilities(IMP::kernel::Model *m,
-                              const IMP::kernel::ParticleIndexes &pis,
+void initialize_probabilities(IMP::Model *m,
+                              const IMP::ParticleIndexes &pis,
                               const Grid &grid,
                               const States &states,
                               Probabilities &probabilities) {
@@ -201,7 +201,7 @@ IMP::base::AddStringFlag input_adder("input",
 
 int main(int argc, char **argv) {
   IMP::base::setup_from_argv(argc, argv, "Experiment with loopy domino");
-  IMP_NEW(IMP::kernel::Model, m, ());
+  IMP_NEW(IMP::Model, m, ());
     IMP::atom::Hierarchy pdb = IMP::atom::read_pdb(input, m, new IMP::atom::CAlphaPDBSelector());
   // add coordinates to residues
   {
@@ -231,7 +231,7 @@ int main(int argc, char **argv) {
             grid.indexes_end(grid.get_bounding_box()),
             std::back_inserter(states));
   Probabilities probabilities;
-  IMP::kernel::ParticleIndexes pis(atoms.size());
+  IMP::ParticleIndexes pis(atoms.size());
   for (unsigned int i = 0; i< atoms.size(); ++i) {
     pis[i] = atoms[i].get_particle_index();
   }

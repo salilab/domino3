@@ -6,18 +6,18 @@
 #define IMPDOMINO3_PROBABILITY2DFACTOR_H
 
 #include <IMP/domino3/domino3_config.h>
-#include <IMP/kernel/ModelObject.h>
+#include <IMP/ModelObject.h>
 #include "Factor.h"
 #include <IMP/base/object_macros.h>
 #include <IMP/base/graph_macros.h>
-#include <IMP/kernel/particle_index.h>
+#include <IMP/particle_index.h>
 #include "Marginals.h"
 
 IMPDOMINO3_BEGIN_NAMESPACE
 
 /** A factor for a single distance restraint. */
 class IMPDOMINO3EXPORT Probability2DFactor: public Factor {
-  kernel::ParticleIndexPair pis_;
+  ParticleIndexPair pis_;
   StatesTable *pst_;
   boost::shared_array<FP> log_probability_;
  protected:
@@ -25,8 +25,8 @@ class IMPDOMINO3EXPORT Probability2DFactor: public Factor {
 private:
 
  public:
-  Probability2DFactor(kernel::Model *m,
-          const kernel::ParticleIndexPair &pis,
+  Probability2DFactor(Model *m,
+          const ParticleIndexPair &pis,
           StatesTable *pst,
           boost::shared_array<FP> &log_probability);
 

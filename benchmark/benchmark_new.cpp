@@ -1,9 +1,9 @@
 /**
- * Copyright 2007-2014 IMP Inventors. All rights reserved.
+ * Copyright 2007-2015 IMP Inventors. All rights reserved.
  */
 
 #include <IMP/base/flags.h>
-#include <IMP/kernel/Model.h>
+#include <IMP/Model.h>
 #include <IMP/atom/Hierarchy.h>
 #include <IMP/atom/hierarchy_tools.h>
 #include <IMP/atom/pdb.h>
@@ -28,8 +28,8 @@ namespace {
 
     
     
-  double calc_weighted_rmsd(IMP::algebra::Vector3Ds &vs, const IMP::kernel::ParticlesTemp &ps,IMP::domino3::StatesTable *pst){
-      IMP::kernel::ParticleIndexes pis = IMP::kernel::get_indexes(ps);
+  double calc_weighted_rmsd(IMP::algebra::Vector3Ds &vs, const IMP::ParticlesTemp &ps,IMP::domino3::StatesTable *pst){
+      IMP::ParticleIndexes pis = IMP::get_indexes(ps);
       double ret_sum=0.0;
       for (unsigned int i = 0; i < ps.size(); ++i) {
           IMP::domino3::Marginals * marg = pst->get_marginals(pis[i]);
@@ -59,8 +59,8 @@ namespace {
     
     
     
-  void run_it(IMP::kernel::Model *m, const IMP::kernel::ParticlesTemp &ps) {
-    IMP::kernel::ParticleIndexes pis = IMP::kernel::get_indexes(ps);
+  void run_it(IMP::Model *m, const IMP::ParticlesTemp &ps) {
+    IMP::ParticleIndexes pis = IMP::get_indexes(ps);
       for( int i = 0; i < pis.size(); i++){
           std::ostringstream oss;
           oss  << pis[i];
@@ -99,7 +99,7 @@ namespace {
         double cur_dist = IMP::core::get_distance(di, dj);
           avg_dist +=cur_dist;
           counter++;
-        IMP::kernel::ParticleIndexPair cur_pair(pis[i], pis[j]);
+        IMP::ParticleIndexPair cur_pair(pis[i], pis[j]);
           std::cout << pis[i] << ":" << pis[j] << " Curr dist: " << cur_dist << std::endl;
         if (cur_dist < dist) {
 
@@ -148,13 +148,13 @@ namespace {
 
 int main(int argc, char **argv) {
   IMP::base::setup_from_argv(argc, argv, "Experiment with loopy domino");
-  IMP_NEW(IMP::kernel::Model, m, ());
+  IMP_NEW(IMP::Model, m, ());
     IMP::atom::Hierarchy pdb = IMP::atom::read_pdb(input, m,new IMP::atom::CAlphaPDBSelector());
   IMP::atom::Atoms atoms
     = IMP::atom::get_by_type(pdb, IMP::atom::ATOM_TYPE);
 
 
-    run_it(m, IMP::kernel::ParticlesTemp(atoms.begin(), atoms.end()));
+    run_it(m, IMP::ParticlesTemp(atoms.begin(), atoms.end()));
 
   return 0;
 }

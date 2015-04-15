@@ -2,7 +2,7 @@
  *  \file IMP/domino3/XYZStates.h
  *  \brief A beyesian infererence-based sampler.
  *
- *  Copyright 2007-2014 IMP Inventors. All rights reserved.
+ *  Copyright 2007-2015 IMP Inventors. All rights reserved.
  *
  */
 
@@ -11,7 +11,7 @@
 
 #include <IMP/domino3/domino3_config.h>
 #include <IMP/algebra/Vector3D.h>
-#include <IMP/kernel/particle_index.h>
+#include <IMP/particle_index.h>
 
 IMPDOMINO3_BEGIN_NAMESPACE
 

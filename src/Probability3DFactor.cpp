@@ -1,7 +1,7 @@
 /**
  *  \file IMP/domino3/Probability3DFactor.cpp
  *
- *  Copyright 2007-2014 IMP Inventors. All rights reserved.
+ *  Copyright 2007-2015 IMP Inventors. All rights reserved.
  *
  */
 
@@ -11,16 +11,16 @@
 
 IMPDOMINO3_BEGIN_NAMESPACE
 namespace {
-    std::string get_prob3d_name(const kernel::ParticleIndexTriplet &pis) {
+    std::string get_prob3d_name(const ParticleIndexTriplet &pis) {
         std::ostringstream oss;
         oss << "Probability3dFactor-" << pis[0] << "-" << pis[1]<< "-" << pis[2] ;
         return oss.str();
     }
 }
 
-Probability3DFactor::Probability3DFactor(kernel::Model *m,const kernel::ParticleIndexTriplet &pis,
+Probability3DFactor::Probability3DFactor(Model *m,const ParticleIndexTriplet &pis,
                                          StatesTable *pst, Probability3D * log_probability):
-Factor(m, kernel::ParticleIndexes(pis.begin(), pis.end()),
+Factor(m, ParticleIndexes(pis.begin(), pis.end()),
        pst, get_prob3d_name(pis)), log_probability(log_probability),pis_(pis),pst_(pst) {
     
     States *ps2 = pst_->get_states(pis_[2]);

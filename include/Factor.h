@@ -6,11 +6,11 @@
 #define IMPDOMINO3_FACTOR_H
 
 #include <IMP/domino3/domino3_config.h>
-#include <IMP/kernel/ModelObject.h>
+#include <IMP/ModelObject.h>
 #include <IMP/base/object_macros.h>
 #include <IMP/base/graph_macros.h>
 #include "StatesTable.h"
-#include <IMP/kernel/particle_index.h>
+#include <IMP/particle_index.h>
 #include "Marginals.h"
 
 IMPDOMINO3_BEGIN_NAMESPACE
@@ -27,9 +27,9 @@ typedef std::vector<FactorEdge> FactorEdges;
 
 
 /** Factor updates its marginals based on some criteria. */
-class IMPDOMINO3EXPORT Factor: public kernel::ModelObject {
+class IMPDOMINO3EXPORT Factor: public ModelObject {
   base::Vector<MarginalsList> inputs_;
-  kernel::ParticleIndexes pis_;
+  ParticleIndexes pis_;
   MarginalsList mine_;
   FactorsTemp neighbors_;
   unsigned int index_;
@@ -38,17 +38,17 @@ class IMPDOMINO3EXPORT Factor: public kernel::ModelObject {
       from the inputs (via averaging). */
   virtual void do_update() = 0;
 
-  virtual kernel::ModelObjectsTemp do_get_outputs() const IMP_OVERRIDE {
-    return kernel::ModelObjectsTemp();
+  virtual ModelObjectsTemp do_get_outputs() const IMP_OVERRIDE {
+    return ModelObjectsTemp();
   }
 
-  virtual kernel::ModelObjectsTemp do_get_inputs() const IMP_OVERRIDE {
-    return kernel::get_particles(get_model(), get_particle_indexes());
+  virtual ModelObjectsTemp do_get_inputs() const IMP_OVERRIDE {
+    return get_particles(get_model(), get_particle_indexes());
   }
 
  public:
-  Factor(kernel::Model *m,
-       const kernel::ParticleIndexes &pis,
+  Factor(Model *m,
+       const ParticleIndexes &pis,
        StatesTable *pst,
        std::string name);
 
@@ -56,7 +56,7 @@ class IMPDOMINO3EXPORT Factor: public kernel::ModelObject {
   void update();
 
   //! always sorted
-  const kernel::ParticleIndexes &get_particle_indexes() const { return pis_; }
+  const ParticleIndexes &get_particle_indexes() const { return pis_; }
 
   const MarginalsList& get_marginals() const { return mine_; }
 
@@ -80,7 +80,7 @@ IMPDOMINO3EXPORT void update_state_table(const FactorsTemp &factors,const States
 
 
 IMP_GRAPH(FactorGraph, undirected, base::Pointer<Factor>,
-          kernel::ParticleIndexes,
+          ParticleIndexes,
           out << vertex->get_name() << "\\n"
           << "[" << vertex->get_type_name() << ": "
           << vertex->get_index() << "]");

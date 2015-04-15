@@ -1,7 +1,7 @@
 /**
  *  \file IMP/domino3/Probability2DFactor.cpp
  *
- *  Copyright 2007-2014 IMP Inventors. All rights reserved.
+ *  Copyright 2007-2015 IMP Inventors. All rights reserved.
  *
  */
 
@@ -10,16 +10,16 @@
 
 IMPDOMINO3_BEGIN_NAMESPACE
 namespace {
-    std::string get_prob_name(const kernel::ParticleIndexPair &pis) {
+    std::string get_prob_name(const ParticleIndexPair &pis) {
         std::ostringstream oss;
         oss << "ProbabilityFactor-" << pis[0] << "-" << pis[1];
         return oss.str();
     }
 }
 
-Probability2DFactor::Probability2DFactor(kernel::Model *m,const kernel::ParticleIndexPair &pis,
+Probability2DFactor::Probability2DFactor(Model *m,const ParticleIndexPair &pis,
                                      StatesTable *pst, boost::shared_array<FP> &log_probability):
-  Factor(m, kernel::ParticleIndexes(pis.begin(), pis.end()),
+  Factor(m, ParticleIndexes(pis.begin(), pis.end()),
          pst, get_prob_name(pis)), log_probability_(log_probability),pis_(pis),pst_(pst) {
 }
 

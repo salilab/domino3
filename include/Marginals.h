@@ -24,10 +24,10 @@ class IMPDOMINO3EXPORT Marginals: public base::Object {
     boost::scoped_array<FP> current_, next_;
     unsigned int size_;
     FP change_;
-    kernel::ParticleIndex pi_;
+    ParticleIndex pi_;
     
 public:
-    Marginals(kernel::Model *m, kernel::ParticleIndex pi, unsigned int size);
+    Marginals(Model *m, ParticleIndex pi, unsigned int size);
     
     inline FP * get_current_marginal(){
         return current_.get();
@@ -146,7 +146,7 @@ public:
         return change_;
     }
     
-    kernel::ParticleIndex get_particle_index() const {
+    ParticleIndex get_particle_index() const {
         return pi_;
     }
     

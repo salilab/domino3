@@ -1,9 +1,9 @@
 /**
- * Copyright 2007-2014 IMP Inventors. All rights reserved.
+ * Copyright 2007-2015 IMP Inventors. All rights reserved.
  */
 
 #include <IMP/base/flags.h>
-#include <IMP/kernel/Model.h>
+#include <IMP/Model.h>
 #include <IMP/atom/Hierarchy.h>
 #include <IMP/atom/hierarchy_tools.h>
 #include <IMP/atom/pdb.h>
@@ -41,7 +41,7 @@ namespace {
     
     
     
-    void run_it(IMP::kernel::Model *m) {
+    void run_it(IMP::Model *m) {
 //        IMP::rotamer::RotamerLibrary rl;
 //        rl.read_library_file(rotamer_lib);
 //        DistantRestraints restraints=read_restraints(restraints_path);
@@ -52,11 +52,11 @@ namespace {
 //        }
 //        IMP::ParticlesTemp ps;
 //        for( int i = 0; i < vs_org.size(); i++){
-//            IMP::kernel::Particle * p = new IMP::kernel::Particle(m);
+//            IMP::Particle * p = new IMP::Particle(m);
 //            ps.push_back(p);
 //            IMP::core::XYZR::setup_particle(m, p->get_index(),  IMP::algebra::Sphere3D(vs_org[i], 1));
 //        }
-//        IMP::kernel::ParticleIndexes pis = IMP::kernel::get_indexes(ps);
+//        IMP::ParticleIndexes pis = IMP::get_indexes(ps);
 //        for( int i = 0; i < pis.size(); i++){
 //            std::ostringstream oss;
 //            oss  << pis[i];
@@ -80,7 +80,7 @@ namespace {
 //        
 //        IMP::domino3::Factors factors;
 //        for( int i = 0; i < restraints.size(); i++){
-//            IMP::kernel::ParticleIndexPair cur_pair(pis[restraints[i]->from], pis[restraints[i]->to]);
+//            IMP::ParticleIndexPair cur_pair(pis[restraints[i]->from], pis[restraints[i]->to]);
 //            IMP_NEW(IMP::domino3::DistanceFactor, dn,(m, cur_pair, restraints[i]->dist, 1, st));
 //            factors.push_back(dn);
 //            dn->set_was_used(true);
@@ -126,7 +126,7 @@ namespace {
 
 int main(int argc, char **argv) {
     IMP::base::setup_from_argv(argc, argv, "Experiment with loopy domino");
-    IMP_NEW(IMP::kernel::Model, m, ());
+    IMP_NEW(IMP::Model, m, ());
     //    IMP::atom::Hierarchy pdb = IMP::atom:: (input, m,new IMP::atom::CAlphaPDBSelector());
     
 

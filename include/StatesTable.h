@@ -2,7 +2,7 @@
  *  \file IMP/domino3/StatesTable.h
  *  \brief A beyesian infererence-based sampler.
  *
- *  Copyright 2007-2014 IMP Inventors. All rights reserved.
+ *  Copyright 2007-2015 IMP Inventors. All rights reserved.
  *
  */
 
@@ -11,7 +11,7 @@
 
 #include <IMP/domino3/domino3_config.h>
 #include "States.h"
-#include <IMP/kernel/particle_index.h>
+#include <IMP/particle_index.h>
 #include <boost/unordered_map.hpp>
 
 IMPDOMINO3_BEGIN_NAMESPACE
@@ -27,24 +27,24 @@ class IMPDOMINO3EXPORT StatesTable : public IMP::base::Object {
                     IMP::base::PointerMember<States>, states,
                     IMP::base::PointerMember<Marginals>, marginals,
                     RMF::NodeHandle, node,);
-  typedef boost::unordered_map<kernel::ParticleIndex, ParticleData> Map;
+  typedef boost::unordered_map<ParticleIndex, ParticleData> Map;
   Map states_;
-  typedef IMP::base::Vector<kernel::ParticleIndex> Vector;
+  typedef IMP::base::Vector<ParticleIndex> Vector;
   Vector states_incoming_order_;
 
-  base::WeakPointer<kernel::Model> m_;
+  base::WeakPointer<Model> m_;
   RMF::NodeHandle parent_;
  public:
-  StatesTable(kernel::Model *m,
+  StatesTable(Model *m,
               std::string name = "StatesTable%1%"):
     Object(name), m_(m) {}
   // implementation methods use this to get the enumerator
-  States *get_states(kernel::ParticleIndex pi) const {
+  States *get_states(ParticleIndex pi) const {
     IMP_USAGE_CHECK(get_has(pi),
                     "I don't know about particle " << pi);
     return states_.find(pi)->second.get_states();
   }
-  Marginals *get_marginals(kernel::ParticleIndex pi) const {
+  Marginals *get_marginals(ParticleIndex pi) const {
     IMP_USAGE_CHECK(get_has(pi),
                     "I don't know about particle " << pi);
     return states_.find(pi)->second.get_marginals();
@@ -55,11 +55,11 @@ class IMPDOMINO3EXPORT StatesTable : public IMP::base::Object {
                       "Index out of range " << i);
       return this->get_marginals(states_incoming_order_[i]);
   }
-  bool get_has(kernel::ParticleIndex pi) const {
+  bool get_has(ParticleIndex pi) const {
     return states_.find(pi) != states_.end();
   }
-  kernel::ParticleIndexes get_particle_indexes() const;
-  void add(kernel::ParticleIndex pi, States *e, Marginals *m);
+  ParticleIndexes get_particle_indexes() const;
+  void add(ParticleIndex pi, States *e, Marginals *m);
   void set_rmf(RMF::NodeHandle parent);
   void add_to_frame();
   void show_marginal();

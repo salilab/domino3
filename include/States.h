@@ -2,7 +2,7 @@
  *  \file IMP/domino3/States.h
  *  \brief A beyesian infererence-based sampler.
  *
- *  Copyright 2007-2014 IMP Inventors. All rights reserved.
+ *  Copyright 2007-2015 IMP Inventors. All rights reserved.
  *
  */
 
@@ -10,7 +10,7 @@
 #define IMPDOMINO3_STATES_H
 
 #include <IMP/domino3/domino3_config.h>
-#include <IMP/kernel/particle_index.h>
+#include <IMP/particle_index.h>
 #include <RMF/NodeHandle.h>
 #include "Marginals.h"
 #include <IMP/base/Pointer.h>
@@ -25,25 +25,25 @@ IMPDOMINO3_BEGIN_NAMESPACE
     coordiantes for state i.
  */
 class IMPDOMINO3EXPORT States : public IMP::base::Object {
-  base::WeakPointer<kernel::Model> m_;
+  base::WeakPointer<Model> m_;
 protected:
-  virtual void do_load(unsigned int, kernel::ParticleIndex pi) const = 0;
+  virtual void do_load(unsigned int, ParticleIndex pi) const = 0;
  public:
-  States(kernel::Model *m, std::string name = "States %1%") :
+  States(Model *m, std::string name = "States %1%") :
   Object(name), m_(m) {}
-  kernel::Model *get_model() const {return m_;}
+  Model *get_model() const {return m_;}
   virtual unsigned int get_number() const = 0;
-  virtual void load(unsigned int i, kernel::ParticleIndex pi) const {
+  virtual void load(unsigned int i, ParticleIndex pi) const {
     IMP_USAGE_CHECK(i < get_number(),
                     "Out of range state requested");
     do_load(i, pi);
   }
   /** Add the marginals to a file for displaying with the passed
       node as a parent.*/
-  virtual void add_to_rmf(kernel::ParticleIndex pi, RMF::NodeHandle parent) const = 0;
+  virtual void add_to_rmf(ParticleIndex pi, RMF::NodeHandle parent) const = 0;
   /** Update the RMF file contents for the current marginals. Assume everything
       under the parent is yours.*/
-  virtual void update_rmf(kernel::ParticleIndex pi, RMF::NodeHandle parent,
+  virtual void update_rmf(ParticleIndex pi, RMF::NodeHandle parent,
                           Marginals *m) const = 0;
   virtual ~States();
 };

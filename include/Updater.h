@@ -9,7 +9,7 @@
 #include <IMP/base/Object.h>
 #include "Factor.h"
 #include <IMP/base/object_macros.h>
-#include <IMP/kernel/particle_index.h>
+#include <IMP/particle_index.h>
 #include <boost/unordered_set.hpp>
 #include "Marginals.h"
 
