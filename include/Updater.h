@@ -6,9 +6,9 @@
 #define IMPDOMINO3_UPDATER_H
 
 #include <IMP/domino3/domino3_config.h>
-#include <IMP/base/Object.h>
+#include <IMP/Object.h>
 #include "Factor.h"
-#include <IMP/base/object_macros.h>
+#include <IMP/object_macros.h>
 #include <IMP/particle_index.h>
 #include <boost/unordered_set.hpp>
 #include "Marginals.h"
@@ -16,7 +16,7 @@
 IMPDOMINO3_BEGIN_NAMESPACE
 
 /** Updater its marginals based on some criteria. */
-class IMPDOMINO3EXPORT Updater: public base::Object {
+class IMPDOMINO3EXPORT Updater: public Object {
   Factors factors_;
   typedef std::vector<Factor *> ActiveSet;
   ActiveSet cur_queue_, next_queue_;

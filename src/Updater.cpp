@@ -11,7 +11,7 @@ IMPDOMINO3_BEGIN_NAMESPACE
 
 Updater::Updater(const FactorsTemp &graph,
                  std::string name):
-base::Object(name), factors_(graph) {
+Object(name), factors_(graph) {
     for (unsigned int i = 0; i < factors_.size(); ++i) {
         factors_[i]->set_index(i);
     }

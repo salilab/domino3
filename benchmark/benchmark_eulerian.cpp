@@ -2,13 +2,13 @@
  * Copyright 2007-2015 IMP Inventors. All rights reserved.
  */
 
-#include <IMP/base/flags.h>
+#include <IMP/flags.h>
 #include <IMP/Model.h>
 #include <IMP/atom/Hierarchy.h>
 #include <IMP/atom/hierarchy_tools.h>
 #include <IMP/em/DensityMap.h>
 #include <IMP/atom/pdb.h>
-#include <IMP/base/SetLogState.h>
+#include <IMP/SetLogState.h>
 #include <IMP/core/XYZ.h>
 #include <algorithm>
 #include <boost/unordered_map.hpp>
@@ -23,10 +23,10 @@ typedef IMP::algebra::GridD<3,
                             IMP::algebra::DenseGridStorageD<3, float>,
                             float> Grid;
 typedef Grid::Index GridIndex;
-typedef IMP::base::Vector<GridIndex> States;
+typedef IMP::Vector<GridIndex> States;
 
 typedef boost::scoped_array<boost::scoped_array<double> >  Probabilities;
-typedef IMP::base::Vector<IMP::base::Vector<int> > DistanceIndex;
+typedef IMP::Vector<IMP::Vector<int> > DistanceIndex;
 typedef boost::unordered_set<int> DirtyRestraints;
 
 IMP_NAMED_TUPLE_3(Distance, Distances,
@@ -51,10 +51,10 @@ void fill_one(const Grid &grid,
   }
 }
 
-IMP::base::Vector<double> get_entropies(unsigned int num_variables,
+IMP::Vector<double> get_entropies(unsigned int num_variables,
                                         unsigned int num_states,
                                         const Probabilities &probabilities) {
-  IMP::base::Vector<double> ret(num_variables, 0);
+  IMP::Vector<double> ret(num_variables, 0);
   for (unsigned int i = 0; i < num_variables; ++i) {
     for (unsigned int j = 0; j < num_states; ++j) {
       double cur_prob = probabilities[i][j];
@@ -105,8 +105,8 @@ void refine_one(const Distance &d, const Grid &grid,
             Probabilities &probabilities,
             DirtyRestraints &dirty_restraints) {
   // cheat on it being symmetric
-  IMP::base::Vector<double> accum_first(states.size(), 0);
-  IMP::base::Vector<double> accum_second(states.size(), 0);
+  IMP::Vector<double> accum_first(states.size(), 0);
+  IMP::Vector<double> accum_second(states.size(), 0);
   for (unsigned int i = 0; i < states.size(); ++i) {
     double pi0 = probabilities[d.get_first()][i];
     if (pi0 < .001) continue;
@@ -141,7 +141,7 @@ void refine(const Distances &distances, const Grid &grid,
             const States &states, const DistanceIndex &distance_index,
             Probabilities &probabilities,
             DirtyRestraints &dirty_restraints) {
-  IMP::base::Vector<int> my_restraints(dirty_restraints.begin(),
+  IMP::Vector<int> my_restraints(dirty_restraints.begin(),
                                        dirty_restraints.end());
   dirty_restraints.clear();
   for (unsigned int i = 0; i < my_restraints.size(); ++i) {
@@ -176,36 +176,36 @@ void write_probabilities(unsigned int num_states,
     }
     std::ostringstream oss;
     oss << prefix << "." << i << ".mrc";
-    IMP::base::PointerMember<IMP::em::DensityMap> map
+    IMP::PointerMember<IMP::em::DensityMap> map
     = IMP::em::create_density_map(grid);
     IMP::em::write_map(map, oss.str());
   }
 }
 
 boost::int64_t iterations = 100;
-IMP::base::AddIntFlag iteration_adder("iterations",
+IMP::AddIntFlag iteration_adder("iterations",
                        "The number of times to iterate through the restraints",
                         &iterations);
 
-IMP::base::AddFloatFlag iteration_cellsize("cellsize",
+IMP::AddFloatFlag iteration_cellsize("cellsize",
                        "The cell size of the grid.",
                         &cell_size);
 
 
 std::string input = IMP::atom::get_example_path("1d3d-protein.pdb");
-IMP::base::AddStringFlag input_adder("input",
+IMP::AddStringFlag input_adder("input",
                        "The input pdb to use",
                         &input);
 }
 
 
 int main(int argc, char **argv) {
-  IMP::base::setup_from_argv(argc, argv, "Experiment with loopy domino");
+  IMP::setup_from_argv(argc, argv, "Experiment with loopy domino");
   IMP_NEW(IMP::Model, m, ());
     IMP::atom::Hierarchy pdb = IMP::atom::read_pdb(input, m, new IMP::atom::CAlphaPDBSelector());
   // add coordinates to residues
   {
-    IMP::base::SetLogState sll(IMP::base::SILENT);
+    IMP::SetLogState sll(IMP::SILENT);
     IMP::atom::create_rigid_body(pdb);
   }
     IMP::atom::Atoms atoms
@@ -246,7 +246,7 @@ int main(int argc, char **argv) {
   dirty_restraints.insert(distance_index[3].begin(),
                           distance_index[3].end());
 
-    IMP::base::Vector<double> entropies
+    IMP::Vector<double> entropies
     = get_entropies(atoms.size(), states.size(), probabilities);
     //MY_LOG_VERBOSE("entropies are " << entropies << std::endl);
     //MY_LOG_VERBOSE("And the total is " << std::accumulate(entropies.begin(),
@@ -256,7 +256,7 @@ int main(int argc, char **argv) {
   for (unsigned int i = 0; i < iterations; ++i) {
     refine(distances, grid, states, distance_index,
            probabilities, dirty_restraints);
-    IMP::base::Vector<double> entropies
+    IMP::Vector<double> entropies
     = get_entropies(atoms.size(), states.size(), probabilities);
     //MY_LOG_VERBOSE("entropies are " << entropies << std::endl);
     //MY_LOG_VERBOSE("And the total is " << std::accumulate(entropies.begin(),

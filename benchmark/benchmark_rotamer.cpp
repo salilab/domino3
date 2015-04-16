@@ -2,7 +2,7 @@
  * Copyright 2007-2015 IMP Inventors. All rights reserved.
  */
 
-#include <IMP/base/flags.h>
+#include <IMP/flags.h>
 #include <IMP/Model.h>
 #include <IMP/atom/Hierarchy.h>
 #include <IMP/atom/hierarchy_tools.h>
@@ -15,7 +15,7 @@
 #include <IMP/rmf/frames.h>
 #include <IMP/rmf/particle_io.h>
 
-#include <IMP/base/SetLogState.h>
+#include <IMP/SetLogState.h>
 #include <IMP/domino3/Factor.h>
 #include <IMP/domino3/DistanceFactor.h>
 #include <IMP/domino3/ExcludedVolumeFactor.h>
@@ -31,11 +31,11 @@ namespace {
     
         
     std::string rotamer_lib = IMP::domino3::get_example_path("rotamer.lib");
-    IMP::base::AddStringFlag asf("lib", "Input lib anchors", &rotamer_lib);
+    IMP::AddStringFlag asf("lib", "Input lib anchors", &rotamer_lib);
     std::string pdb_path = IMP::domino3::get_example_path("example_distance_restraints.txt");
-    IMP::base::AddStringFlag oasf("pdb", "Input file restraints", &pdb_path);
+    IMP::AddStringFlag oasf("pdb", "Input file restraints", &pdb_path);
     boost::int64_t iterations = 100;
-    IMP::base::AddIntFlag aif("iterations", "Number of iterations",
+    IMP::AddIntFlag aif("iterations", "Number of iterations",
                               &iterations);
     
     
@@ -45,7 +45,7 @@ namespace {
 //        IMP::rotamer::RotamerLibrary rl;
 //        rl.read_library_file(rotamer_lib);
 //        DistantRestraints restraints=read_restraints(restraints_path);
-//        IMP::base::set<int> residues;
+//        IMP::set<int> residues;
 //        for( int i = 0; i < restraints.size(); i++){
 //            residues.insert(restraints[i]->from);
 //            residues.insert(restraints[i]->to);
@@ -125,7 +125,7 @@ namespace {
 
 
 int main(int argc, char **argv) {
-    IMP::base::setup_from_argv(argc, argv, "Experiment with loopy domino");
+    IMP::setup_from_argv(argc, argv, "Experiment with loopy domino");
     IMP_NEW(IMP::Model, m, ());
     //    IMP::atom::Hierarchy pdb = IMP::atom:: (input, m,new IMP::atom::CAlphaPDBSelector());
     

@@ -7,9 +7,9 @@
 
 #include <IMP/domino3/domino3_config.h>
 #include <IMP/domino3/LogMathFunctions.h>
-#include <IMP/base/Object.h>
-#include <IMP/base/ConstVector.h>
-#include <IMP/base/object_macros.h>
+#include <IMP/Object.h>
+#include <IMP/ConstVector.h>
+#include <IMP/object_macros.h>
 
 IMPDOMINO3_BEGIN_NAMESPACE
 
@@ -20,7 +20,7 @@ IMP_OBJECTS(Marginals, MarginalsList);
 
 
 /** Store the marginal for a variable. */
-class IMPDOMINO3EXPORT Marginals: public base::Object {
+class IMPDOMINO3EXPORT Marginals: public Object {
     boost::scoped_array<FP> current_, next_;
     unsigned int size_;
     FP change_;

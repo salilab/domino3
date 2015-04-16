@@ -7,8 +7,8 @@
 
 #include <IMP/domino3/domino3_config.h>
 #include <IMP/ModelObject.h>
-#include <IMP/base/object_macros.h>
-#include <IMP/base/graph_macros.h>
+#include <IMP/object_macros.h>
+#include <IMP/graph_macros.h>
 #include "StatesTable.h"
 #include <IMP/particle_index.h>
 #include "Marginals.h"
@@ -28,7 +28,7 @@ typedef std::vector<FactorEdge> FactorEdges;
 
 /** Factor updates its marginals based on some criteria. */
 class IMPDOMINO3EXPORT Factor: public ModelObject {
-  base::Vector<MarginalsList> inputs_;
+  Vector<MarginalsList> inputs_;
   ParticleIndexes pis_;
   MarginalsList mine_;
   FactorsTemp neighbors_;
@@ -79,7 +79,7 @@ IMPDOMINO3EXPORT void update_state_table(const FactorsTemp &factors,const States
 
 
 
-IMP_GRAPH(FactorGraph, undirected, base::Pointer<Factor>,
+IMP_GRAPH(FactorGraph, undirected, Pointer<Factor>,
           ParticleIndexes,
           out << vertex->get_name() << "\\n"
           << "[" << vertex->get_type_name() << ": "

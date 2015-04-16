@@ -13,7 +13,7 @@
 #include <IMP/particle_index.h>
 #include <RMF/NodeHandle.h>
 #include "Marginals.h"
-#include <IMP/base/Pointer.h>
+#include <IMP/Pointer.h>
 #include <RMF/NodeHandle.h>
 
 IMPDOMINO3_BEGIN_NAMESPACE
@@ -24,8 +24,8 @@ IMPDOMINO3_BEGIN_NAMESPACE
     n and update_to_state would modify the particle to have the
     coordiantes for state i.
  */
-class IMPDOMINO3EXPORT States : public IMP::base::Object {
-  base::WeakPointer<Model> m_;
+class IMPDOMINO3EXPORT States : public IMP::Object {
+  WeakPointer<Model> m_;
 protected:
   virtual void do_load(unsigned int, ParticleIndex pi) const = 0;
  public:

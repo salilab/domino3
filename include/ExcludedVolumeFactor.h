@@ -7,8 +7,8 @@
 
 #include <IMP/domino3/domino3_config.h>
 #include <IMP/ModelObject.h>
-#include <IMP/base/object_macros.h>
-#include <IMP/base/graph_macros.h>
+#include <IMP/object_macros.h>
+#include <IMP/graph_macros.h>
 #include <IMP/particle_index.h>
 #include "Marginals.h"
 

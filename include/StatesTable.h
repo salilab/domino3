@@ -22,17 +22,17 @@ IMPDOMINO3_BEGIN_NAMESPACE
     and gets to all the right places. It is initialized internally
     in the DominoSampler.
  */
-class IMPDOMINO3EXPORT StatesTable : public IMP::base::Object {
+class IMPDOMINO3EXPORT StatesTable : public IMP::Object {
   IMP_NAMED_TUPLE_3(ParticleData, ParticleDatas,
-                    IMP::base::PointerMember<States>, states,
-                    IMP::base::PointerMember<Marginals>, marginals,
+                    IMP::PointerMember<States>, states,
+                    IMP::PointerMember<Marginals>, marginals,
                     RMF::NodeHandle, node,);
   typedef boost::unordered_map<ParticleIndex, ParticleData> Map;
   Map states_;
-  typedef IMP::base::Vector<ParticleIndex> Vector;
+  typedef IMP::Vector<ParticleIndex> Vector;
   Vector states_incoming_order_;
 
-  base::WeakPointer<Model> m_;
+  WeakPointer<Model> m_;
   RMF::NodeHandle parent_;
  public:
   StatesTable(Model *m,

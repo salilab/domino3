@@ -2,7 +2,7 @@
  * Copyright 2007-2015 IMP Inventors. All rights reserved.
  */
 
-#include <IMP/base/flags.h>
+#include <IMP/flags.h>
 #include <IMP/Model.h>
 #include <IMP/atom/Hierarchy.h>
 #include <IMP/atom/hierarchy_tools.h>
@@ -14,7 +14,7 @@
 #include <IMP/rmf/frames.h>
 #include <IMP/rmf/particle_io.h>
 
-#include <IMP/base/SetLogState.h>
+#include <IMP/SetLogState.h>
 #include <IMP/domino3/Factor.h>
 #include <IMP/domino3/Probability2DFactor.h>
 #include <IMP/domino3/Probability3DFactor.h>
@@ -47,22 +47,22 @@ namespace {
     }
     
     std::string output = "out.rmf";
-    IMP::base::AddStringFlag oasf("output", "Output rmf name", &output);
+    IMP::AddStringFlag oasf("output", "Output rmf name", &output);
     std::string dock_file = IMP::domino3::get_example_path("33_dock.txt");
-    IMP::base::AddStringFlag dock("dock", "Dock score file",&dock_file);
+    IMP::AddStringFlag dock("dock", "Dock score file",&dock_file);
     std::string sea_file = IMP::domino3::get_example_path("4_true_sea.txt");
-    IMP::base::AddStringFlag sea("sea", "SEA score file",&sea_file);
+    IMP::AddStringFlag sea("sea", "SEA score file",&sea_file);
     std::string chem_file = IMP::domino3::get_example_path("4_33_chemsim_rxn.txt");
-    IMP::base::AddStringFlag chem("chem", "Chem score file",&chem_file);
+    IMP::AddStringFlag chem("chem", "Chem score file",&chem_file);
     
     boost::int64_t iterations = 100;
-    IMP::base::AddIntFlag aif("iterations", "Number of iterations",
+    IMP::AddIntFlag aif("iterations", "Number of iterations",
                               &iterations);
     boost::int64_t enzyme_size=3;
-    IMP::base::AddIntFlag enzymes("enzymes", "Number of enzymes",
+    IMP::AddIntFlag enzymes("enzymes", "Number of enzymes",
                                   &enzyme_size);
     boost::int64_t ligand_size=4;
-    IMP::base::AddIntFlag ligands("ligands", "Number of ligands",
+    IMP::AddIntFlag ligands("ligands", "Number of ligands",
                                   &ligand_size);
     static int enzym_id_counter = 0;
     struct Enzyme {
@@ -436,7 +436,7 @@ namespace {
 
 
 int main(int argc, char **argv) {
-    IMP::base::setup_from_argv(argc, argv, "Experiment with loopy domino");
+    IMP::setup_from_argv(argc, argv, "Experiment with loopy domino");
     IMP_NEW(IMP::Model, m, ());
     run_it(m);
     return 0;

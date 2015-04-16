@@ -11,7 +11,7 @@
 IMPDOMINO3_BEGIN_NAMESPACE
 
 Marginals::Marginals(Model *m, ParticleIndex pi, unsigned int size):
-  base::Object("Marginals"+m->get_particle_name(pi)), pi_(pi),
+  Object("Marginals"+m->get_particle_name(pi)), pi_(pi),
   current_(new FP[size]), next_(new FP[size]), change_(0.0), size_(size) {
   FP start_value=1.0/this->get_number();
       start_value = LogMathFunctions::convert_to_space(start_value);

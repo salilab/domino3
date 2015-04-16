@@ -2,7 +2,7 @@
  * Copyright 2007-2015 IMP Inventors. All rights reserved.
  */
 
-#include <IMP/base/flags.h>
+#include <IMP/flags.h>
 #include <IMP/Model.h>
 #include <IMP/atom/Hierarchy.h>
 #include <IMP/atom/hierarchy_tools.h>
@@ -14,7 +14,7 @@
 #include <IMP/rmf/frames.h>
 #include <IMP/rmf/particle_io.h>
 
-#include <IMP/base/SetLogState.h>
+#include <IMP/SetLogState.h>
 #include <IMP/domino3/Factor.h>
 #include <IMP/domino3/DistanceFactor.h>
 #include <IMP/domino3/ExcludedVolumeFactor.h>
@@ -45,15 +45,15 @@ namespace {
   
     
   std::string input = IMP::atom::get_example_path("1d3d-protein.pdb");
-  IMP::base::AddStringFlag asf("input", "Input file name", &input);
+  IMP::AddStringFlag asf("input", "Input file name", &input);
   std::string output = "out.rmf";
-  IMP::base::AddStringFlag oasf("output", "Output rmf name", &output);
+  IMP::AddStringFlag oasf("output", "Output rmf name", &output);
   double dist = std::numeric_limits<double>::infinity();
-  IMP::base::AddFloatFlag dasf("distance", "Maximum distance for restraints",
+  IMP::AddFloatFlag dasf("distance", "Maximum distance for restraints",
                               &dist);
 
   boost::int64_t iterations = 1;
-  IMP::base::AddIntFlag aif("iterations", "Number of iterations",
+  IMP::AddIntFlag aif("iterations", "Number of iterations",
                             &iterations);
 
     
@@ -147,7 +147,7 @@ namespace {
 
 
 int main(int argc, char **argv) {
-  IMP::base::setup_from_argv(argc, argv, "Experiment with loopy domino");
+  IMP::setup_from_argv(argc, argv, "Experiment with loopy domino");
   IMP_NEW(IMP::Model, m, ());
     IMP::atom::Hierarchy pdb = IMP::atom::read_pdb(input, m,new IMP::atom::CAlphaPDBSelector());
   IMP::atom::Atoms atoms
