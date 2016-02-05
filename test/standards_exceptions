@@ -1,4 +1,12 @@
 value_object_exceptions=[]
-function_name_exceptions=[]
+function_name_exceptions=[
+    'Marginals.check_current_normalized',
+    'Marginals.check_next_normalized',
+    'Marginals.convert_to_space',
+    'Marginals.make_next_zero',
+    'Marginals.merge_probabilities_from_list',
+    'Marginals.mult_two_marginals',
+    'Marginals.multp_to_next_marginal',
+    'print_graph']
 show_exceptions=[]
 spelling_exceptions=['rmf']
