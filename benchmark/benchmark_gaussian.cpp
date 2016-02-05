@@ -28,22 +28,6 @@ namespace {
 
     
     
-  double calc_weighted_rmsd(IMP::algebra::Vector3Ds &vs, const IMP::ParticlesTemp &ps,IMP::domino3::StatesTable *pst){
-      IMP::ParticleIndexes pis = IMP::get_indexes(ps);
-      double ret_sum=0.0;
-      for (unsigned int i = 0; i < ps.size(); ++i) {
-          IMP::domino3::Marginals * marg = pst->get_marginals(pis[i]);
-          IMP::algebra::Vector3D vector_i = vs[i];
-          for(int y = 0; y < marg->get_number(); y++){
-              IMP::algebra::Vector3D vector_y = vs[y];
-              double dist=IMP::algebra::get_distance(vector_i, vector_y);
-              ret_sum+=exp(marg->get_current_marginal(y))*dist;
-          }
-      }
-      return ret_sum;
-  }
-  
-    
   std::string input = IMP::domino3::get_example_path("gaussian.pdb");
   IMP::AddStringFlag asf("input", "Input file name", &input);
   std::string output = "out.rmf";
@@ -61,7 +45,7 @@ namespace {
     
   void run_it(IMP::Model *m, const IMP::ParticlesTemp &ps) {
     IMP::ParticleIndexes pis = IMP::get_indexes(ps);
-      for( int i = 0; i < pis.size(); i++){
+      for(unsigned i = 0; i < pis.size(); i++){
           std::ostringstream oss;
           oss  << pis[i];
           m->get_particle(pis[i])->set_name(oss.str());
@@ -85,7 +69,6 @@ namespace {
     st->set_rmf(f.get_root_node());
 
     IMP::domino3::Factors factors;
-      int error_count=0;
       double avg_dist=0;
       double counter=0;
     for (unsigned int i = 0; i < pis.size(); ++i) {
@@ -116,7 +99,6 @@ namespace {
       }
     }
     //std::cout << "AVG Dist:" << avg_dist/counter;
-    //std::cout << "Node error size: " << error_count << std::endl;
     //std::cout << "Node size: " << factors.size() << std::endl;
     IMP::domino3::add_neighbors(factors);
  //     InteractionGraph ig = get_interaction_graph(rs, pst);
@@ -143,7 +125,7 @@ namespace {
     //std::cout << "Weighted RMSD: " << calc_weighted_rmsd(vs,ps,st) << std::endl;
 
     double  diagonal[] =  {1,	1,  1	,1 , 1	,1, 1, 0.999085, 0.845624, 0.846366}; 
-      for( int i = 0; i < pis.size(); i++){
+      for(unsigned i = 0; i < pis.size(); i++){
           IMP::domino3::Marginals * m0 = st->get_marginals_by_order(i);
           //std::cout <<  diagonal[i] << " " << exp(m0->get_current_marginal(i)) << std::endl;
           if( std::abs(diagonal[i] - exp(m0->get_current_marginal(i))) >0.1){

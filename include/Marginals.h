@@ -21,10 +21,10 @@ IMP_OBJECTS(Marginals, MarginalsList);
 
 /** Store the marginal for a variable. */
 class IMPDOMINO3EXPORT Marginals: public Object {
-    boost::scoped_array<FP> current_, next_;
-    unsigned int size_;
-    FP change_;
     ParticleIndex pi_;
+    boost::scoped_array<FP> current_, next_;
+    FP change_;
+    unsigned int size_;
     
 public:
     Marginals(Model *m, ParticleIndex pi, unsigned int size);

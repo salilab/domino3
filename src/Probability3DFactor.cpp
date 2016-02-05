@@ -18,13 +18,13 @@ namespace {
     }
 }
 
-Probability3DFactor::Probability3DFactor(Model *m,const ParticleIndexTriplet &pis,
-                                         StatesTable *pst, Probability3D * log_probability):
-Factor(m, ParticleIndexes(pis.begin(), pis.end()),
-       pst, get_prob3d_name(pis)), log_probability(log_probability),pis_(pis),pst_(pst) {
-    
-    States *ps2 = pst_->get_states(pis_[2]);
-
+Probability3DFactor::Probability3DFactor(Model *m,
+                      const ParticleIndexTriplet &pis,
+                      StatesTable *pst, Probability3D * log_probability):
+      Factor(m, ParticleIndexes(pis.begin(), pis.end()),
+             pst, get_prob3d_name(pis)),
+      pis_(pis),pst_(pst),
+      log_probability(log_probability) {
 }
 
 //
@@ -94,7 +94,6 @@ void Probability3DFactor::do_update() {
                 tmp         = LogMathFunctions::mult_sse(prob_row[z],i_cur_m0);
                 tmp         = LogMathFunctions::mult_sse(tmp,z_cur_m2[z]);
                 j_next_m1   = LogMathFunctions::add_sse(j_next_m1,tmp);
-                float * p = (float *)&j_next_m1;
                 
                 tmp         = LogMathFunctions::mult_sse(prob_row[z],i_cur_m0);
                 tmp         = LogMathFunctions::mult_sse(tmp,j_cur_m1);

@@ -20,17 +20,17 @@ unsigned int IndexStates::get_number() const {
   return states_.size();
 }
 
-void IndexStates::do_load(unsigned int i, ParticleIndex pi) const {
+void IndexStates::do_load(unsigned int, ParticleIndex) const {
 
 }
 
 
-void IndexStates::add_to_rmf(ParticleIndex, RMF::NodeHandle parent) const {
+void IndexStates::add_to_rmf(ParticleIndex, RMF::NodeHandle) const {
 
 }
 
-void IndexStates::update_rmf(ParticleIndex, RMF::NodeHandle parent,
-                           Marginals *m) const {
+void IndexStates::update_rmf(ParticleIndex, RMF::NodeHandle,
+                             Marginals *) const {
 }
 
 IMPDOMINO3_END_NAMESPACE

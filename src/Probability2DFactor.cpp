@@ -20,7 +20,8 @@ namespace {
 Probability2DFactor::Probability2DFactor(Model *m,const ParticleIndexPair &pis,
                                      StatesTable *pst, boost::shared_array<FP> &log_probability):
   Factor(m, ParticleIndexes(pis.begin(), pis.end()),
-         pst, get_prob_name(pis)), log_probability_(log_probability),pis_(pis),pst_(pst) {
+         pst, get_prob_name(pis)), pis_(pis), pst_(pst),
+  log_probability_(log_probability) {
 }
 
 

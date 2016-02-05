@@ -34,7 +34,7 @@ namespace {
       for (unsigned int i = 0; i < ps.size(); ++i) {
           IMP::domino3::Marginals * marg = pst->get_marginals(pis[i]);
           IMP::algebra::Vector3D vector_i = vs[i];
-          for(int y = 0; y < marg->get_number(); y++){
+          for(unsigned y = 0; y < marg->get_number(); y++){
               IMP::algebra::Vector3D vector_y = vs[y];
               double dist=IMP::algebra::get_distance(vector_i, vector_y);
               ret_sum+=exp(marg->get_current_marginal(y))*dist;
@@ -61,7 +61,7 @@ namespace {
     
   void run_it(IMP::Model *m, const IMP::ParticlesTemp &ps) {
     IMP::ParticleIndexes pis = IMP::get_indexes(ps);
-      for( int i = 0; i < pis.size(); i++){
+      for(unsigned i = 0; i < pis.size(); i++){
           std::ostringstream oss;
           oss  << pis[i];
           m->get_particle(pis[i])->set_name(oss.str());

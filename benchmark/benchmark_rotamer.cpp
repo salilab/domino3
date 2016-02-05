@@ -41,7 +41,7 @@ namespace {
     
     
     
-    void run_it(IMP::Model *m) {
+    void run_it(IMP::Model *) {
 //        IMP::rotamer::RotamerLibrary rl;
 //        rl.read_library_file(rotamer_lib);
 //        DistantRestraints restraints=read_restraints(restraints_path);

@@ -59,23 +59,6 @@ namespace {
         return ret_array;
     }
     
-    
-    double calc_weighted_rmsd(IMP::algebra::Vector3Ds &vs, const IMP::ParticlesTemp &ps,IMP::domino3::StatesTable *pst){
-        IMP::ParticleIndexes pis = IMP::get_indexes(ps);
-        double ret_sum=0.0;
-        for (unsigned int i = 0; i < ps.size(); ++i) {
-            IMP::domino3::Marginals * marg = pst->get_marginals(pis[i]);
-            IMP::algebra::Vector3D vector_i = vs[i];
-            for(unsigned y = 0; y < marg->get_number(); y++){
-                IMP::algebra::Vector3D vector_y = vs[y];
-                double dist=IMP::algebra::get_distance(vector_i, vector_y);
-                ret_sum+=exp(marg->get_current_marginal(y))*dist;
-            }
-        }
-        return ret_sum;
-    }
-    
-    
     std::string anchors = IMP::domino3::get_example_path("example_distance_anchors.txt");
     IMP::AddStringFlag asf("anchors", "Input file anchors", &anchors);
     std::string restraints_path = IMP::domino3::get_example_path("example_distance_restraints.txt");
@@ -160,12 +143,6 @@ namespace {
             order.push_back(pos_order[0].second);
         }
         
-/*      for(size_t i = 0 ; i < order.size();i++){
-            std::cout << order[i] << " ";
-        }
-        std::cout << std::endl;*/
-        
-        //    std::cout << "Weighted RMSD: " << calc_weighted_rmsd(vs,ps,st) << std::endl;
     }
 }
 

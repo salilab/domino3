@@ -90,11 +90,10 @@ namespace {
 
     typedef boost::unordered_map<std::string, Ligand *>  StringToLigand;
     
-    void read_in_sea_file(IMP::Model *m,
-                           std::string path,
-                           EnzymeEnzymeScoreLookup &scores,
-                           StringToEnzyme &id_to_enzyme,
-                           IntToString &enzyme_id_to_name){
+    void read_in_sea_file(std::string path,
+                          EnzymeEnzymeScoreLookup &scores,
+                          StringToEnzyme &id_to_enzyme,
+                          IntToString &enzyme_id_to_name){
         //std::cout << "Read sea file: " << path << std::endl;
 
         std::ifstream infile(path.c_str());
@@ -117,8 +116,7 @@ namespace {
     }
     
     
-    void read_in_dock_file(IMP::Model *m,
-                           std::string path,
+    void read_in_dock_file(std::string path,
                            EnzymeLigandScoreLookup &scores,
                            StringToEnzyme &id_to_enzyme,
                            StringToLigand &id_to_ligand,
@@ -143,8 +141,7 @@ namespace {
     }
     
     
-    void read_in_chem_file(IMP::Model *m,
-                           std::string path,
+    void read_in_chem_file(std::string path,
                            EnzymeLigandLigandScoreLookup &scores,
                            StringToEnzyme &id_to_enzyme,
                            StringToLigand &id_to_ligand){
@@ -263,21 +260,18 @@ namespace {
         IMP_USAGE_CHECK(boost::filesystem::exists(sea_file) , "SEA File dosen't exist");
         IMP_USAGE_CHECK(boost::filesystem::exists(dock_file), "Dock File dosen't exist");
         IMP_USAGE_CHECK(boost::filesystem::exists(chem_file), "Chem File dosen't exist");
-        read_in_sea_file(m,
-                          sea_file,
-                          enzyme_enzyme_scores,
-                          id_to_enzyme,enzyme_id_to_name);
+        read_in_sea_file(sea_file,
+                         enzyme_enzyme_scores,
+                         id_to_enzyme,enzyme_id_to_name);
         int enzymes_in_sea=id_to_enzyme.size();
-        read_in_dock_file(m,
-                         dock_file,
-                         enzyme_ligand_scores,
-                         id_to_enzyme,
-                         id_to_ligand,
-                         ligand_id_to_name);
+        read_in_dock_file(dock_file,
+                          enzyme_ligand_scores,
+                          id_to_enzyme,
+                          id_to_ligand,
+                          ligand_id_to_name);
         int enzymes_in_dock=id_to_enzyme.size();
         int ligands_in_dock=id_to_ligand.size();
-        read_in_chem_file(m,
-                          chem_file,
+        read_in_chem_file(chem_file,
                           enzyme_ligand_ligand_scores,
                           id_to_enzyme,
                           id_to_ligand);
@@ -318,17 +312,9 @@ namespace {
             Enzyme * e1 = enzymePair.first;
             Ligand * l1 = enzymePair.second;
             dock_probability_vector[e1->id*id_to_ligand.size()+l1->id] = score;
-//            dock_probability_vector[e1->id*id_to_ligand.size()+l1->id] =-3.49650756146648;
         }
-//        normalize(dock_probability_vector,1,id_to_enzyme.size(),id_to_ligand.size(),false);
 
         IMP::domino3::Probability3D chem_probability(id_to_enzyme.size(),id_to_ligand.size(),id_to_ligand.size());
-        const unsigned int chem_size = id_to_enzyme.size()*id_to_ligand.size()*id_to_ligand.size();
-        
-//        boost::shared_array<IMP::domino3::FP> chem_probability_vector((IMP::domino3::FP *)
-//                                                                      memalign(sizeof(IMP::domino3::FP)*8, (chem_size/4 + 1) * (sizeof(IMP::domino3::FP)*8))
-//                                                                      );
-//        std::fill (chem_probability_vector.get(),chem_probability_vector.get()+chem_size,0);
         for (EnzymeLigandLigandScoreLookup::iterator i = enzyme_ligand_ligand_scores.begin(); i != enzyme_ligand_ligand_scores.end(); ++i)
         {
             EnzymeLigandLigandPair enzymePair=i->first;
@@ -397,7 +383,7 @@ namespace {
         for(int i = 0; i < enzyme_size; i++){
             std::vector<std::pair<IMP::domino3::FP, std::string> > enzyme_order;
             IMP::domino3::Marginals * m  = st->get_marginals_by_order(i);
-            for(int state = 0; state < m->get_number(); state++)
+            for(unsigned state = 0; state < m->get_number(); state++)
                 enzyme_order.push_back(std::make_pair(IMP::domino3::LogMathFunctions::convert_to_linear(m->get_current_marginal(state)),
                                                       enzyme_id_to_name[state]));
             sort(enzyme_order.begin(),enzyme_order.end(), std::greater<std::pair<IMP::domino3::FP, std::string> >());
@@ -409,10 +395,10 @@ namespace {
                 std::cout << enzyme_order[state].second << "\t" << enzyme_order[state].first << std::endl;
             }*/
         }
-        for(int i = enzyme_size; i < (enzyme_size+ligand_size); i++){
+        for(unsigned i = enzyme_size; i < (enzyme_size+ligand_size); i++){
             std::vector<std::pair<IMP::domino3::FP, std::string> > ligand_order;
             IMP::domino3::Marginals * m  = st->get_marginals_by_order(i);
-            for(int state = 0; state < m->get_number(); state++)
+            for(unsigned state = 0; state < m->get_number(); state++)
                 ligand_order.push_back(std::make_pair(IMP::domino3::LogMathFunctions::convert_to_linear(m->get_current_marginal(state)),
                                                       ligand_id_to_name[state]));
             sort(ligand_order.begin(),ligand_order.end(), std::greater<std::pair<IMP::domino3::FP, std::string> >());

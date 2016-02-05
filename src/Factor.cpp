@@ -36,7 +36,7 @@ Factor::Factor(Model *m,
 void Factor::update() {
   // propergate my list to neighbours. Inputs is from neighbor (MPI call in futur)
   for (unsigned int i = 0; i < pis_.size(); ++i) {
-      for(int j = 0; j < inputs_[i].size(); j++) {
+      for(unsigned j = 0; j < inputs_[i].size(); j++) {
           inputs_[i][j]->check_current_normalized();
       }
   }
@@ -84,30 +84,6 @@ void add_neighbors_by_factor_edges(const FactorEdges &factor_edges){
 	}
 }
 
-
-
-FactorGraph get_node_graph(const FactorsTemp &nodes) {
-  FactorGraph ret(nodes.size());
-  FactorGraphVertexName vm = boost::get(boost::vertex_name, ret);
-  for (unsigned int i = 0; i < nodes.size(); ++i) {
-    vm[i] = nodes[i];
-    // create self edge too
-    for (unsigned int j = 0; j <= i; ++j) {
-      ParticleIndexes intersection;
-      std::set_intersection(nodes[i]->get_particle_indexes().begin(),
-                            nodes[i]->get_particle_indexes().end(),
-                            nodes[j]->get_particle_indexes().begin(),
-                            nodes[j]->get_particle_indexes().end(),
-                            std::back_inserter(intersection));
-      if (!intersection.empty()) {
-        boost::add_edge(i, j, intersection, ret);
-      }
-    }
-  }
-  return ret;
-}
-
-
 void add_neighbors(const FactorsTemp &nodes) {
   for (unsigned int i = 0; i < nodes.size(); ++i) {
     ParticleIndexes pisi = nodes[i]->get_particle_indexes();
@@ -154,7 +130,7 @@ void print_graph(const FactorsTemp &nodes){
         ParticleIndexes particles=nodes[i]->get_particle_indexes();
         std::cout << particles << " -> ";
         FactorsTemp neighbors = nodes[i]->get_neighbors();
-        for(int j = 0; j < neighbors.size(); j++){
+        for(unsigned j = 0; j < neighbors.size(); j++){
             std::cout << neighbors[j]->get_particle_indexes() << " ";
         }
         std::cout << std::endl;

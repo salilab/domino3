@@ -71,13 +71,13 @@ void ExcludedVolumeFactor::do_update() {
     __m128 * prob_vec =(__m128 * ) &prob_float[0];
     
     FP init_value=LogMathFunctions::convert_to_space(0.0f);
-    for (unsigned int i = 0; i < size_i; ++i) {
+    for (int i = 0; i < size_i; ++i) {
         const FP m0_i_current_marginal = m0->get_current_marginal(i);
         __m128 i_cur_m0 = _mm_set1_ps(m0_i_current_marginal);
         __m128 i_next_m0 = _mm_set1_ps(init_value);
         //set for diagonal
         prob_float[i] = LogMathFunctions::convert_to_space(0.00001);
-        for (unsigned int j = 0; j < (size_j/4)+1; ++j) {
+        for (int j = 0; j < (size_j/4)+1; ++j) {
             __m128 tmp  = LogMathFunctions::mult_sse(prob_vec[j],j_cur_m1[j]);
             i_next_m0   = LogMathFunctions::add_sse(i_next_m0,tmp);
             
