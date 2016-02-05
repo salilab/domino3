@@ -18,14 +18,6 @@ IMPDOMINO3_BEGIN_NAMESPACE
 class Factor;
 IMP_OBJECTS(Factor, Factors);
 
-struct FactorEdge {
-    Factor * from_;
-    Factor * to_;
-    FactorEdge(Factor *from, Factor *to) : from_(from), to_(to){}
-};
-typedef std::vector<FactorEdge> FactorEdges;
-
-
 /** Factor updates its marginals based on some criteria. */
 class IMPDOMINO3EXPORT Factor: public ModelObject {
   Vector<MarginalsList> inputs_;
@@ -71,6 +63,20 @@ class IMPDOMINO3EXPORT Factor: public ModelObject {
   // match the particles and set intput
   void set_matching_inputs(Factor *n);
 };
+
+class FactorEdge : public Value {
+public:
+  Pointer<Factor> from_;
+  Pointer<Factor> to_;
+  FactorEdge() {}
+
+  FactorEdge(Factor *from, Factor *to) : from_(from), to_(to){}
+
+  IMP_SHOWABLE_INLINE(FactorEdge, {
+    out << from_ << " -> " << to_;
+  });
+};
+IMP_VALUES(FactorEdge, FactorEdges);
 
 IMPDOMINO3EXPORT void add_neighbors(const FactorsTemp &factors);
 IMPDOMINO3EXPORT void add_neighbors_by_factor_edges(const FactorEdges &factor_edges);
