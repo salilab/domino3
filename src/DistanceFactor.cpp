@@ -1,7 +1,7 @@
 /**
  *  \file IMP/domino3/DistanceFactor.cpp
  *
- *  Copyright 2007-2015 IMP Inventors. All rights reserved.
+ *  Copyright 2007-2017 IMP Inventors. All rights reserved.
  *
  */
 
