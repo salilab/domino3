@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/salilab/domino3.svg?branch=develop)](https://travis-ci.org/salilab/domino3)
+[![codecov](https://codecov.io/gh/salilab/domino3/branch/develop/graph/badge.svg)](https://codecov.io/gh/salilab/domino3)
+
 This module is for experimenting with a more traditional inferential approach. The computational model is:
 - a graph with a node for each piece of data, sharing edges when they share variables
 - marginals for each variable, with a copy at each node that uses it
