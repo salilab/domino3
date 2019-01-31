@@ -17,6 +17,7 @@ IMP_SWIG_OBJECT(IMP::domino3, StatesTable, StatesTables);
 IMP_SWIG_OBJECT(IMP::domino3, XYZStates, XYZStatesList);
 IMP_SWIG_OBJECT(IMP::domino3, Marginals, MarginalsList);
 
+%ignore FactorGraphVertexIndex;
 
 %include "IMP/domino3/Marginals.h"
 %include "IMP/domino3/States.h"
