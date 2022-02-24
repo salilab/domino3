@@ -6,6 +6,8 @@
  */
 
 #include <IMP/domino3/Updater.h>
+#include <IMP/random.h>
+#include <algorithm>
 
 IMPDOMINO3_BEGIN_NAMESPACE
 
@@ -21,7 +23,12 @@ Object(name), factors_(graph) {
 
 void Updater::do_update() {
     boost::unordered_set<ParticleIndex> changed;
+#if IMP_COMPILER_HAS_RANDOM_SHUFFLE
     std::random_shuffle ( cur_queue_.begin(), cur_queue_.end() );
+#else
+    std::random_shuffle(cur_queue_.begin(), cur_queue_.end(),
+                        random_number_generator);
+#endif
     this->change  = 0.0f;
     this->entropy  = 0.0f;
     for (ActiveSet::const_iterator it = cur_queue_.begin();
