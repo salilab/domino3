@@ -26,8 +26,8 @@ void Updater::do_update() {
 #if IMP_COMPILER_HAS_RANDOM_SHUFFLE
     std::random_shuffle ( cur_queue_.begin(), cur_queue_.end() );
 #else
-    std::random_shuffle(cur_queue_.begin(), cur_queue_.end(),
-                        random_number_generator);
+    std::shuffle(cur_queue_.begin(), cur_queue_.end(),
+                 random_number_generator);
 #endif
     this->change  = 0.0f;
     this->entropy  = 0.0f;
