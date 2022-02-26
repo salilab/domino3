@@ -23,7 +23,7 @@ Object(name), factors_(graph) {
 
 void Updater::do_update() {
     boost::unordered_set<ParticleIndex> changed;
-#if IMP_COMPILER_HAS_RANDOM_SHUFFLE
+#if !defined(IMP_COMPILER_HAS_RANDOM_SHUFFLE) || IMP_COMPILER_HAS_RANDOM_SHUFFLE
     std::random_shuffle ( cur_queue_.begin(), cur_queue_.end() );
 #else
     std::shuffle(cur_queue_.begin(), cur_queue_.end(),
