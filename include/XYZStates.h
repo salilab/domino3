@@ -22,14 +22,14 @@ class IMPDOMINO3EXPORT XYZStates : public States {
   algebra::Vector3Ds states_;
   double max_radius_;
 protected:
- virtual void do_load(unsigned int i, ParticleIndex pi) const IMP_OVERRIDE;
+ virtual void do_load(unsigned int i, ParticleIndex pi) const override;
  public:
  XYZStates(Model *m, const algebra::Vector3Ds &states);
-  virtual unsigned int get_number() const IMP_OVERRIDE;
+  virtual unsigned int get_number() const override;
   void set_max_radius(double r) {max_radius_ = r;}
-  virtual void add_to_rmf(ParticleIndex pi, RMF::NodeHandle parent) const IMP_OVERRIDE;
+  virtual void add_to_rmf(ParticleIndex pi, RMF::NodeHandle parent) const override;
   virtual void update_rmf(ParticleIndex pi, RMF::NodeHandle parent,
-                          Marginals *m) const IMP_OVERRIDE;
+                          Marginals *m) const override;
   IMP_OBJECT_METHODS(XYZStates);
 };
 

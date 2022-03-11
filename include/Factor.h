@@ -30,11 +30,11 @@ class IMPDOMINO3EXPORT Factor: public ModelObject {
       from the inputs (via averaging). */
   virtual void do_update() = 0;
 
-  virtual ModelObjectsTemp do_get_outputs() const IMP_OVERRIDE {
+  virtual ModelObjectsTemp do_get_outputs() const override {
     return ModelObjectsTemp();
   }
 
-  virtual ModelObjectsTemp do_get_inputs() const IMP_OVERRIDE {
+  virtual ModelObjectsTemp do_get_inputs() const override {
     return get_particles(get_model(), get_particle_indexes());
   }
 

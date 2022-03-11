@@ -21,7 +21,7 @@ class IMPDOMINO3EXPORT Probability2DFactor: public Factor {
   StatesTable *pst_;
   boost::shared_array<FP> log_probability_;
  protected:
-  virtual void do_update() IMP_OVERRIDE;
+  virtual void do_update() override;
 private:
 
  public:

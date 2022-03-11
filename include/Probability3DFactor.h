@@ -23,7 +23,7 @@ class IMPDOMINO3EXPORT Probability3DFactor: public Factor {
   StatesTable *pst_;
   Probability3D * log_probability;
  protected:
-  virtual void do_update() IMP_OVERRIDE;
+  virtual void do_update() override;
 private:
 
  public:

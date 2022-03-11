@@ -21,13 +21,13 @@ IMPDOMINO3_BEGIN_NAMESPACE
 class IMPDOMINO3EXPORT IndexStates : public States {
  const std::vector<int> states_;
 protected:
- virtual void do_load(unsigned int i, ParticleIndex pi) const IMP_OVERRIDE;
+ virtual void do_load(unsigned int i, ParticleIndex pi) const override;
  public:
  IndexStates(Model *m, const std::vector<int> &states);
-  virtual unsigned int get_number() const IMP_OVERRIDE;
-  virtual void add_to_rmf(ParticleIndex pi, RMF::NodeHandle parent) const IMP_OVERRIDE;
+  virtual unsigned int get_number() const override;
+  virtual void add_to_rmf(ParticleIndex pi, RMF::NodeHandle parent) const override;
   virtual void update_rmf(ParticleIndex pi, RMF::NodeHandle parent,
-                          Marginals *m) const IMP_OVERRIDE;
+                          Marginals *m) const override;
   IMP_OBJECT_METHODS(IndexStates);
 };
 

@@ -25,7 +25,7 @@ class IMPDOMINO3EXPORT DistanceFactor: public Factor {
   FP * distances;
   Model *m;
  protected:
-  virtual void do_update() IMP_OVERRIDE;
+  virtual void do_update() override;
 private:
   FP distance_to_probability(FP x);
 

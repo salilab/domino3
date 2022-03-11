@@ -17,7 +17,7 @@ IMPDOMINO3_BEGIN_NAMESPACE
     the same space of assignments. */
 class IMPDOMINO3EXPORT ExcludedVolumeFactor: public Factor {
  protected:
-  virtual void do_update() IMP_OVERRIDE;
+  virtual void do_update() override;
  public:
   ExcludedVolumeFactor(Model *m,
                      const ParticleIndexPair &pis,
