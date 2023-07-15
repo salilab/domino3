@@ -10,6 +10,7 @@
 #include <IMP/object_macros.h>
 #include <IMP/graph_macros.h>
 #include <IMP/particle_index.h>
+#include <IMP/domino3/Factor.h>
 #include "Marginals.h"
 
 IMPDOMINO3_BEGIN_NAMESPACE
