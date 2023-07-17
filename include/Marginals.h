@@ -8,6 +8,7 @@
 #include <IMP/domino3/domino3_config.h>
 #include <IMP/domino3/LogMathFunctions.h>
 #include <IMP/Object.h>
+#include <IMP/Particle.h>
 #include <IMP/ConstVector.h>
 #include <IMP/object_macros.h>
 

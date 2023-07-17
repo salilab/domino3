@@ -10,6 +10,7 @@
 #define IMPDOMINO3_XYZ_STATES_H
 
 #include <IMP/domino3/domino3_config.h>
+#include <IMP/domino3/States.h>
 #include <IMP/algebra/Vector3D.h>
 #include <IMP/particle_index.h>
 
