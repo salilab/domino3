@@ -35,4 +35,6 @@ jobs:
         make
         ./setup_environment.sh pytest --cov=.. --cov-branch --cov-report=xml -v test/*/*.py
         ${GCC/gcc/gcov} $(find . -name "*.gcno")
-    - uses: codecov/codecov-action@v3
+    - uses: codecov/codecov-action@v4
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
