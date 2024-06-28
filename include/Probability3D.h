@@ -7,6 +7,7 @@
 
 IMPDOMINO3_BEGIN_NAMESPACE
 
+namespace {
 void *memalign(size_t boundary, size_t size)
 {
     void *pointer;
@@ -18,6 +19,7 @@ void *memalign(size_t boundary, size_t size)
     }
     return pointer;
 }
+} // namespace
 
 /** A node for a single distance restraint. */
 class Probability3D {

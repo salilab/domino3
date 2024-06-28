@@ -34,18 +34,6 @@
 
 namespace {
     
-    void *memalign(size_t boundary, size_t size)
-    {
-        void *pointer;
-        int code = posix_memalign(&pointer,boundary,size);
-        if (code != 0)
-        {
-            std::cerr<<"Error in memalign: Could not allocate memory by memalign. Please report this bug to developers\n";
-            exit(3);
-        }
-        return pointer;
-    }
-    
     std::string output = "out.rmf";
     IMP::AddStringFlag oasf("output", "Output rmf name", &output);
     std::string dock_file = IMP::domino3::get_example_path("33_dock.txt");
