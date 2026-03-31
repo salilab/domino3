@@ -1,4 +1,4 @@
-[![Build Status](https://github.com/salilab/domino3/workflows/build/badge.svg?branch=develop)](https://github.com/salilab/domino3/actions?query=workflow%3Abuild)
+[![Build Status](https://github.com/salilab/domino3/actions/workflows/build.yml/badge.svg?branch=develop)](https://github.com/salilab/domino3/actions/workflows/build.yml)
 [![codecov](https://codecov.io/gh/salilab/domino3/branch/develop/graph/badge.svg)](https://codecov.io/gh/salilab/domino3)
 
 This module is for experimenting with a more traditional inferential approach. The computational model is:
