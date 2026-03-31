@@ -8,6 +8,7 @@
 #include <IMP/domino3/Updater.h>
 #include <IMP/random.h>
 #include <algorithm>
+#include <boost/version.hpp>
 
 IMPDOMINO3_BEGIN_NAMESPACE
 
@@ -23,7 +24,9 @@ Object(name), factors_(graph) {
 
 void Updater::do_update() {
     boost::unordered_set<ParticleIndex> changed;
-#if !defined(IMP_COMPILER_HAS_RANDOM_SHUFFLE) || IMP_COMPILER_HAS_RANDOM_SHUFFLE
+#if IMP_COMPILER_HAS_RANDOM_SHUFFLE && BOOST_VERSION < 107500
+    // Older Boost RNG has non-constexpr min(), max() which won't compile
+    // with std::shuffle, so use the older random_shuffle instead
     std::random_shuffle ( cur_queue_.begin(), cur_queue_.end() );
 #else
     std::shuffle(cur_queue_.begin(), cur_queue_.end(),
