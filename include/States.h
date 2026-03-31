@@ -19,10 +19,10 @@
 IMPDOMINO3_BEGIN_NAMESPACE
 /** Handle the states for a particular particle (or "class" of
     particles. For example a state enumerator class could take
-    a bounding box and a number,n, and generate n points in the
-    bounding box. Then the get_number function woudld return
+    a bounding box and a number, n, and generate n points in the
+    bounding box. Then the get_number function would return
     n and update_to_state would modify the particle to have the
-    coordiantes for state i.
+    coordinates for state i.
  */
 class IMPDOMINO3EXPORT States : public IMP::Object {
   WeakPointer<Model> m_;

@@ -245,9 +245,9 @@ namespace {
 
         EnzymeLigandScoreLookup enzyme_ligand_scores;
         EnzymeLigandLigandScoreLookup enzyme_ligand_ligand_scores;
-        IMP_USAGE_CHECK(boost::filesystem::exists(sea_file) , "SEA File dosen't exist");
-        IMP_USAGE_CHECK(boost::filesystem::exists(dock_file), "Dock File dosen't exist");
-        IMP_USAGE_CHECK(boost::filesystem::exists(chem_file), "Chem File dosen't exist");
+        IMP_USAGE_CHECK(boost::filesystem::exists(sea_file) , "SEA File doesn't exist");
+        IMP_USAGE_CHECK(boost::filesystem::exists(dock_file), "Dock File doesn't exist");
+        IMP_USAGE_CHECK(boost::filesystem::exists(chem_file), "Chem File doesn't exist");
         read_in_sea_file(sea_file,
                          enzyme_enzyme_scores,
                          id_to_enzyme,enzyme_id_to_name);

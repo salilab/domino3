@@ -251,14 +251,14 @@ private:
         // which, in internal bits, is written 0x4b400000 (since 10010110bin = 150)
         int lx = *((int*) &tx) - 0x4b400000;   // integer value of x
         float dx = x - (float) (lx);             // float remainder of x
-        //   x = 1.0f + dx*(0.69606564f           // cubic apporoximation of 2^x for x in the range [0, 1]
+        //   x = 1.0f + dx*(0.69606564f           // cubic approximation of 2^x for x in the range [0, 1]
         //            + dx*(0.22449433f           // Gives relative deviation < 1.5E-4
         //            + dx*(0.07944023f)));       // Speed: 1.9E-8s
         x = 1.0f + dx * (0.693019f // polynomial approximation of 2^x for x in the range [0, 1]
                          + dx * (0.241404f             // Gives relative deviation < 4.6E-6
                                  + dx * (0.0520749f            // Speed: 2.1E-8s
                                          + dx * 0.0134929f)));
-        //   x = 1.0f + dx*(0.693153f             // polynomial apporoximation of 2^x for x in the range [0, 1]
+        //   x = 1.0f + dx*(0.693153f             // polynomial approximation of 2^x for x in the range [0, 1]
         //            + dx*(0.240153f             // Gives relative deviation < 2.3E-7
         //            + dx*(0.0558282f            // Speed: 2.3E-8s
         //            + dx*(0.00898898f
@@ -306,7 +306,7 @@ private:
         __m128 maskedMax = _mm_set1_ps(0.0f);
         __m128 maskedMin = _mm_set1_ps(0.0f);
         
-        // Check wheter one of the values is bigger or smaller than FLT_MIN_EXP or FLT_MAX_EXP
+        // Check whether one of the values is bigger or smaller than FLT_MIN_EXP or FLT_MAX_EXP
         // The correct FLT_MAX_EXP value is written to the right place
         maskedMax = _mm_cmpgt_ps(X, CONST32_FLTMAXEXP);
         maskedMin = _mm_cmpgt_ps(X, CONST32_FLTMINEXP);
@@ -322,7 +322,7 @@ private:
         
         dx = _mm_sub_ps(X, _mm_cvtepi32_ps(lx));						// float remainder of x
         
-        //   x = 1.0f + dx*(0.693153f             // polynomial apporoximation of 2^x for x in the range [0, 1]
+        //   x = 1.0f + dx*(0.693153f             // polynomial approximation of 2^x for x in the range [0, 1]
         //            + dx*(0.240153f             // Gives relative deviation < 2.3E-7
         //            + dx*(0.0558282f            // Speed: 2.3E-8s
         //            + dx*(0.00898898f

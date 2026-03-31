@@ -60,7 +60,7 @@ class IMPDOMINO3EXPORT Factor: public ModelObject {
 
   //! make sure to call it on the neighbor too
   void add_neighbor(Factor *n);
-  // match the particles and set intput
+  // match the particles and set input
   void set_matching_inputs(Factor *n);
 };
 
